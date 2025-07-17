@@ -7,9 +7,11 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-  <script>
+    <script type="module">
+    // 從 Firebase CDN 導入所需模組
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js'; // 導入 onAuthStateChanged 和 signOut
+
     const firebaseConfig = {
       apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
       authDomain: "goodaymember.firebaseapp.com",
@@ -19,78 +21,12 @@
       appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
       measurementId: "G-J3Z7YTHJ9P"
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-  </script>
-</head>
 
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light px-4">
-    <a class="navbar-brand fw-bold" href="#">好管家代領</a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu"></ul>
-    </div>
-  </nav>
+    // 初始化 Firebase 應用程式和認證服務
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app); // 使用 getAuth 獲取 Auth 實例
 
-    <section id="souvenir" class="section active-section">
-    <h3>🎁 紀念品</h3>
-    <div class="table-responsive mt-3">
-      <table class="table table-bordered table-sm" id="souvenirTable">
-        <thead class="table-warning"></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section id="recommend" class="section">
-    <h3>🌟 推薦清單</h3>
-    <div class="mb-3 d-flex align-items-center gap-2">
-      <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
-      <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 300px;">
-        <option value="我全都要（不需證件）">我全都要（不需證件）</option>
-        <option value="高cp推薦">高cp推薦</option>
-        <option value="禮券類">禮券類</option>
-        <option value="小資族">小資族</option>
-        <option value="入門組">入門組</option>
-      </select>
-    </div>
-    <div class="table-responsive mt-3">
-      <table class="table table-bordered table-sm" id="recommendTable">
-        <thead class="table-warning"></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section id="notice" class="section">
-    <h3>📌 注意事項</h3>
-    <p>本服務為好管家團隊提供之股東紀念品代領平台，請確認資料正確性後再進行登記。</p>
-  </section>
-
-  <section id="about" class="section">
-    <h3>👤 關於我們</h3>
-    <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
-  </section>
-
-  <script>
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
-        authDomain: "goodaymember.firebaseapp.com",
-        projectId: "goodaymember",
-        storageBucket: "goodaymember.appspot.com",
-        messagingSenderId: "730801053598",
-        appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
-        measurementId: "G-J3Z7YTHJ9P"
-    };
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app); // 使用 getAuth 獲取 Auth 實例
-
-      
+    // 其餘的您的 JavaScript 程式碼從這裡開始
     let loginEmail = null;
     const navMenu = document.getElementById("navMenu");
     const allSections = document.querySelectorAll(".section");
@@ -142,20 +78,20 @@
         e.preventDefault();
         const id = e.target.getAttribute("data-section");
         if (id === "logout") {
-          auth.signOut().then(() => location.reload());
+          signOut(auth).then(() => location.reload()); // 使用導入的 signOut 函數
         } else {
           showSection(id);
         }
       }
     });
 
-    // 新增：載入紀念品資料的函數
+    // 載入紀念品資料的函數
     function loadSouvenirData() {
         fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
             .then(res => res.json())
             .then(data => {
                 const table = document.getElementById('souvenirTable');
-                if (table && data && data.length > 0) { // 確保表格元素存在且有資料
+                if (table && data && data.length > 0) {
                     const headers = Object.keys(data[0]);
                     const thead = headers.map(h => `<th>${h}</th>`).join('');
                     const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
@@ -163,17 +99,17 @@
                     table.querySelector('tbody').innerHTML = tbody;
                 }
             })
-            .catch(error => console.error('載入紀念品資料時發生錯誤:', error)); // 錯誤處理
+            .catch(error => console.error('載入紀念品資料時發生錯誤:', error));
     }
 
-    // 載入推薦清單資料的函數 (保持原樣，但在 DOMContentLoaded 後也會初始載入一次)
+    // 載入推薦清單資料的函數
     function loadRecommend(sheetName) {
         const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
         fetch(url)
             .then(res => res.json())
             .then(data => {
                 const table = document.getElementById('recommendTable');
-                if (table && data && data.length > 0) { // 確保表格元素存在且有資料
+                if (table && data && data.length > 0) {
                     const headers = Object.keys(data[0]);
                     const thead = headers.map(h => `<th>${h}</th>`).join('');
                     const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
@@ -181,28 +117,76 @@
                     table.querySelector('tbody').innerHTML = tbody;
                 }
             })
-            .catch(error => console.error('載入推薦清單資料時發生錯誤:', error)); // 錯誤處理
+            .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
     }
 
-    // 當 DOM 內容完全載入後，立即執行這些操作
-    document.addEventListener('DOMContentLoaded', () => {
-        loadSouvenirData(); // 在登入狀態確定前就載入紀念品資料
-        
-        // Firebase 登入狀態監聽與資料載入
-        firebase.auth().onAuthStateChanged((user) => {
-            loginEmail = user ? user.email : null;
-            console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
-            renderNavTabs();
-            showSection("souvenir"); // 確保頁面載入或登入狀態改變時顯示紀念品區塊
+    // 當 DOM 內容完全載入後，執行這些操作
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSouvenirData();
+      
+      // Firebase 登入狀態監聽
+      onAuthStateChanged(auth, (user) => { // 使用導入的 onAuthStateChanged 函數
+        loginEmail = user ? user.email : null;
+        console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
+        renderNavTabs();
+        showSection("souvenir");
 
-            // 為推薦清單選擇器添加事件監聽器
-            document.getElementById('recommendSheet')?.addEventListener('change', function () {
-                loadRecommend(this.value);
-            });
-            // 初始載入推薦清單的預設選項
-            loadRecommend('我全都要（不需證件）');
-        });
-    });
+        document.getElementById('recommendSheet')?.addEventListener('change', function () {
+          loadRecommend(this.value);
+        });
+        loadRecommend('我全都要（不需證件）');
+      });
+    });
   </script>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light px-4">
+    <a class="navbar-brand fw-bold" href="#">好管家代領</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu"></ul>
+    </div>
+  </nav>
+
+    <section id="souvenir" class="section active-section">
+    <h3>🎁 紀念品</h3>
+    <div class="table-responsive mt-3">
+      <table class="table table-bordered table-sm" id="souvenirTable">
+        <thead class="table-warning"></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="recommend" class="section">
+    <h3>🌟 推薦清單</h3>
+    <div class="mb-3 d-flex align-items-center gap-2">
+      <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
+      <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 300px;">
+        <option value="我全都要（不需證件）">我全都要（不需證件）</option>
+        <option value="高cp推薦">高cp推薦</option>
+        <option value="禮券類">禮券類</option>
+        <option value="小資族">小資族</option>
+        <option value="入門組">入門組</option>
+      </select>
+    </div>
+    <div class="table-responsive mt-3">
+      <table class="table table-bordered table-sm" id="recommendTable">
+        <thead class="table-warning"></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="notice" class="section">
+    <h3>📌 注意事項</h3>
+    <p>本服務為好管家團隊提供之股東紀念品代領平台，請確認資料正確性後再進行登記。</p>
+  </section>
+
+  <section id="about" class="section">
+    <h3>👤 關於我們</h3>
+    <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
+  </section>
+
 </body>
 </html>

@@ -1,3 +1,5 @@
+成功的index（2)
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -18,7 +20,7 @@
         <li class="nav-item"><a class="nav-link" href="#" data-section="notice">注意事項</a></li>
         <li class="nav-item"><a class="nav-link" href="#" data-section="about">關於我</a></li>
         <li class="nav-item"><a class="nav-link" href="register.html">註冊</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" data-section="login">登入</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">登入</a></li>
       </ul>
     </div>
   </nav>
@@ -63,22 +65,10 @@
 
   <!-- 區塊：關於我 -->
   <section id="about" class="section">
-    <h3>🔐 會員登入</h3>
-    <form id="loginForm" style="max-width: 400px;">
-      <div class="mb-3">
-        <label for="loginEmail" class="form-label">Email</label>
-        <input type="email" class="form-control" id="loginEmail" required>
-      </div>
-      <div class="mb-3">
-        <label for="loginPassword" class="form-label">密碼</label>
-        <input type="password" class="form-control" id="loginPassword" required>
-      </div>
-      <button type="submit" class="btn btn-primary">登入</button>
-    </form>
+    <h3>👤 關於我們</h3>
+    <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
   </section>
 
-
-  
 <script>
   // 讀取 localStorage 中登入 Email
   const loginEmail = localStorage.getItem("loginEmail");
@@ -186,21 +176,6 @@
 
   // 預設載入第一個分類
   loadRecommend('我全都要（不需證件）');
-  
-  document.getElementById("loginForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-
-    // 這裡你可以改成實際驗證流程，這裡先用假資料登入成功示範
-    if (email && password) {
-      localStorage.setItem("loginEmail", email);
-      alert("登入成功！");
-      location.reload(); // 重新整理頁面以觸發登入後邏輯
-    } else {
-      alert("請輸入帳號密碼");
-    }
-  });
 </script>
 </body>
 </html>

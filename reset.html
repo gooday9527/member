@@ -21,6 +21,24 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
   </style>
+  <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
+    authDomain: "goodaymember.firebaseapp.com",
+    projectId: "goodaymember",
+    storageBucket: "goodaymember.firebasestorage.app",
+    messagingSenderId: "730801053598",
+    appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
+    measurementId: "G-J3Z7YTHJ9P"
+  };
+
+  // 初始化 Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+</script>
 </head>
 <body>
   <div class="card shadow">

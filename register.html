@@ -62,43 +62,22 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec";
 
-    document.getElementById("registerForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const messageBox = document.getElementById("message");
-      messageBox.classList.add("d-none");
+  document.getElementById("registerForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-      if (!name || !email || !password || password.length < 6) {
-        showMessage("請填寫完整資訊，密碼至少 6 碼", "danger");
-        return;
-      }
+    const res = await apiRequest({ action: "register", name, email, password });
 
-      fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "register",
-          name: name,
-          email: email,
-          password: password
-        })
-      })
-      .then(res => res.json())
-      .then(response => {
-        if (response.success) {
-          showMessage(response.message, "success");
-          document.getElementById("registerForm").reset();
-        } else {
-          showMessage(response.message, "danger");
-        }
-      })
-      .catch(error => {
-        console.error("註冊錯誤:", error);
-        showMessage("系統錯誤，請稍後再試", "danger");
-      });
-    });
+    if (res.success) {
+      showMessage(res.message || "註冊成功", "success");
+      document.getElementById("registerForm").reset();
+    } else {
+      showMessage(res.message || "註冊失敗", "danger");
+    }
+  });
+
 
     function showMessage(msg, type) {
       const box = document.getElementById("message");

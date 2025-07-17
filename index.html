@@ -29,19 +29,9 @@
         /* 導覽列樣式 */
         .navbar {
             background-color: #ffe082;
-            padding-left: 1rem; /* 移除過多的 px-4，讓 Bootstrap 自己處理響應式間距 */
+            padding-left: 1rem; 
             padding-right: 1rem;
         }
-
-        /* 確保導覽列的排版 - 這些可能導致小螢幕問題，請特別注意 */
-        /* .navbar-collapse {
-            justify-content: flex-start !important; 
-        } */
-        /* .navbar-nav {
-            margin-right: auto !important; 
-            margin-left: 0 !important; 
-        } */
-        /* 上述被註解掉的 CSS 規則，在小螢幕下可能會干擾 Bootstrap 導覽列的預設行為 */
 
         .nav-link {
             font-weight: bold;
@@ -58,26 +48,26 @@
         .container-fluid {
             padding-left: 1rem !important;
             padding-right: 1rem !important;
-            position: relative; /* 關鍵：讓內部絕對定位的區塊相對於此容器定位 */
-            min-height: 600px; /* 範例值，您可以調整以確保頁面內容足夠高，防止塌陷 */
-            padding-top: 3rem; /* 為內容區塊留出一些頂部空間，避免與導覽列重疊 */
-            padding-bottom: 3rem; /* 底部空間 */
+            position: relative; 
+            min-height: 600px; 
+            padding-top: 3rem; 
+            padding-bottom: 3rem; 
         }
 
         /* 區塊 (section) 顯示/隱藏和層疊樣式 */
         .section {
-            display: none; /* 預設隱藏所有區塊 */
-            position: absolute; /* 讓所有區塊疊加在同一個位置 */
-            width: calc(100% - 2rem); /* 100% 減去左右各 1rem 的 padding */
-            top: 1rem; /* 從 container-fluid 的 padding-top 開始 */
-            left: 1rem; /* 從 container-fluid 的 padding-left 開始 */
-            right: 1rem; /* 從 container-fluid 的 padding-right 開始 */
+            display: none; 
+            position: absolute; 
+            width: calc(100% - 2rem); 
+            top: 1rem; 
+            left: 1rem; 
+            right: 1rem; 
         }
 
         /* 只有帶有 active-section class 的區塊才顯示出來 */
         .section.active-section {
-            display: block; /* 顯示當前活動的區塊 */
-            z-index: 10; /* 確保活動區塊在最上層 */
+            display: block; 
+            z-index: 10; 
         }
 
         /* ===== 表格樣式 ===== */
@@ -88,7 +78,7 @@
         }
 
         th {
-            white-space: nowrap; /* 確保標題欄不換行 */
+            white-space: nowrap; 
             text-align: left;
             background-color: #fff3cd;
             padding: 0.5rem;
@@ -97,14 +87,14 @@
         }
 
         td {
-            white-space: normal; /* 確保內容欄可換行 */
+            white-space: normal; 
             text-align: left;
             padding: 0.5rem;
             vertical-align: middle;
             border: 1px solid #dee2e6;
         }
 
-        /* 前三欄欄寬固定 - 保持您原始的設定 */
+        /* 前三欄欄寬固定 */
         th:nth-child(1), td:nth-child(1) {
             width: 40px;
         }
@@ -115,17 +105,17 @@
             width: 90px;
         }
 
-        /* 紀念品欄限制最大寬度 - 保持您原始的設定 */
+        /* 紀念品欄限制最大寬度 */
         th:nth-child(4), td:nth-child(4) {
             max-width: 300px;
         }
 
-        /* 推薦分類下拉選單寬度 - 保持您原始的設定 */
+        /* 推薦分類下拉選單寬度 */
         #recommendSheet {
             max-width: 300px;
         }
 
-        /* DataTables 相關的自訂樣式，以確保其正常顯示和下拉選單寬度 */
+        /* DataTables 相關的自訂樣式 */
         .dataTables_wrapper .dataTables_length select {
             min-width: 80px; 
             width: auto; 
@@ -152,18 +142,14 @@
         /* 處理可能由 DataTables 內聯樣式引起的問題 */
         div.dataTables_wrapper div.dataTables_filter label,
         div.dataTables_wrapper div.dataTables_length label {
-            display: flex; /* 使用 flexbox 確保內容和標籤在同一行 */
-            align-items: center; /* 垂直置中 */
-            gap: 0.5em; /* 元素之間增加一些間距 */
+            display: flex; 
+            align-items: center; 
+            gap: 0.5em; 
         }
         div.dataTables_wrapper div.dataTables_filter input {
-            flex-grow: 1; /* 讓輸入框佔用剩餘空間 */
-        }
-        /* 修復 DataTables 輸入框的寬度問題，確保其在手機上不會過寬 */
-        .dataTables_wrapper .dataTables_filter input {
-            box-sizing: border-box; /* 確保 padding 和 border 不會增加元素總寬度 */
-            max-width: 100%; /* 防止在小螢幕上超出容器 */
-            width: auto; /* 讓其根據內容自適應 */
+            box-sizing: border-box; 
+            max-width: 100%; 
+            width: auto; 
         }
 
 
@@ -188,24 +174,26 @@
 
             /* 確保手機版導覽列的漢堡按鈕可見並正常工作 */
             .navbar-toggler {
-                display: block; /* 確保按鈕在手機上顯示 */
-                border: 1px solid rgba(0,0,0,.1); /* 增加邊框，讓它更顯眼 */
+                display: block; 
+                border: 1px solid rgba(0,0,0,.1); 
             }
             /* 讓導覽列內容在手機上堆疊 */
             .navbar-collapse {
-                flex-grow: 1; /* 允許它佔用可用空間 */
-                flex-basis: 100%; /* 強制換行 */
-                margin-top: 0.5rem; /* 與漢堡按鈕保持距離 */
+                flex-grow: 1; 
+                flex-basis: 100%; 
+                margin-top: 0.5rem; 
             }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light"> <a class="navbar-brand fw-bold" href="#">好管家代領</a>
+    <nav class="navbar navbar-expand-md navbar-light"> 
+        <a class="navbar-brand fw-bold" href="#">好管家代領</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav"> <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
+        <div class="collapse navbar-collapse" id="navbarNav"> 
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
             </ul>
         </div>
     </nav>
@@ -422,7 +410,7 @@
                                 scrollCollapse: true, 
                                 initComplete: function(settings, json) {
                                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-                                }
+                               }
                             });
                         } else {
                             tableElement.querySelector('thead').innerHTML = '';

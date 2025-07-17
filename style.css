@@ -1,45 +1,43 @@
-/* 整體背景色與字型 */
+/* style.css - 好管家紀念品代領 專用樣式 */
+
 body {
-  background-color: #fffbea; /* 淡黃色背景 */
-  font-family: 'Noto Sans TC', sans-serif; /* 使用台灣常見中文字型 */
+  background-color: #fffbea;
+  font-family: 'Noto Sans TC', sans-serif;
 }
 
-/* 導覽列樣式 */
 .navbar {
-  background-color: #ffe082; /* 導覽列為亮黃色 */
+  background-color: #ffe082;
 }
 
-/* 導覽列連結樣式 */
 .nav-link {
-  font-weight: bold; /* 導覽列字體加粗 */
+  font-weight: bold;
 }
 
-/* 各分頁區塊預設隱藏 */
 .section {
   display: none;
-  padding: 30px 15px; /* 四周留白，避免貼邊 */
+  padding: 30px;
 }
 
-/* 被選中的分頁顯示 */
 .active-section {
   display: block;
 }
 
-/* 表格容器可水平滾動，避免擠壓畫面 */
-.table-responsive {
-  overflow-x: auto; /* 當表格超過寬度時，出現水平卷軸 */
-  width: 100%;
-}
-
-/* 表格樣式設定 */
 .table {
-  background-color: white; /* 表格底色為白色 */
-  word-break: keep-all; /* 單字不拆開換行（欄位名稱保持在一行） */
-  white-space: nowrap; /* 不自動換行，讓表格在小螢幕下出現捲軸而非換行 */
+  background-color: white;
+  width: 100%;              /* 滿版寬度 */
+  table-layout: fixed;      /* 等寬欄位 */
+  word-wrap: break-word;    /* 超出自動斷字 */
 }
 
-/* 表格標題與內容置中 */
 th, td {
-  text-align: center; /* 水平置中 */
-  vertical-align: middle; /* 垂直置中 */
+  white-space: nowrap;      /* 不換行 */
+  overflow: hidden;         /* 超出隱藏 */
+  text-overflow: ellipsis;  /* 超出顯示省略號 */
+  font-size: 14px;          /* 小字體 */
+  padding: 0.5rem;          /* 精簡內距 */
+}
+
+/* 表格容器不允許橫向滾動 */
+.table-responsive {
+  overflow-x: hidden;
 }

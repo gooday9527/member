@@ -69,15 +69,16 @@
 
  <script>
    const loginEmail = localStorage.getItem("loginEmail");
-   const navMenu = document.getElementById("navMenu");
+   const navTabs = document.getElementById("nav-tabs") || document.getElementById("navMenu");
+   const contentArea = document.getElementById("content-area");
 
    const tabsBeforeLogin = [
      { id: "souvenir", label: "紀念品" },
      { id: "recommend", label: "推薦清單" },
      { id: "notice", label: "注意事項" },
      { id: "about", label: "關於我" },
-     { id: "register.html", label: "註冊", external: true },
-     { id: "login.html", label: "登入", external: true }
+     { id: "register.html", label: "註冊" },
+     { id: "login.html", label: "登入" }
    ];
 
    const tabsAfterLogin = [
@@ -93,39 +94,78 @@
      { id: "logout", label: "登出" }
    ];
 
-   function renderNavMenu() {
-     navMenu.innerHTML = "";
+   function renderNavTabs() {
+     if (!navTabs) return;
+     navTabs.innerHTML = "";
      const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
      tabs.forEach(tab => {
        const li = document.createElement("li");
        li.className = "nav-item";
-       const href = tab.external ? tab.id : "#";
-       const dataAttr = tab.external ? "" : `data-section="${tab.id}"`;
-       li.innerHTML = `<a class="nav-link" href="${href}" ${dataAttr}>${tab.label}</a>`;
-       navMenu.appendChild(li);
+       li.innerHTML = `<a class="nav-link" href="#" data-id="${tab.id}">${tab.label}</a>`;
+       navTabs.appendChild(li);
      });
    }
 
-   navMenu.addEventListener("click", (e) => {
-     if (e.target.matches(".nav-link") && e.target.dataset.section) {
-       e.preventDefault();
-       const sectionId = e.target.dataset.section;
-       if (sectionId === "logout") {
+   function activateSection(id) {
+     document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+     const section = document.getElementById(id);
+     if (section) section.classList.add('active-section');
+   }
+
+   navTabs?.addEventListener("click", async e => {
+     if (e.target.matches(".nav-link")) {
+       const id = e.target.dataset.id;
+       if (id === "logout") {
          localStorage.removeItem("loginEmail");
          location.reload();
        } else {
-         showSection(sectionId);
+         activateSection(id);
+         loadContent(id);
        }
      }
    });
-
-   function showSection(id) {
-     document.querySelectorAll(".section").forEach(s => s.classList.remove("active-section"));
-     const target = document.getElementById(id);
-     if (target) target.classList.add("active-section");
+ 
+   function loadContent(id) {
+     if (id === "souvenir") {
+       fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
+         .then(res => res.json())
+         .then(data => {
+           const table = document.getElementById('souvenirTable');
+           if (!table) return;
+           const headers = Object.keys(data[0]);
+           const thead = headers.map(h => `<th>${h}</th>`).join('');
+           const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+           table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+           table.querySelector('tbody').innerHTML = tbody;
+         });
+     } else if (id === "recommend") {
+       const sheetName = document.getElementById("recommendSheet")?.value || "我全都要（不需證件）";
+       loadRecommend(sheetName);
+     }
    }
 
-   renderNavMenu();
+   function loadRecommend(sheetName) {
+     const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
+     fetch(url)
+       .then(res => res.json())
+       .then(data => {
+         const table = document.getElementById('recommendTable');
+         if (!table) return;
+         const headers = Object.keys(data[0]);
+         const thead = headers.map(h => `<th>${h}</th>`).join('');
+         const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+         table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+         table.querySelector('tbody').innerHTML = tbody;
+       });
+   }
+
+   document.getElementById('recommendSheet')?.addEventListener('change', function () {
+     loadRecommend(this.value);
+   });
+
+   renderNavTabs();
+   activateSection("souvenir");
+   loadContent("souvenir");
  </script>
 </body>
 </html>

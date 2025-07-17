@@ -68,10 +68,13 @@
   </section>
 
  <script>
+   // 讀取 localStorage 中登入 Email
    const loginEmail = localStorage.getItem("loginEmail");
+   // 導覽列容器與區塊們
    const navTabs = document.getElementById("nav-tabs") || document.getElementById("navMenu");
    const contentArea = document.getElementById("content-area");
 
+   // 導覽列分頁項目（登入前與登入後）
    const tabsBeforeLogin = [
      { id: "souvenir", label: "紀念品" },
      { id: "recommend", label: "推薦清單" },
@@ -94,6 +97,7 @@
      { id: "logout", label: "登出" }
    ];
 
+   // 動態建立導覽列
    function renderNavTabs() {
      if (!navTabs) return;
      navTabs.innerHTML = "";
@@ -101,11 +105,31 @@
      tabs.forEach(tab => {
        const li = document.createElement("li");
        li.className = "nav-item";
-       li.innerHTML = `<a class="nav-link" href="#" data-id="${tab.id}">${tab.label}</a>`;
-       navTabs.appendChild(li);
+       if (tab.link) {
+         li.innerHTML = `<a class="nav-link" href="${tab.link}">${tab.label}</a>`;
+       } else {
+         li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
+       }
+       navMenu.appendChild(li);
      });
    }
 
+  
+   // 點擊切換區塊
+   navMenu.addEventListener("click", function (e) {
+     if (e.target.matches(".nav-link[data-section]")) {
+       e.preventDefault();
+       const id = e.target.getAttribute("data-section");
+       if (id === "logout") {
+         localStorage.removeItem("loginEmail");
+         location.reload();
+       } else {
+         showSection(id);
+       }
+     }
+   });
+
+   // 顯示指定區塊
    function activateSection(id) {
      document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
      const section = document.getElementById(id);
@@ -125,8 +149,19 @@
      }
    });
  
-   function loadContent(id) {
-     if (id === "souvenir") {
+   // 顯示指定區塊
+   function showSection(id) {
+     allSections.forEach(sec => sec.classList.remove("active-section"));
+     const target = document.getElementById(id);
+     if (target) target.classList.add("active-section");
+   }
+
+   // 初始畫面
+   renderNavTabs();
+   showSection("souvenir");
+
+   // ===== 以下為原有資料載入功能 =====
+   // 取得紀念品清單
        fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
          .then(res => res.json())
          .then(data => {
@@ -138,34 +173,29 @@
            table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
            table.querySelector('tbody').innerHTML = tbody;
          });
-     } else if (id === "recommend") {
-       const sheetName = document.getElementById("recommendSheet")?.value || "我全都要（不需證件）";
-       loadRecommend(sheetName);
-     }
-   }
 
-   function loadRecommend(sheetName) {
-     const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
-     fetch(url)
-       .then(res => res.json())
-       .then(data => {
-         const table = document.getElementById('recommendTable');
-         if (!table) return;
-         const headers = Object.keys(data[0]);
-         const thead = headers.map(h => `<th>${h}</th>`).join('');
-         const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
-         table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
-         table.querySelector('tbody').innerHTML = tbody;
-       });
-   }
+    // 取得推薦清單
+    function loadRecommend(sheetName) {
+      const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const table = document.getElementById('recommendTable');
+          if (!table) return;
+          const headers = Object.keys(data[0]);
+          const thead = headers.map(h => `<th>${h}</th>`).join('');
+          const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+          table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+          table.querySelector('tbody').innerHTML = tbody;
+        });
+    }
 
-   document.getElementById('recommendSheet')?.addEventListener('change', function () {
-     loadRecommend(this.value);
-   });
+    document.getElementById('recommendSheet')?.addEventListener('change', function () {
+      loadRecommend(this.value);
+    });
 
-   renderNavTabs();
-   activateSection("souvenir");
-   loadContent("souvenir");
+    // 預設載入第一個分類
+   loadRecommend('我全都要（不需證件）');
  </script>
 </body>
 </html>

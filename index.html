@@ -145,10 +145,14 @@
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       loginEmail = user.email;
+      console.log("✅ 已登入使用者：", loginEmail);
+    } else {
+      console.log("⚠️ 尚未登入，僅顯示基本功能");
     }
-    renderNavTabs();
-    showSection("souvenir");  // 預設顯示區塊
+    renderNavTabs(); // ✅ 無論是否登入，都執行
+    showSection("souvenir");
   });
+
 
   // ===== 以下為資料載入功能 =====
   fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')

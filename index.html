@@ -192,5 +192,16 @@
   // 預設載入第一個分類
   loadRecommend('我全都要（不需證件）');
 </script>
+  <script>
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      console.log("已登入使用者：", user.email);
+      // 可根據需要顯示使用者資訊或繼續執行頁面功能
+    } else {
+      // 若未登入，導回登入頁
+      window.location.href = "login.html";
+    }
+  });
+</script>
 </body>
 </html>

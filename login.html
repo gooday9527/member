@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>會員登入</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
     body {
       background-color: #f8f9fa;
@@ -32,61 +32,27 @@
       border-color: #e0a800;
     }
   </style>
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
-    authDomain: "goodaymember.firebaseapp.com",
-    projectId: "goodaymember",
-    storageBucket: "goodaymember.firebasestorage.app",
-    messagingSenderId: "730801053598",
-    appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
-    measurementId: "G-J3Z7YTHJ9P"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-</script>
 
-<script>
-document.getElementById("loginForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  try {
-    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    const user = userCredential.user;
-
-    // ✅ 登入成功，寫入 localStorage
-    localStorage.setItem("loginEmail", user.email);
-
-    // 🔁 呼叫 Apps Script API 確認會員狀態
-    const response = await fetch("https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "login", email: user.email })
-    });
-
-    const result = await response.json();
-    if (result.success) {
-      window.location.href = "index.html";
-    } else {
-      alert(result.message || "系統錯誤，請稍後再試");
-    }
-
-  } catch (error) {
-    alert("登入失敗：" + error.message);
-  }
-});
-</script>
-
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
+      authDomain: "goodaymember.firebaseapp.com",
+      projectId: "goodaymember",
+      storageBucket: "goodaymember.firebasestorage.app",
+      messagingSenderId: "730801053598",
+      appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
+      measurementId: "G-J3Z7YTHJ9P"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  </script>
 </head>
 <body>
   <div class="card shadow">
     <h3 class="text-center mb-4">會員登入</h3>
-    <div id="message" class="alert d-none"></div>
     <form id="loginForm">
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
@@ -105,35 +71,37 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     </div>
   </div>
 
-<script>
-document.getElementById("loginForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
-  try {
-    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    const user = userCredential.user;
+      try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
 
-    // 登入成功後呼叫 Apps Script 檢查會員資料
-    const response = await fetch("https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "login", email: user.email })
+        // ✅ 登入成功：儲存 Email 到 localStorage
+        localStorage.setItem("loginEmail", user.email);
+
+        // 🔁 呼叫 Apps Script 檢查會員資料
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "login", email: user.email })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          window.location.href = "index.html";
+        } else {
+          alert(result.message || "系統錯誤，請稍後再試");
+        }
+
+      } catch (error) {
+        alert("登入失敗：" + error.message);
+      }
     });
-
-    const result = await response.json();
-    if (result.success) {
-      window.location.href = "index.html";
-    } else {
-      alert(result.message || "系統錯誤，請稍後再試");
-    }
-
-  } catch (error) {
-    alert("登入失敗：" + error.message);
-  }
-});
-</script>
-
+  </script>
 </body>
 </html>

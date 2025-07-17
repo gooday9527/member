@@ -29,17 +29,19 @@
         /* 導覽列樣式 */
         .navbar {
             background-color: #ffe082;
+            padding-left: 1rem; /* 移除過多的 px-4，讓 Bootstrap 自己處理響應式間距 */
+            padding-right: 1rem;
         }
 
-        /* 確保導覽列的排版 */
-        .navbar-collapse {
-            justify-content: flex-start !important; /* 確保內容靠左 */
-        }
-
-        .navbar-nav {
-            margin-right: auto !important; /* 將 nav items 推向左邊 */
-            margin-left: 0 !important; /* 確保沒有左邊距 */
-        }
+        /* 確保導覽列的排版 - 這些可能導致小螢幕問題，請特別注意 */
+        /* .navbar-collapse {
+            justify-content: flex-start !important; 
+        } */
+        /* .navbar-nav {
+            margin-right: auto !important; 
+            margin-left: 0 !important; 
+        } */
+        /* 上述被註解掉的 CSS 規則，在小螢幕下可能會干擾 Bootstrap 導覽列的預設行為 */
 
         .nav-link {
             font-weight: bold;
@@ -79,9 +81,6 @@
         }
 
         /* ===== 表格樣式 ===== */
-        /* 讓 DataTables 自己接管滾動，因此這裡不需要特別設定 overflow-x */
-        /* .table-responsive { width: 100%; } 無需保留，DataTables會創建自己的滾動容器 */
-
         table {
             border-collapse: collapse;
             width: 100%;
@@ -127,7 +126,6 @@
         }
 
         /* DataTables 相關的自訂樣式，以確保其正常顯示和下拉選單寬度 */
-        /* 這些是針對 DataTables 生成的元素樣式，應與 DataTables 的 CSS 協同工作 */
         .dataTables_wrapper .dataTables_length select {
             min-width: 80px; 
             width: auto; 
@@ -144,7 +142,6 @@
         }
 
         /* 確保 DataTables 生成的表頭和內容容器對齊 */
-        /* DataTables 在 scrollX: true 時會創建 .dataTables_scrollHead 和 .dataTables_scrollBody */
         .dataTables_scrollHeadInner, .dataTables_scrollBody {
             width: 100% !important; 
         }
@@ -188,14 +185,27 @@
             .table th, .table td { 
                 padding: 6px 3px; 
             }
+
+            /* 確保手機版導覽列的漢堡按鈕可見並正常工作 */
+            .navbar-toggler {
+                display: block; /* 確保按鈕在手機上顯示 */
+                border: 1px solid rgba(0,0,0,.1); /* 增加邊框，讓它更顯眼 */
+            }
+            /* 讓導覽列內容在手機上堆疊 */
+            .navbar-collapse {
+                flex-grow: 1; /* 允許它佔用可用空間 */
+                flex-basis: 100%; /* 強制換行 */
+                margin-top: 0.5rem; /* 與漢堡按鈕保持距離 */
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light px-4">
-        <a class="navbar-brand fw-bold" href="#">好管家代領</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
+    <nav class="navbar navbar-expand-lg navbar-light"> <a class="navbar-brand fw-bold" href="#">好管家代領</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav"> <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
             </ul>
         </div>
     </nav>
@@ -322,6 +332,12 @@
                     activeNavLink.classList.add('active');
                 }
             }
+            // 由於導覽列是單頁應用切換，確保在點擊導覽列連結後收起導覽列
+            const navbarCollapse = document.getElementById('navbarNav');
+            const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+            if (bsCollapse && navbarCollapse.classList.contains('show')) {
+                 bsCollapse.hide();
+            }
         }
 
         navMenu.addEventListener("click", function (e) {
@@ -346,7 +362,7 @@
 
         let souvenirDataTable = null; 
 
-        // 將 zh-Hant.json 的內容直接放在這裡，從我提供的 JSON 內容複製貼上
+        // 將 zh-Hant.json 的內容直接放在這裡
         const dataTablesZhHant = {
             "decimal":        "",
             "emptyTable":     "目前沒有資料",
@@ -396,16 +412,15 @@
                             // DataTables 初始化
                             souvenirDataTable = $('#souvenirTable').DataTable({
                                 destroy: true, 
-                                language: dataTablesZhHant, // 直接使用內聯的 JSON 物件
+                                language: dataTablesZhHant, 
                                 paging: true,      
                                 searching: true,   
                                 info: true,        
                                 ordering: true,    
-                                scrollX: true,     // 啟用水平滾動
-                                autoWidth: false,  // 禁用自動寬度
+                                scrollX: true,     
+                                autoWidth: false,  
                                 scrollCollapse: true, 
                                 initComplete: function(settings, json) {
-                                    // 在 DataTables 完全初始化後，重新調整列寬以確保對齊
                                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
                                 }
                             });
@@ -448,7 +463,7 @@
                                 searching: false, 
                                 paging: false,    
                                 info: false,      
-                                language: dataTablesZhHant, // 直接使用內聯的 JSON 物件
+                                language: dataTablesZhHant, 
                                 ordering: true,    
                                 scrollX: true,     
                                 autoWidth: false,  
@@ -489,7 +504,6 @@
 
         // 監聽視窗大小變化，當視窗大小改變時，重新調整 DataTables 列寬
         $(window).on('resize', function () {
-            // 使用 setTimeout 讓其在 DOM 渲染穩定後執行，防止在快速縮放時的閃爍或錯誤
             setTimeout(function() {
                 if ($.fn.dataTable.tables(true).length) { 
                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();

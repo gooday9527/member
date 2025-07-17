@@ -56,6 +56,23 @@
   </div>
 
 <script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec";
+
+async function apiRequest(payload) {
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("API 錯誤", error);
+    return { success: false, message: "系統錯誤，請稍後再試" };
+  }
+}
+
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();
   const email = document.getElementById("email").value.trim();
@@ -70,6 +87,13 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     showMessage(res.message || "登入失敗", "danger");
   }
 });
+
+function showMessage(msg, type) {
+  const box = document.getElementById("message");
+  box.className = `alert alert-${type}`;
+  box.textContent = msg;
+  box.classList.remove("d-none");
+}
 </script>
 </body>
 </html>

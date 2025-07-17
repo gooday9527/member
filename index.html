@@ -1,46 +1,41 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <!-- Firebase SDK（放在 head 或 body 最上方） -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
-    authDomain: "goodaymember.firebaseapp.com",
-    projectId: "goodaymember",
-    storageBucket: "goodaymember.firebaseapp.com",
-    messagingSenderId: "730801053598",
-    appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
-    measurementId: "G-J3Z7YTHJ9P"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-</script>
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>好管家股東紀念品代領</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
+      authDomain: "goodaymember.firebaseapp.com",
+      projectId: "goodaymember",
+      storageBucket: "goodaymember.appspot.com",
+      messagingSenderId: "730801053598",
+      appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
+      measurementId: "G-J3Z7YTHJ9P"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  </script>
 </head>
+
 <body>
   <nav class="navbar navbar-expand-lg navbar-light px-4">
     <a class="navbar-brand fw-bold" href="#">好管家代領</a>
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
-        <!-- 登入前 -->
-        <li class="nav-item"><a class="nav-link" href="#" data-section="souvenir">紀念品</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" data-section="recommend">推薦清單</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" data-section="notice">注意事項</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" data-section="about">關於我</a></li>
-        <li class="nav-item"><a class="nav-link" href="register.html">註冊</a></li>
-        <li class="nav-item"><a class="nav-link" href="login.html">登入</a></li>
+        <!-- 導覽列由 JS 動態產生 -->
       </ul>
     </div>
   </nav>
 
-  <!-- 區塊：紀念品 -->
+  <!-- 各區塊內容 -->
   <section id="souvenir" class="section active-section">
     <h3>🎁 紀念品</h3>
     <div class="table-responsive mt-3">
@@ -51,7 +46,6 @@
     </div>
   </section>
 
-  <!-- 區塊：推薦清單 -->
   <section id="recommend" class="section">
     <h3>🌟 推薦清單</h3>
     <div class="mb-3 d-flex align-items-center gap-2">
@@ -72,39 +66,22 @@
     </div>
   </section>
 
-  <!-- 區塊：注意事項 -->
   <section id="notice" class="section">
     <h3>📌 注意事項</h3>
     <p>本服務為好管家團隊提供之股東紀念品代領平台，請確認資料正確性後再進行登記。</p>
   </section>
 
-  <!-- 區塊：關於我 -->
   <section id="about" class="section">
     <h3>👤 關於我們</h3>
     <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
   </section>
 
 <script>
-  // 讀取 localStorage 中登入 Email
   let loginEmail = null;
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    loginEmail = user.email;
-    console.log("已登入使用者：", loginEmail);
-    renderNavTabs(); // ← ⚠️ 等登入資訊準備好後再渲染導覽列
-     showSection("souvenir");
-  } else {
-    // 未登入導向登入頁
-    window.location.href = "login.html";
-  }
-});
 
-
-  // 導覽列容器與區塊們
   const navMenu = document.getElementById("navMenu");
   const allSections = document.querySelectorAll(".section");
 
-  // 導覽列分頁項目（登入前與登入後）
   const tabsBeforeLogin = [
     { id: "souvenir", label: "紀念品" },
     { id: "recommend", label: "推薦清單" },
@@ -128,7 +105,7 @@ firebase.auth().onAuthStateChanged((user) => {
     { id: "logout", label: "登出" }
   ];
 
-  // 動態建立導覽列
+  // 建立導覽列
   function renderNavTabs() {
     navMenu.innerHTML = "";
     const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
@@ -144,33 +121,36 @@ firebase.auth().onAuthStateChanged((user) => {
     });
   }
 
-  // 點擊切換區塊
-  navMenu.addEventListener("click", function (e) {
-    if (e.target.matches(".nav-link[data-section]")) {
-      e.preventDefault();
-      const id = e.target.getAttribute("data-section");
-      if (id === "logout") {
-        localStorage.removeItem("loginEmail");
-        location.reload();
-      } else {
-        showSection(id);
-      }
-    }
-  });
-
-  // 顯示指定區塊
+  // 切換區塊
   function showSection(id) {
     allSections.forEach(sec => sec.classList.remove("active-section"));
     const target = document.getElementById(id);
     if (target) target.classList.add("active-section");
   }
 
-  // 初始畫面
-  // renderNavTabs(); ❌ 不要在這裡先執行！
- 
+  // 導覽列點擊
+  navMenu.addEventListener("click", function (e) {
+    if (e.target.matches(".nav-link[data-section]")) {
+      e.preventDefault();
+      const id = e.target.getAttribute("data-section");
+      if (id === "logout") {
+        auth.signOut().then(() => location.reload());
+      } else {
+        showSection(id);
+      }
+    }
+  });
 
-  // ===== 以下為原有資料載入功能 =====
-  // 取得紀念品清單
+  // Firebase 監聽登入狀態
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      loginEmail = user.email;
+    }
+    renderNavTabs();
+    showSection("souvenir");  // 預設顯示區塊
+  });
+
+  // ===== 以下為資料載入功能 =====
   fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
     .then(res => res.json())
     .then(data => {
@@ -182,7 +162,6 @@ firebase.auth().onAuthStateChanged((user) => {
       table.querySelector('tbody').innerHTML = tbody;
     });
 
-  // 取得推薦清單
   function loadRecommend(sheetName) {
     const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
     fetch(url)
@@ -200,22 +179,7 @@ firebase.auth().onAuthStateChanged((user) => {
   document.getElementById('recommendSheet')?.addEventListener('change', function () {
     loadRecommend(this.value);
   });
-
-  // 預設載入第一個分類
   loadRecommend('我全都要（不需證件）');
-</script>
-  <script>
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      console.log("已登入使用者：", user.email);
-      // 可根據需要顯示使用者資訊或繼續執行頁面功能
-    } else {
-      // 若未登入，導回登入頁
-      window.location.href = "login.html";
-    }
-  });
-  // ✅ 加這一行就不會報錯 auth is not defined
-  const auth = firebase.auth();  
 </script>
 </body>
 </html>

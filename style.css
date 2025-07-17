@@ -1,0 +1,32 @@
+body {
+  background-color: #fefefe;
+  font-family: "Microsoft JhengHei", sans-serif;
+}
+
+.navbar .nav-link {
+  font-weight: bold;
+  color: #333;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: #000;
+  text-decoration: underline;
+}
+
+.table th, .table td {
+  white-space: nowrap;
+}
+
+th {
+  font-weight: bold;
+  background-color: #fff8dc;
+  white-space: nowrap;
+}
+
+.container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}

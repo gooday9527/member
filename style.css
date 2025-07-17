@@ -1,9 +1,7 @@
-/* ==== 共用樣式 ==== */
+/* ===== 全站通用樣式 ===== */
 body {
   background-color: #fffbea;
   font-family: 'Noto Sans TC', sans-serif;
-  margin: 0;
-  padding: 0;
 }
 
 .navbar {
@@ -23,41 +21,31 @@ body {
   display: block;
 }
 
-/* ==== 表格樣式 ==== */
-.table-responsive {
+/* ===== 表格樣式 ===== */
+table {
+  table-layout: auto !important; /* 根據內容自動調整欄寬 */
   width: 100%;
-  overflow-x: auto;
+  border-collapse: collapse;
 }
 
-.table {
-  width: 100%;
-  table-layout: auto; /* ✅ 根據內容自動調整欄寬 */
-  word-break: keep-all; /* ✅ 不強制斷字，避免換行 */
-  white-space: nowrap;  /* ✅ 單行顯示 */
-  background-color: white;
-}
-
-.table th,
-.table td {
-  padding: 8px 12px;
+th, td {
+  white-space: nowrap; /* 不自動換行 */
+  padding: 0.5rem;
+  text-align: center;
   vertical-align: middle;
-  font-size: 0.9rem;
-  text-align: left;
+  border: 1px solid #dee2e6;
 }
 
-.table thead {
-  background-color: #fff3cd;
+/* 指定前兩欄為較窄欄位（如 ID、股號） */
+th:nth-child(1), td:nth-child(1) {
+  width: 40px;
 }
 
-/* 手機畫面調整 */
-@media (max-width: 576px) {
-  .section {
-    padding: 15px;
-  }
+th:nth-child(2), td:nth-child(2) {
+  width: 80px;
+}
 
-  .table th,
-  .table td {
-    padding: 6px 8px;
-    font-size: 0.85rem;
-  }
+/* 調整推薦分類下拉選單寬度 */
+#recommendSheet {
+  max-width: 300px;
 }

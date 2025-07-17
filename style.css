@@ -36,13 +36,17 @@ th, td {
   border: 1px solid #dee2e6;
 }
 
-/* 指定前兩欄為較窄欄位（如 ID、股號） */
+/* 指定前3欄為較窄欄位（如 ID、股號、股名） */
 th:nth-child(1), td:nth-child(1) {
   width: 40px;
 }
 
 th:nth-child(2), td:nth-child(2) {
-  width: 80px;
+  width: 60px;
+}
+
+th:nth-child(3), td:nth-child(3) {
+  width: 90px;
 }
 
 /* 調整推薦分類下拉選單寬度 */

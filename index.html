@@ -29,9 +29,7 @@
   <nav class="navbar navbar-expand-lg navbar-light px-4">
     <a class="navbar-brand fw-bold" href="#">好管家代領</a>
     <div class="collapse navbar-collapse">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
-        <!-- 導覽列由 JS 動態產生 -->
-      </ul>
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu"></ul>
     </div>
   </nav>
 
@@ -76,114 +74,103 @@
     <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
   </section>
 
-<script>
-  let loginEmail = null;
+  <script>
+    let loginEmail = null;
+    const navMenu = document.getElementById("navMenu");
+    const allSections = document.querySelectorAll(".section");
 
-  const navMenu = document.getElementById("navMenu");
-  const allSections = document.querySelectorAll(".section");
+    const tabsBeforeLogin = [
+      { id: "souvenir", label: "紀念品" },
+      { id: "recommend", label: "推薦清單" },
+      { id: "notice", label: "注意事項" },
+      { id: "about", label: "關於我" },
+      { id: "register", label: "註冊", link: "register.html" },
+      { id: "login", label: "登入", link: "login.html" }
+    ];
 
-  const tabsBeforeLogin = [
-    { id: "souvenir", label: "紀念品" },
-    { id: "recommend", label: "推薦清單" },
-    { id: "notice", label: "注意事項" },
-    { id: "about", label: "關於我" },
-    { id: "register", label: "註冊", link: "register.html" },
-    { id: "login", label: "登入", link: "login.html" }
-  ];
+    const tabsAfterLogin = [
+      { id: "souvenir", label: "紀念品" },
+      { id: "recommend", label: "推薦清單" },
+      { id: "notice", label: "注意事項" },
+      { id: "about", label: "關於我" },
+      { id: "account", label: "帳號/持股" },
+      { id: "delegation", label: "可委託" },
+      { id: "delegated", label: "已委託" },
+      { id: "announcement", label: "公告欄" },
+      { id: "souvenir-manage", label: "紀念品管理" },
+      { id: "billing", label: "帳戶管理" },
+      { id: "logout", label: "登出" }
+    ];
 
-  const tabsAfterLogin = [
-    { id: "souvenir", label: "紀念品" },
-    { id: "recommend", label: "推薦清單" },
-    { id: "notice", label: "注意事項" },
-    { id: "about", label: "關於我" },
-    { id: "account", label: "帳號/持股" },
-    { id: "delegation", label: "可委託" },
-    { id: "delegated", label: "已委託" },
-    { id: "announcement", label: "公告欄" },
-    { id: "souvenir-manage", label: "紀念品管理" },
-    { id: "billing", label: "帳戶管理" },
-    { id: "logout", label: "登出" }
-  ];
-
-  // 建立導覽列
-  function renderNavTabs() {
-    navMenu.innerHTML = "";
-    const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
-    tabs.forEach(tab => {
-      const li = document.createElement("li");
-      li.className = "nav-item";
-      if (tab.link) {
-        li.innerHTML = `<a class="nav-link" href="${tab.link}">${tab.label}</a>`;
-      } else {
-        li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
-      }
-      navMenu.appendChild(li);
-    });
-  }
-
-  // 切換區塊
-  function showSection(id) {
-    allSections.forEach(sec => sec.classList.remove("active-section"));
-    const target = document.getElementById(id);
-    if (target) target.classList.add("active-section");
-  }
-
-  // 導覽列點擊
-  navMenu.addEventListener("click", function (e) {
-    if (e.target.matches(".nav-link[data-section]")) {
-      e.preventDefault();
-      const id = e.target.getAttribute("data-section");
-      if (id === "logout") {
-        auth.signOut().then(() => location.reload());
-      } else {
-        showSection(id);
-      }
-    }
-  });
-
-  // Firebase 監聽登入狀態
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      loginEmail = user.email;
-      console.log("✅ 已登入使用者：", loginEmail);
-    } else {
-      console.log("⚠️ 尚未登入，僅顯示基本功能");
-    }
-    renderNavTabs(); // ✅ 無論是否登入，都執行
-    showSection("souvenir");
-  });
-
-
-  // ===== 以下為資料載入功能 =====
-  fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
-    .then(res => res.json())
-    .then(data => {
-      const table = document.getElementById('souvenirTable');
-      const headers = Object.keys(data[0]);
-      const thead = headers.map(h => `<th>${h}</th>`).join('');
-      const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
-      table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
-      table.querySelector('tbody').innerHTML = tbody;
-    });
-
-  function loadRecommend(sheetName) {
-    const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        const table = document.getElementById('recommendTable');
-        const headers = Object.keys(data[0]);
-        const thead = headers.map(h => `<th>${h}</th>`).join('');
-        const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
-        table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
-        table.querySelector('tbody').innerHTML = tbody;
+    function renderNavTabs() {
+      navMenu.innerHTML = "";
+      const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
+      tabs.forEach(tab => {
+        const li = document.createElement("li");
+        li.className = "nav-item";
+        li.innerHTML = tab.link
+          ? `<a class="nav-link" href="${tab.link}">${tab.label}</a>`
+          : `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
+        navMenu.appendChild(li);
       });
-  }
+    }
 
-  document.getElementById('recommendSheet')?.addEventListener('change', function () {
-    loadRecommend(this.value);
-  });
-  loadRecommend('我全都要（不需證件）');
-</script>
+    function showSection(id) {
+      allSections.forEach(sec => sec.classList.remove("active-section"));
+      const target = document.getElementById(id);
+      if (target) target.classList.add("active-section");
+    }
+
+    navMenu.addEventListener("click", function (e) {
+      if (e.target.matches(".nav-link[data-section]")) {
+        e.preventDefault();
+        const id = e.target.getAttribute("data-section");
+        if (id === "logout") {
+          auth.signOut().then(() => location.reload());
+        } else {
+          showSection(id);
+        }
+      }
+    });
+
+    // Firebase 登入狀態監聽與資料載入
+    firebase.auth().onAuthStateChanged((user) => {
+      loginEmail = user ? user.email : null;
+      console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
+      renderNavTabs();
+      showSection("souvenir");
+
+      // 🔽 修正：資料載入放這裡（確保 DOM 存在）
+      fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
+        .then(res => res.json())
+        .then(data => {
+          const table = document.getElementById('souvenirTable');
+          const headers = Object.keys(data[0]);
+          const thead = headers.map(h => `<th>${h}</th>`).join('');
+          const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+          table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+          table.querySelector('tbody').innerHTML = tbody;
+        });
+
+      function loadRecommend(sheetName) {
+        const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            const table = document.getElementById('recommendTable');
+            const headers = Object.keys(data[0]);
+            const thead = headers.map(h => `<th>${h}</th>`).join('');
+            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+            table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+            table.querySelector('tbody').innerHTML = tbody;
+          });
+      }
+
+      document.getElementById('recommendSheet')?.addEventListener('change', function () {
+        loadRecommend(this.value);
+      });
+      loadRecommend('我全都要（不需證件）');
+    });
+  </script>
 </body>
 </html>

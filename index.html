@@ -237,267 +237,299 @@
         <section id="about" class="section">
             <h3 class="text-center">👤 關於我們</h3> 
             <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
-        </section>
-    </div>
+        </p>
+    </section>
+</div>
 
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.10/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.10/js/dataTables.bootstrap5.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" integrity="sha512-J/0uB3zIgK1t5OJAA7Js1qntoZ1aI7V3C2aygtlNt9rSAbRRxvKakIDhMKRcX7gs3PEz+XRTS1G0BqT/91Q56A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.13.10/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.13.10/js/dataTables.bootstrap5.min.js"></script>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" integrity="sha512-J/0uB3zIgK1t5OJAA7Js1qntoZ1aI7V3C2aygtlNt9rSAbRRxvKakIDhMKRcX7gs3PEz+XRTS1G0BqT/91Q56A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
-            authDomain: "goodaymember.firebaseapp.com",
-            projectId: "goodaymember",
-            storageBucket: "goodaymember.appspot.com",
-            messagingSenderId: "730801053598",
-            appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
-            measurementId: "G-J3Z7YTHJ9P"
-        };
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+    const firebaseConfig = {
+        apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
+        authDomain: "goodaymember.firebaseapp.com",
+        projectId: "goodaymember",
+        storageBucket: "goodaymember.appspot.com",
+        messagingSenderId: "730801053598",
+        appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
+        measurementId: "G-J3Z7YTHJ9P"
+    };
 
-        let loginEmail = null;
-        const navMenu = document.getElementById("navMenu");
-        const allSections = document.querySelectorAll(".section");
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-        const tabsBeforeLogin = [
-            { id: "souvenir", label: "紀念品" },
-            { id: "recommend", label: "推薦清單" },
-            { id: "notice", label: "注意事項" },
-            { id: "about", label: "關於我" },
-            { id: "register", label: "註冊", link: "register.html" },
-            { id: "login", label: "登入", link: "login.html" }
-        ];
+    let loginEmail = null;
+    const navMenu = document.getElementById("navMenu");
+    const allSections = document.querySelectorAll(".section");
 
-        const tabsAfterLogin = [
-            { id: "souvenir", label: "紀念品" },
-            { id: "recommend", label: "推薦清單" },
-            { id: "notice", label: "注意事項" },
-            { id: "about", label: "關於我" },
-            { id: "account", label: "新增帳號/持股" },
-            { id: "delegation", label: "可委託" },
-            { id: "delegated", label: "已委託" },
-            { id: "announcement", label: "公告欄" },
-            { id: "souvenir-manage", label: "紀念品管理" },
-            { id: "billing", label: "帳戶管理" },
-            { id: "logout", label: "登出" }
-        ];
+    const tabsBeforeLogin = [
+        { id: "souvenir", label: "紀念品" },
+        { id: "recommend", label: "推薦清單" },
+        { id: "notice", label: "注意事項" },
+        { id: "about", label: "關於我" },
+        { id: "register", label: "註冊", link: "register.html" },
+        { id: "login", label: "登入", link: "login.html" }
+    ];
 
-        function renderNavTabs() {
-            navMenu.innerHTML = ""; 
-            const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
-            tabs.forEach(tab => {
-                const li = document.createElement("li");
-                li.className = "nav-item";
-                if (tab.link) {
-                    li.innerHTML = `<a class="nav-link" href="${tab.link}">${tab.label}</a>`;
-                } else {
-                    li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
-                }
-                navMenu.appendChild(li);
-            });
-        }
+    const tabsAfterLogin = [
+        { id: "souvenir", label: "紀念品" },
+        { id: "recommend", label: "推薦清單" },
+        { id: "notice", label: "注意事項" },
+        { id: "about", label: "關於我" },
+        { id: "account", label: "新增帳號/持股" },
+        { id: "delegation", label: "可委託" },
+        { id: "delegated", label: "已委託" },
+        { id: "announcement", label: "公告欄" },
+        { id: "souvenir-manage", label: "紀念品管理" },
+        { id: "billing", label: "帳戶管理" },
+        { id: "logout", label: "登出" }
+    ];
 
-        function showSection(id) {
-            allSections.forEach(sec => sec.classList.remove("active-section"));
-            const target = document.getElementById(id);
-            if (target) {
-                target.classList.add("active-section");
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('active');
-                });
-                const activeNavLink = document.querySelector(`.nav-link[data-section="${id}"]`);
-                if (activeNavLink) {
-                    activeNavLink.classList.add('active');
-                }
+    function renderNavTabs() {
+        navMenu.innerHTML = ""; 
+        const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
+        tabs.forEach(tab => {
+            const li = document.createElement("li");
+            li.className = "nav-item";
+            if (tab.link) {
+                li.innerHTML = `<a class="nav-link" href="${tab.link}">${tab.label}</a>`;
+            } else {
+                li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
             }
-            // 由於導覽列是單頁應用切換，確保在點擊導覽列連結後收起導覽列
-            const navbarCollapse = document.getElementById('navbarNav');
-            const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
-            if (bsCollapse && navbarCollapse.classList.contains('show')) {
-                 bsCollapse.hide();
-            }
-        }
-
-        navMenu.addEventListener("click", function (e) {
-            const clickedNavLink = e.target.closest(".nav-link[data-section]");
-            if (clickedNavLink) {
-                e.preventDefault(); 
-                const id = clickedNavLink.getAttribute("data-section"); 
-                if (id === "logout") {
-                    signOut(auth).then(() => {
-                        console.log("用戶已登出");
-                        loginEmail = null;
-                        renderNavTabs();
-                        showSection("souvenir");
-                    }).catch((error) => {
-                        console.error("登出失敗:", error);
-                    });
-                } else {
-                    showSection(id);
-                }
-            }
+            navMenu.appendChild(li);
         });
+    }
 
-        let souvenirDataTable = null; 
-
-        // 將 zh-Hant.json 的內容直接放在這裡
-        const dataTablesZhHant = {
-            "decimal":        "",
-            "emptyTable":     "目前沒有資料",
-            "info":           "顯示第 _START_ 到 _END_ 筆資料，共 _TOTAL_ 筆",
-            "infoEmpty":      "目前沒有資料",
-            "infoFiltered":   "(從 _MAX_ 筆資料中篩選)",
-            "infoPostFix":    "",
-            "thousands":      ",",
-            "lengthMenu":     "顯示 _MENU_ 筆資料",
-            "loadingRecords": "載入中...",
-            "processing":     "處理中...",
-            "search":         "搜尋:",
-            "zeroRecords":    "沒有符合的結果",
-            "paginate": {
-                "first":    "首頁",
-                "last":     "末頁",
-                "next":     "下一頁",
-                "previous": "上一頁"
-            },
-            "aria": {
-                "sortAscending":  ": 升冪排列",
-                "sortDescending": ": 降冪排列"
-            }
-        };
-
-
-        function loadSouvenirData() {
-            fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
-                .then(res => res.json())
-                .then(data => {
-                    const tableElement = document.getElementById('souvenirTable');
-                    if (tableElement) {
-                        if (souvenirDataTable) { 
-                            souvenirDataTable.destroy(); 
-                        }
-                        tableElement.querySelector('tbody').innerHTML = ''; 
-                        tableElement.querySelector('thead').innerHTML = ''; 
-
-                        if (data && data.length > 0) {
-                            const headers = Object.keys(data[0]);
-                            const thead = headers.map(h => `<th>${h}</th>`).join('');
-                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
-                            
-                            tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
-                            tableElement.querySelector('tbody').innerHTML = tbody;
-
-                            // DataTables 初始化
-                            souvenirDataTable = $('#souvenirTable').DataTable({
-                                destroy: true, 
-                                language: dataTablesZhHant, 
-                                paging: true,      
-                                searching: true,   
-                                info: true,        
-                                ordering: true,    
-                                scrollX: true,     
-                                autoWidth: false,  
-                                scrollCollapse: true, 
-                                initComplete: function(settings, json) {
-                                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-                               }
-                            });
-                        } else {
-                            tableElement.querySelector('thead').innerHTML = '';
-                            tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                            souvenirDataTable = null; 
-                        }
-                    }
-                })
-                .catch(error => console.error('載入紀念品資料時發生錯誤:', error));
-        }
-
-        let recommendDataTable = null; 
-
-        function loadRecommend(sheetName) {
-            const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
-            fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    const tableElement = document.getElementById('recommendTable');
-                    if (tableElement) {
-                        if (recommendDataTable) { 
-                            recommendDataTable.destroy(); 
-                        }
-                        tableElement.querySelector('tbody').innerHTML = '';
-                        tableElement.querySelector('thead').innerHTML = ''; 
-
-                        if (data && data.length > 0) {
-                            const headers = Object.keys(data[0]);
-                            const thead = headers.map(h => `<th>${h}</th>`).join('');
-                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
-                            
-                            tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
-                            tableElement.querySelector('tbody').innerHTML = tbody;
-
-                            // DataTables 初始化
-                            recommendDataTable = $('#recommendTable').DataTable({
-                                destroy: true, 
-                                searching: false, 
-                                paging: false,    
-                                info: false,      
-                                language: dataTablesZhHant, 
-                                ordering: true,    
-                                scrollX: true,     
-                                autoWidth: false,  
-                                scrollCollapse: true, 
-                                initComplete: function(settings, json) {
-                                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-                                }
-                            });
-                        } else {
-                            tableElement.querySelector('thead').innerHTML = '';
-                            tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                            recommendDataTable = null; 
-                        }
-                    }
-                })
-                .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            onAuthStateChanged(auth, (user) => {
-                loginEmail = user ? user.email : null;
-                console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
-                
-                renderNavTabs(); 
-                showSection("souvenir"); 
-
-                loadSouvenirData(); 
-
-                const recommendSheetSelect = document.getElementById('recommendSheet');
-                if (recommendSheetSelect) {
-                    recommendSheetSelect.addEventListener('change', function () {
-                        loadRecommend(this.value);
-                    });
-                    loadRecommend('我全都要（不需證件）'); 
-                }
+    function showSection(id) {
+        allSections.forEach(sec => sec.classList.remove("active-section"));
+        const target = document.getElementById(id);
+        if (target) {
+            target.classList.add("active-section");
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
             });
-        });
+            const activeNavLink = document.querySelector(`.nav-link[data-section="${id}"]`);
+            if (activeNavLink) {
+                activeNavLink.classList.add('active');
+            }
+        }
+        // 由於導覽列是單頁應用切換，確保在點擊導覽列連結後收起導覽列
+        const navbarCollapse = document.getElementById('navbarNav');
+        const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+        if (bsCollapse && navbarCollapse.classList.contains('show')) {
+             bsCollapse.hide();
+        }
 
-        // 監聽視窗大小變化，當視窗大小改變時，重新調整 DataTables 列寬
-        $(window).on('resize', function () {
-            setTimeout(function() {
-                if ($.fn.dataTable.tables(true).length) { 
-                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-                }
+        // 核心修正：當推薦清單區塊顯示時，重新調整其 DataTables 列寬
+        if (id === 'recommend' && recommendDataTable) {
+            // 使用 setTimeout 確保在 section 顯示完成後再調整，避免計算錯誤
+            setTimeout(() => {
+                recommendDataTable.columns.adjust();
+            }, 100); 
+        }
+        // 同樣對紀念品表格也做一次調整，以防萬一
+        if (id === 'souvenir' && souvenirDataTable) {
+            setTimeout(() => {
+                souvenirDataTable.columns.adjust();
             }, 100);
+        }
+    }
+
+    navMenu.addEventListener("click", function (e) {
+        const clickedNavLink = e.target.closest(".nav-link[data-section]");
+        if (clickedNavLink) {
+            e.preventDefault(); 
+            const id = clickedNavLink.getAttribute("data-section"); 
+            if (id === "logout") {
+                signOut(auth).then(() => {
+                    console.log("用戶已登出");
+                    loginEmail = null;
+                    renderNavTabs();
+                    showSection("souvenir");
+                }).catch((error) => {
+                    console.error("登出失敗:", error);
+                });
+            } else {
+                showSection(id);
+            }
+        }
+    });
+
+    let souvenirDataTable = null; 
+
+    const dataTablesZhHant = {
+        "decimal":        "",
+        "emptyTable":     "目前沒有資料",
+        "info":           "顯示第 _START_ 到 _END_ 筆資料，共 _TOTAL_ 筆",
+        "infoEmpty":      "目前沒有資料",
+        "infoFiltered":   "(從 _MAX_ 筆資料中篩選)",
+        "infoPostFix":    "",
+        "thousands":      ",",
+        "lengthMenu":     "顯示 _MENU_ 筆資料",
+        "loadingRecords": "載入中...",
+        "processing":     "處理中...",
+        "search":         "搜尋:",
+        "zeroRecords":    "沒有符合的結果",
+        "paginate": {
+            "first":    "首頁",
+            "last":     "末頁",
+            "next":     "下一頁",
+            "previous": "上一頁"
+        },
+        "aria": {
+            "sortAscending":  ": 升冪排列",
+            "sortDescending": ": 降冪排列"
+        }
+    };
+
+
+    function loadSouvenirData() {
+        fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
+            .then(res => res.json())
+            .then(data => {
+                const tableElement = document.getElementById('souvenirTable');
+                if (tableElement) {
+                    if (souvenirDataTable) { 
+                        souvenirDataTable.destroy(); 
+                    }
+                    tableElement.querySelector('tbody').innerHTML = ''; 
+                    tableElement.querySelector('thead').innerHTML = ''; 
+
+                    if (data && data.length > 0) {
+                        const headers = Object.keys(data[0]);
+                        const thead = headers.map(h => `<th>${h}</th>`).join('');
+                        const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+                        
+                        tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+                        tableElement.querySelector('tbody').innerHTML = tbody;
+
+                        // DataTables 初始化
+                        souvenirDataTable = $('#souvenirTable').DataTable({
+                            destroy: true, 
+                            language: dataTablesZhHant, 
+                            paging: true,      
+                            searching: true,   
+                            info: true,        
+                            ordering: true,    
+                            scrollX: true,     
+                            autoWidth: false,  
+                            scrollCollapse: true, 
+                            initComplete: function(settings, json) {
+                                // 初始載入時的調整，但因為表格可能隱藏，所以需要 showSection 中再次調整
+                                // $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+                            }
+                        });
+                        // 首次載入時如果紀念品區塊是活躍的，則進行調整
+                        if ($('#souvenir').hasClass('active-section')) {
+                             souvenirDataTable.columns.adjust();
+                        }
+                    } else {
+                        tableElement.querySelector('thead').innerHTML = '';
+                        tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                        souvenirDataTable = null; 
+                    }
+                }
+            })
+            .catch(error => console.error('載入紀念品資料時發生錯誤:', error));
+    }
+
+    let recommendDataTable = null; 
+
+    function loadRecommend(sheetName) {
+        const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const tableElement = document.getElementById('recommendTable');
+                if (tableElement) {
+                    if (recommendDataTable) { 
+                        recommendDataTable.destroy(); 
+                    }
+                    tableElement.querySelector('tbody').innerHTML = '';
+                    tableElement.querySelector('thead').innerHTML = ''; 
+
+                    if (data && data.length > 0) {
+                        const headers = Object.keys(data[0]);
+                        const thead = headers.map(h => `<th>${h}</th>`).join('');
+                        const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+                        
+                        tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+                        tableElement.querySelector('tbody').innerHTML = tbody;
+
+                        // DataTables 初始化
+                        recommendDataTable = $('#recommendTable').DataTable({
+                            destroy: true, 
+                            searching: false, 
+                            paging: false,    
+                            info: false,      
+                            language: dataTablesZhHant, 
+                            ordering: true,    
+                            scrollX: true,     
+                            autoWidth: false,  
+                            scrollCollapse: true, 
+                            initComplete: function(settings, json) {
+                                // 初始載入時的調整，但因為表格可能隱藏，所以需要 showSection 中再次調整
+                                // $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+                            }
+                        });
+                        // 首次載入時如果推薦清單區塊是活躍的，則進行調整
+                        if ($('#recommend').hasClass('active-section')) {
+                             recommendDataTable.columns.adjust();
+                        }
+                    } else {
+                        tableElement.querySelector('thead').innerHTML = '';
+                        tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                        recommendDataTable = null; 
+                    }
+                }
+            })
+            .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        onAuthStateChanged(auth, (user) => {
+            loginEmail = user ? user.email : null;
+            console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
+            
+            renderNavTabs(); 
+            showSection("souvenir"); 
+
+            // 這裡不再直接調用 loadSouvenirData 和 loadRecommend
+            // 因為它們的 DataTables 初始化後的 adjust() 邏輯需要依賴 section 的可見性
+
+            // 確保在首次載入時，如果直接顯示紀念品區塊，其表格能正確調整
+            loadSouvenirData(); 
+            const recommendSheetSelect = document.getElementById('recommendSheet');
+            if (recommendSheetSelect) {
+                recommendSheetSelect.addEventListener('change', function () {
+                    loadRecommend(this.value);
+                });
+                // 首次載入時，預設加載 '我全都要（不需證件）'
+                loadRecommend('我全都要（不需證件）'); 
+            }
         });
-    </script>
+    });
+
+    // 監聽視窗大小變化，當視窗大小改變時，重新調整 DataTables 列寬
+    $(window).on('resize', function () {
+        setTimeout(function() {
+            // 只調整當前可見的 DataTables
+            if ($('#souvenir').hasClass('active-section') && souvenirDataTable) {
+                souvenirDataTable.columns.adjust();
+            }
+            if ($('#recommend').hasClass('active-section') && recommendDataTable) {
+                recommendDataTable.columns.adjust();
+            }
+        }, 100);
+    });
+</script>
 </body>
 </html>

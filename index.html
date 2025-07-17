@@ -8,14 +8,28 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css"/>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.min.css"/>
+
+    <style>
+        /* 可選的：如果水平空間不足，讓導覽列項目可以輕微地自動換行 */
+        /* .navbar-nav {
+            flex-wrap: wrap;
+        } */
+        /* 或者，如果希望導覽列在小螢幕上可以水平滾動 */
+        .navbar-nav-scroll {
+            overflow-x: auto;
+            white-space: nowrap; /* 確保內容不換行 */
+            -webkit-overflow-scrolling: touch; /* 提升手機滾動體驗 */
+        }
+        .navbar-nav-scroll .nav-item {
+            display: inline-block; /* 讓 nav items 在水平滾動時仍是塊級元素 */
+            vertical-align: top;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light px-4">
-        <a class="navbar-brand fw-bold" href="#">好管家代領</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
+    <nav class="navbar navbar-light px-4"> <a class="navbar-brand fw-bold" href="#">好管家代領</a>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 navbar-nav-scroll" id="navMenu" style="flex-direction: row !important;">
             </ul>
-        </div>
     </nav>
 
     <div class="container-fluid">
@@ -189,12 +203,19 @@
                 .then(res => res.json())
                 .then(data => {
                     const table = document.getElementById('recommendTable');
-                    if (table && data && data.length > 0) {
-                        const headers = Object.keys(data[0]);
-                        const thead = headers.map(h => `<th>${h}</th>`).join('');
-                        const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
-                        table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
-                        table.querySelector('tbody').innerHTML = tbody;
+                    if (table) {
+                        if (data && data.length > 0) {
+                            const headers = Object.keys(data[0]);
+                            const thead = headers.map(h => `<th>${h}</th>`).join('');
+                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+                            
+                            table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+                            table.querySelector('tbody').innerHTML = tbody;
+                        } else {
+                            table.querySelector('thead').innerHTML = '';
+                            table.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                        }
+
                         if (typeof $ !== 'undefined' && $.fn.DataTable) {
                             $('#recommendTable').DataTable({
                                 destroy: true,

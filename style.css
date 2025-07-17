@@ -15,6 +15,12 @@ body {
   font-weight: bold;
 }
 
+/* style.css */
+.container-fluid {
+    padding-left: 1rem !important;  /* 範例：左右各留 1rem 的內邊距 */
+    padding-right: 1rem !important;
+}
+
 /* 調整『🎁 紀念品』標題的上下間距 */
 .section h3 {
     margin-top: 0.2rem;    /* 縮小標題上方的間距 */
@@ -27,9 +33,9 @@ body {
 /* 例如：
 .section {
     padding-top: 10px; // 將頂部內邊距從 30px 縮小到 15px
-    padding-right: 20px
-    padding-bottom: 10px;
-    padding-left: 20px;
+    padding-right: 5px
+    padding-bottom: 5px;
+    padding-left: 5px;
 }
 
 .active-section {

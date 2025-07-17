@@ -38,11 +38,14 @@
             padding: 8px 5px; 
             vertical-align: middle; 
             word-wrap: break-word; 
-            white-space: normal; 
+            /* 調整這裡：對於表頭 (<th>) 強制不換行，讓它在同一行 */
+            white-space: nowrap; 
             border-bottom: 1px solid #dee2e6; 
         }
+        /* 確保表格內容 (<td>) 可以換行 */
         .table td { 
             font-size: 18px; 
+            white-space: normal; /* 讓 td 內容可以正常換行 */
         }
         .dataTables_wrapper { 
             overflow-x: auto; 
@@ -66,6 +69,13 @@
             .table th, .table td { 
                 padding: 6px 3px; 
             }
+        }
+
+        /* 調整 DataTables「顯示 N 筆資料」下拉選單的寬度 */
+        .dataTables_wrapper .dataTables_length select {
+            min-width: 80px; /* 根據需要調整這個值，以確保足夠寬 */
+            width: auto; /* 允許寬度根據內容調整，但至少有 min-width */
+            display: inline-block; /* 確保其行為像內聯區塊元素 */
         }
     </style>
 </head>
@@ -231,11 +241,13 @@
                 .then(data => {
                     const tableElement = document.getElementById('souvenirTable');
                     if (tableElement) {
+                        // 銷毀舊的 DataTables 實例（如果存在）
                         if (souvenirDataTable) {
-                            souvenirDataTable.destroy(); // 銷毀舊的 DataTables 實例
+                            souvenirDataTable.destroy(); 
                         }
                         // 清空 tbody 以確保重新填充
                         tableElement.querySelector('tbody').innerHTML = ''; 
+                        tableElement.querySelector('thead').innerHTML = ''; // 也清空thead，確保每次都重新生成
 
                         if (data && data.length > 0) {
                             const headers = Object.keys(data[0]);
@@ -249,9 +261,8 @@
                             souvenirDataTable = $('#souvenirTable').DataTable({
                                 destroy: true, // 確保每次調用時都重新初始化
                                 scrollX: true, // 啟用水平滾動
-                                autoWidth: false, // 禁用自動寬度，讓 CSS 決定
+                                autoWidth: false, // 禁用自動寬度，讓 CSS 決定。這很重要，如果啟用，可能會導致寬度問題
                                 language: {
-                                    // 使用 DataTables 1.13.10 繁體中文語系檔 URL
                                     url: "https://cdn.datatables.net/plug-ins/1.13.10/i18n/zh-Hant.json" 
                                 },
                                 paging: true,      // 啟用分頁
@@ -280,11 +291,13 @@
                 .then(data => {
                     const tableElement = document.getElementById('recommendTable');
                     if (tableElement) {
+                        // 銷毀舊的 DataTables 實例（如果存在）
                         if (recommendDataTable) {
-                            recommendDataTable.destroy(); // 銷毀舊的 DataTables 實例
+                            recommendDataTable.destroy(); 
                         }
                         // 清空 tbody 以確保重新填充
                         tableElement.querySelector('tbody').innerHTML = '';
+                        tableElement.querySelector('thead').innerHTML = ''; // 也清空thead，確保每次都重新生成
 
                         if (data && data.length > 0) {
                             const headers = Object.keys(data[0]);
@@ -303,7 +316,6 @@
                                 scrollX: true,    // 啟用水平滾動
                                 autoWidth: false, // 禁用自動寬度
                                 language: {
-                                    // 使用 DataTables 1.13.10 繁體中文語系檔 URL
                                     url: "https://cdn.datatables.net/plug-ins/1.13.10/i18n/zh-Hant.json"
                                 },
                                 ordering: true    // 啟用排序 (如果不需要排序也可以設為 false)

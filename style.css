@@ -1,44 +1,18 @@
 /* ===== 全站通用樣式 ===== */
 body {
-  background-color: #fffbea;
-  font-family: 'Noto Sans TC', sans-serif;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden; /* 避免整頁橫向捲動 */
+    background-color: #fffbea;
+    font-family: 'Noto Sans TC', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* 避免整頁橫向捲動 */
 }
 
+/* 導覽列樣式 */
 .navbar {
-  background-color: #ffe082;
+    background-color: #ffe082;
 }
 
-.nav-link {
-  font-weight: bold;
-}
-
-/* style.css */
-.container-fluid {
-    padding-left: 1rem !important;  /* 範例：左右各留 1rem 的內邊距 */
-    padding-right: 1rem !important;
-}
-
-/* 確保所有區塊預設是隱藏的，並且佔用相同的位置，便於切換 */
-.section {
-    display: none; /* 預設隱藏所有區塊 */
-    /* position: absolute; */ /* 可以嘗試使用 absolute，讓所有區塊疊在一起，點擊時再顯示對應的。
-                                 如果用 absolute，請確保其父容器有 position: relative; */
-    /* width: 100%; */
-    /* height: 100%; */
-    /* top: 0; */
-    /* left: 0; */
-}
-
-/* 只有帶有 active-section class 的區塊才顯示出來 */
-.section.active-section {
-    display: block; /* 顯示當前活動的區塊 */
-    /* z-index: 10; */ /* 如果使用 position: absolute，這可以確保活動區塊在最上層 */
-}
-
-/* 根據您之前的閃現置中問題，確保導覽列的排版 */
+/* 確保導覽列的排版 */
 .navbar-collapse {
     justify-content: flex-start !important; /* 確保內容靠左 */
 }
@@ -48,6 +22,10 @@ body {
     margin-left: 0 !important; /* 確保沒有左邊距 */
 }
 
+.nav-link {
+    font-weight: bold;
+}
+
 /* 確保 nav-link 點擊時的 active 狀態有視覺效果 */
 .nav-link.active {
     color: #007bff; /* 例如，藍色 */
@@ -55,68 +33,83 @@ body {
     border-bottom: 2px solid #007bff; /* 添加底部邊框效果 */
 }
 
+/* 內容容器樣式 */
+.container-fluid {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    position: relative; /* 關鍵：讓內部絕對定位的區塊相對於此容器定位 */
+    min-height: 600px; /* 範例值，您可以調整以確保頁面內容足夠高，防止塌陷 */
+    padding-top: 1rem; /* 為內容區塊留出一些頂部空間，避免與導覽列重疊 */
+    padding-bottom: 1rem; /* 底部空間 */
+}
 
-/* 如果您也覺得整個區塊 (section) 距離導覽列太遠，
-   可以考慮微調 .section 的 padding-top，但這會影響整個 section 的頂部內邊距。*/
-/* 例如：
+/* 區塊 (section) 顯示/隱藏和層疊樣式 */
 .section {
-    padding-top: 10px; // 將頂部內邊距從 30px 縮小到 15px
-    padding-right: 5px
-    padding-bottom: 5px;
-    padding-left: 5px;
+    display: none; /* 預設隱藏所有區塊 */
+    position: absolute; /* 讓所有區塊疊加在同一個位置 */
+    /* 根據 .container-fluid 的 padding 調整寬度和位置，確保內容在容器內 */
+    width: calc(100% - 2rem); /* 100% 減去左右各 1rem 的 padding */
+    top: 1rem; /* 從 container-fluid 的 padding-top 開始 */
+    left: 1rem; /* 從 container-fluid 的 padding-left 開始 */
+    right: 1rem; /* 從 container-fluid 的 padding-right 開始 */
+    /* background-color: #fffbea; /* 可以考慮添加背景色，以防內容透視 */
+    /* height: auto; /* 高度根據內容自動調整 */
 }
 
-.active-section {
-  display: block;
+/* 只有帶有 active-section class 的區塊才顯示出來 */
+.section.active-section {
+    display: block; /* 顯示當前活動的區塊 */
+    z-index: 10; /* 確保活動區塊在最上層 */
 }
+
 
 /* ===== 表格樣式 ===== */
 .table-responsive {
-  width: 100%;
-  overflow-x: hidden;  /* 禁止橫向滾動 */
+    width: 100%;
+    overflow-x: hidden; /* 禁止橫向滾動 */
 }
 
 table {
-  border-collapse: collapse;
-  width: 100%;
-  table-layout: auto;         /* 自動依內容調整欄寬 */
-  word-wrap: break-word;
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: auto; /* 自動依內容調整欄寬 */
+    word-wrap: break-word;
 }
 
 th {
-  white-space: nowrap;        /* ✅ 標題欄不換行 */
-  text-align: left;
-  background-color: #fff3cd;
-  padding: 0.5rem;
-  vertical-align: middle;
-  border: 1px solid #dee2e6;
+    white-space: nowrap; /* ✅ 標題欄不換行 */
+    text-align: left;
+    background-color: #fff3cd;
+    padding: 0.5rem;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
 }
 
 td {
-  white-space: normal;        /* ✅ 內容欄可換行 */
-  text-align: left;
-  padding: 0.5rem;
-  vertical-align: middle;
-  border: 1px solid #dee2e6;
+    white-space: normal; /* ✅ 內容欄可換行 */
+    text-align: left;
+    padding: 0.5rem;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
 }
 
 /* ✅ 前三欄欄寬固定 */
 th:nth-child(1), td:nth-child(1) {
-  width: 40px;
+    width: 40px;
 }
 th:nth-child(2), td:nth-child(2) {
-  width: 60px;
+    width: 60px;
 }
 th:nth-child(3), td:nth-child(3) {
-  width: 90px;
+    width: 90px;
 }
 
 /* ✅ 紀念品欄限制最大寬度 */
 th:nth-child(4), td:nth-child(4) {
-  max-width: 300px;
+    max-width: 300px;
 }
 
 /* ✅ 推薦分類下拉選單寬度 */
 #recommendSheet {
-  max-width: 300px;
+    max-width: 300px;
 }

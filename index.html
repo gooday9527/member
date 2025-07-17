@@ -133,8 +133,11 @@
 
    // 預設載入
    renderNavTabs();
-   loadContent("souvenir");
+   if (loginEmail) {
+     loadContent("account"); // 登入後預設顯示「帳號/持股」
+   } else {
+     loadContent("souvenir"); // 未登入顯示「紀念品」
+   }
  </script>
-
 </body>
 </html>

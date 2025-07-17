@@ -1,3 +1,6 @@
+導覽列成功
+
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -55,11 +58,8 @@
         }
 
         /* 區塊 (section) 顯示/隱藏和層疊樣式 */
-        /* 如果推薦清單也是預設顯示，則移除其初始 display: none; */
         .section {
-            /* 由於您說推薦清單也是預設顯示，所有 section 都應該是 block */
-            /* 所以這裡移除了 display: none; 並改為預設隱藏，再由 JS 設 active-section */
-            display: none; /* 重新設定為預設隱藏，由 JS 控制顯示 */
+            display: none; 
             position: absolute; 
             width: calc(100% - 2rem); 
             top: 1rem; 
@@ -71,13 +71,12 @@
         .section.active-section {
             display: block; 
             z-index: 10; 
-            position: relative; /* 推薦清單如果內容比較多，可以讓它相對定位 */
         }
 
         /* ===== 表格樣式 ===== */
         table {
             border-collapse: collapse;
-            width: 100%; 
+            width: 100%;
             word-wrap: break-word;
         }
 
@@ -99,18 +98,14 @@
         }
 
         /* 前三欄欄寬固定 */
-        /* 針對 td 也使用 !important 來強制覆蓋 DataTables 的行內樣式 */
         th:nth-child(1), td:nth-child(1) {
-            width: 40px !important; 
-            min-width: 40px !important; 
+            width: 40px;
         }
         th:nth-child(2), td:nth-child(2) {
-            width: 60px !important; 
-            min-width: 60px !important; 
+            width: 60px;
         }
         th:nth-child(3), td:nth-child(3) {
-            width: 90px !important; 
-            min-width: 90px !important; 
+            width: 90px;
         }
 
         /* 紀念品欄限制最大寬度 */
@@ -140,14 +135,12 @@
         }
 
         /* 確保 DataTables 生成的表頭和內容容器對齊 */
-        /* 再次強調 !important 來確保覆蓋 */
         .dataTables_scrollHeadInner, .dataTables_scrollBody {
             width: 100% !important; 
         }
         .dataTables_scrollHead table, .dataTables_scrollBody table {
             width: 100% !important; 
             margin-bottom: 0 !important; 
-            table-layout: fixed !important; /* 更強制的 fixed 佈局 */
         }
         /* 處理可能由 DataTables 內聯樣式引起的問題 */
         div.dataTables_wrapper div.dataTables_filter label,
@@ -160,21 +153,6 @@
             box-sizing: border-box; 
             max-width: 100%; 
             width: auto; 
-        }
-
-        /* 增加對 DataTables 生成的滾動容器的寬度強制 */
-        .dataTables_scroll {
-            width: 100% !important;
-        }
-
-        /* 針對手機版，調整 DataTables 容器的行為，確保內容不會溢出 */
-        @media (max-width: 767.98px) { /* Bootstrap sm 斷點以下 */
-            .dataTables_wrapper .dataTables_scrollBody {
-                overflow-x: auto; /* 確保內容溢出時可以滾動 */
-            }
-            .dataTables_scrollHead {
-                overflow-x: hidden; /* 表頭不應該有水平滾動條 */
-            }
         }
 
 
@@ -234,7 +212,8 @@
             </div>
         </section>
 
-        <section id="recommend" class="section active-section"> <h3 class="text-center">🌟 推薦清單</h3> 
+        <section id="recommend" class="section">
+            <h3 class="text-center">🌟 推薦清單</h3> 
             <div class="mb-3 d-flex align-items-center gap-2">
                 <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
                 <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 300px;">
@@ -332,7 +311,6 @@
         }
 
         function showSection(id) {
-            // 先將所有 section 隱藏
             allSections.forEach(sec => sec.classList.remove("active-section"));
             const target = document.getElementById(id);
             if (target) {
@@ -345,23 +323,12 @@
                     activeNavLink.classList.add('active');
                 }
             }
-            // 收起導覽列
+            // 由於導覽列是單頁應用切換，確保在點擊導覽列連結後收起導覽列
             const navbarCollapse = document.getElementById('navbarNav');
             const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
             if (bsCollapse && navbarCollapse.classList.contains('show')) {
                  bsCollapse.hide();
             }
-
-            // 無論切換到哪個區塊，都嘗試調整其 DataTables 列寬
-            // 延遲執行，確保 DOM 完全渲染和樣式應用
-            setTimeout(() => {
-                if (id === 'recommend' && recommendDataTable) {
-                    recommendDataTable.columns.adjust().draw(); 
-                }
-                if (id === 'souvenir' && souvenirDataTable) {
-                    souvenirDataTable.columns.adjust().draw(); 
-                }
-            }, 300); 
         }
 
         navMenu.addEventListener("click", function (e) {
@@ -385,8 +352,8 @@
         });
 
         let souvenirDataTable = null; 
-        let recommendDataTable = null; 
 
+        // 將 zh-Hant.json 的內容直接放在這裡
         const dataTablesZhHant = {
             "decimal":        "",
             "emptyTable":     "目前沒有資料",
@@ -412,108 +379,95 @@
             }
         };
 
-        function initializeDataTable(tableId, data, headers, options) {
-            const tableElement = document.getElementById(tableId);
-            if (!tableElement) return null;
-
-            const currentTableInstance = $.fn.dataTable.isDataTable(`#${tableId}`) ? $(`#${tableId}`).DataTable() : null;
-            if (currentTableInstance) {
-                currentTableInstance.destroy();
-            }
-            
-            tableElement.querySelector('tbody').innerHTML = ''; 
-            tableElement.querySelector('thead').innerHTML = ''; 
-
-            if (data && data.length > 0) {
-                tableElement.querySelector('thead').innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-                tableElement.querySelector('tbody').innerHTML = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
-
-                const newDataTable = $(`#${tableId}`).DataTable($.extend(true, {
-                    destroy: true, 
-                    language: dataTablesZhHant, 
-                    scrollX: true,     
-                    autoWidth: false,  
-                    scrollCollapse: true, 
-                    // columns 配置，給予第一列和第二列更明確的寬度，尤其是推薦清單
-                    // 注意：這會覆蓋 DataTables 的自動計算，需根據實際內容調整
-                    columns: headers.map((header, index) => {
-                        if (tableId === 'recommendTable') { // 僅針對推薦清單
-                            if (index === 0) return { width: '40px' }; // 編號
-                            if (index === 1) return { width: '60px' }; // 年度
-                            if (index === 2) return { width: '90px' }; // 股號
-                            if (index === 3) return { width: '300px' }; // 紀念品名稱 (給大一點)
-                            // 其他列不做特別限制，讓 DataTables 自動分配
-                            return null;
-                        }
-                        // 紀念品表格也給一些預設寬度
-                        if (tableId === 'souvenirTable') {
-                            if (index === 0) return { width: '40px' }; 
-                            if (index === 1) return { width: '60px' }; 
-                            if (index === 2) return { width: '90px' }; 
-                            return null;
-                        }
-                        return null;
-                    }).filter(Boolean), // 移除 null 值
-
-                    initComplete: function(settings, json) {
-                        // 在初始化完成後，強制調整一次列寬
-                        // 使用一個小的延遲確保所有渲染完成
-                        setTimeout(() => {
-                            newDataTable.columns.adjust().draw();
-                        }, 50); 
-                    }
-                }, options)); // 合併傳入的選項
-
-                return newDataTable;
-            } else {
-                tableElement.querySelector('thead').innerHTML = '';
-                tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                return null;
-            }
-        }
 
         function loadSouvenirData() {
             fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
                 .then(res => res.json())
                 .then(data => {
-                    if (data && data.length > 0) {
-                        const headers = Object.keys(data[0]);
-                        souvenirDataTable = initializeDataTable('souvenirTable', data, headers, {
-                            paging: true,      
-                            searching: true,   
-                            info: true,        
-                            ordering: true,    
-                        });
-                    } else {
-                        const tableElement = document.getElementById('souvenirTable');
-                        if (souvenirDataTable) { souvenirDataTable.destroy(); }
-                        tableElement.querySelector('thead').innerHTML = '';
-                        tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                        souvenirDataTable = null; 
+                    const tableElement = document.getElementById('souvenirTable');
+                    if (tableElement) {
+                        if (souvenirDataTable) { 
+                            souvenirDataTable.destroy(); 
+                        }
+                        tableElement.querySelector('tbody').innerHTML = ''; 
+                        tableElement.querySelector('thead').innerHTML = ''; 
+
+                        if (data && data.length > 0) {
+                            const headers = Object.keys(data[0]);
+                            const thead = headers.map(h => `<th>${h}</th>`).join('');
+                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+                            
+                            tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+                            tableElement.querySelector('tbody').innerHTML = tbody;
+
+                            // DataTables 初始化
+                            souvenirDataTable = $('#souvenirTable').DataTable({
+                                destroy: true, 
+                                language: dataTablesZhHant, 
+                                paging: true,      
+                                searching: true,   
+                                info: true,        
+                                ordering: true,    
+                                scrollX: true,     
+                                autoWidth: false,  
+                                scrollCollapse: true, 
+                                initComplete: function(settings, json) {
+                                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+                               }
+                            });
+                        } else {
+                            tableElement.querySelector('thead').innerHTML = '';
+                            tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                            souvenirDataTable = null; 
+                        }
                     }
                 })
                 .catch(error => console.error('載入紀念品資料時發生錯誤:', error));
         }
+
+        let recommendDataTable = null; 
 
         function loadRecommend(sheetName) {
             const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
-                    if (data && data.length > 0) {
-                        const headers = Object.keys(data[0]);
-                        recommendDataTable = initializeDataTable('recommendTable', data, headers, {
-                            searching: false, 
-                            paging: false,    
-                            info: false,      
-                            ordering: true,    
-                        });
-                    } else {
-                        const tableElement = document.getElementById('recommendTable');
-                        if (recommendDataTable) { recommendDataTable.destroy(); }
-                        tableElement.querySelector('thead').innerHTML = '';
-                        tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                        recommendDataTable = null; 
+                    const tableElement = document.getElementById('recommendTable');
+                    if (tableElement) {
+                        if (recommendDataTable) { 
+                            recommendDataTable.destroy(); 
+                        }
+                        tableElement.querySelector('tbody').innerHTML = '';
+                        tableElement.querySelector('thead').innerHTML = ''; 
+
+                        if (data && data.length > 0) {
+                            const headers = Object.keys(data[0]);
+                            const thead = headers.map(h => `<th>${h}</th>`).join('');
+                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+                            
+                            tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+                            tableElement.querySelector('tbody').innerHTML = tbody;
+
+                            // DataTables 初始化
+                            recommendDataTable = $('#recommendTable').DataTable({
+                                destroy: true, 
+                                searching: false, 
+                                paging: false,    
+                                info: false,      
+                                language: dataTablesZhHant, 
+                                ordering: true,    
+                                scrollX: true,     
+                                autoWidth: false,  
+                                scrollCollapse: true, 
+                                initComplete: function(settings, json) {
+                                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+                                }
+                            });
+                        } else {
+                            tableElement.querySelector('thead').innerHTML = '';
+                            tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                            recommendDataTable = null; 
+                        }
                     }
                 })
                 .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
@@ -525,7 +479,7 @@
                 console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
                 
                 renderNavTabs(); 
-                // showSection("souvenir"); // 不需要預設呼叫，因為兩個都是 active-section
+                showSection("souvenir"); 
 
                 loadSouvenirData(); 
 
@@ -534,33 +488,18 @@
                     recommendSheetSelect.addEventListener('change', function () {
                         loadRecommend(this.value);
                     });
-                    loadRecommend('我全都要（不需證件）'); // 首次載入預設分類
+                    loadRecommend('我全都要（不需證件）'); 
                 }
-
-                // 首次載入時，直接調整兩個表格的列寬
-                // 因為它們現在都是 active-section
-                setTimeout(() => {
-                    if (souvenirDataTable) {
-                        souvenirDataTable.columns.adjust().draw();
-                    }
-                    if (recommendDataTable) {
-                        recommendDataTable.columns.adjust().draw();
-                    }
-                }, 100); // 稍作延遲確保 DOM 和數據都已載入
             });
         });
 
         // 監聽視窗大小變化，當視窗大小改變時，重新調整 DataTables 列寬
         $(window).on('resize', function () {
-            clearTimeout(window.resizeTimer); 
-            window.resizeTimer = setTimeout(function() {
-                if ($('#souvenir').hasClass('active-section') && souvenirDataTable) {
-                    souvenirDataTable.columns.adjust().draw();
+            setTimeout(function() {
+                if ($.fn.dataTable.tables(true).length) { 
+                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
                 }
-                if ($('#recommend').hasClass('active-section') && recommendDataTable) {
-                    recommendDataTable.columns.adjust().draw();
-                }
-            }, 250); 
+            }, 100);
         });
     </script>
 </body>

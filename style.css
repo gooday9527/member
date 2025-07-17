@@ -23,8 +23,9 @@ body {
 
 /* 調整『🎁 紀念品』標題的上下間距 */
 .section h3 {
-    margin-top: 0.2rem;    /* 縮小標題上方的間距 */
-    margin-bottom: 0rem; /* 縮小標題下方的間距 */
+    margin-top: 0.5rem;    /* 縮小標題上方的間距 */
+    margin-bottom: 0.5rem; /* 縮小標題下方的間距 */
+    text-align: center;    /* 新增這行：將文字置中 */
     /* 您可以根據需要微調這些值，例如 0.2rem 或 0，以達到更緊密的效果。 */
 }
 

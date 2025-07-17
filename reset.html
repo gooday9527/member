@@ -44,61 +44,21 @@
     </div>
   </div>
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec";
+<script>
+document.getElementById("resetForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const token = new URLSearchParams(window.location.search).get("token");
+  const newPassword = document.getElementById("newPassword").value;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token");
+  const res = await apiRequest({ action: "resetPassword", token, newPassword });
 
-    const form = document.getElementById("resetForm");
-    const messageBox = document.getElementById("message");
-
-    if (!token) {
-      showMessage("缺少重設碼，請確認連結是否正確。", "danger");
-      form.style.display = "none";
-    }
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const password = document.getElementById("password").value;
-      const confirm = document.getElementById("confirm").value;
-
-      if (password.length < 6) {
-        showMessage("密碼長度至少 6 碼", "danger");
-        return;
-      }
-
-      if (password !== confirm) {
-        showMessage("兩次輸入的密碼不一致", "danger");
-        return;
-      }
-
-      fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "reset",
-          token: token,
-          newPassword: password
-        })
-      })
-      .then(res => res.json())
-      .then(response => {
-        showMessage(response.message, response.success ? "success" : "danger");
-        if (response.success) form.reset();
-      })
-      .catch(err => {
-        console.error("錯誤:", err);
-        showMessage("系統錯誤，請稍後再試", "danger");
-      });
-    });
-
-    function showMessage(msg, type) {
-      messageBox.className = `alert alert-${type}`;
-      messageBox.textContent = msg;
-      messageBox.classList.remove("d-none");
-    }
-  </script>
+  if (res.success) {
+    showMessage("密碼重設成功，請重新登入", "success");
+    setTimeout(() => window.location.href = "login.html", 2000);
+  } else {
+    showMessage(res.message || "密碼重設失敗", "danger");
+  }
+});
+</script>
 </body>
 </html>

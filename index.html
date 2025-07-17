@@ -139,28 +139,28 @@
 
         // 點擊事件監聽 (使用事件代理，這樣動態生成的元素也能被監聽)
         navMenu.addEventListener("click", function (e) {
-            // 檢查點擊的目標是否是帶有 data-section 屬性的 nav-link
-            if (e.target.matches(".nav-link[data-section]")) {
-                e.preventDefault(); // 阻止預設的錨點跳轉
-                const id = e.target.getAttribute("data-section");
+    // 找到最近的、帶有 data-section 屬性的 .nav-link 元素
+    const clickedNavLink = e.target.closest(".nav-link[data-section]");
 
-                if (id === "logout") {
-                    // 處理登出
-                    signOut(auth).then(() => {
-                        console.log("用戶已登出");
-                        loginEmail = null; // 更新狀態
-                        renderNavTabs(); // 渲染登入前導覽列
-                        showSection("souvenir"); // 顯示紀念品區塊
-                    }).catch((error) => {
-                        console.error("登出失敗:", error);
-                    });
-                } else {
-                    // 處理區塊切換
-                    showSection(id);
-                }
-            }
-        });
+    // 如果找到了這樣的元素
+    if (clickedNavLink) {
+        e.preventDefault(); // 阻止預設的錨點跳轉
+        const id = clickedNavLink.getAttribute("data-section"); // 從找到的元素獲取 id
 
+        if (id === "logout") {
+            signOut(auth).then(() => {
+                console.log("用戶已登出");
+                loginEmail = null;
+                renderNavTabs();
+                showSection("souvenir");
+            }).catch((error) => {
+                console.error("登出失敗:", error);
+            });
+        } else {
+            showSection(id);
+        }
+    }
+});
         // 載入紀念品資料的函數
         function loadSouvenirData() {
             fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')

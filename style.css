@@ -17,8 +17,8 @@ body {
 
 /* 調整『🎁 紀念品』標題的上下間距 */
 .section h3 {
-    margin-top: 0.5rem;    /* 縮小標題上方的間距 */
-    margin-bottom: 0.5rem; /* 縮小標題下方的間距 */
+    margin-top: 0rem;    /* 縮小標題上方的間距 */
+    margin-bottom: 0rem; /* 縮小標題下方的間距 */
     /* 您可以根據需要微調這些值，例如 0.2rem 或 0，以達到更緊密的效果。 */
 }
 
@@ -26,10 +26,10 @@ body {
    可以考慮微調 .section 的 padding-top，但這會影響整個 section 的頂部內邊距。*/
 /* 例如：
 .section {
-    padding-top: 15px; // 將頂部內邊距從 30px 縮小到 15px
-    padding-right: 30px;
-    padding-bottom: 30px;
-    padding-left: 30px;
+    padding-top: 10px; // 將頂部內邊距從 30px 縮小到 15px
+    padding-right: 10px
+    padding-bottom: 10px;
+    padding-left: 10px;
 }
 
 .active-section {

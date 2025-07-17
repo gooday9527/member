@@ -86,7 +86,19 @@
 
 <script>
   // 讀取 localStorage 中登入 Email
-  const loginEmail = localStorage.getItem("loginEmail");
+  let loginEmail = null;
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    loginEmail = user.email;
+    console.log("已登入使用者：", loginEmail);
+    renderNavTabs(); // ← ⚠️ 等登入資訊準備好後再渲染導覽列
+     showSection("souvenir");
+  } else {
+    // 未登入導向登入頁
+    window.location.href = "login.html";
+  }
+});
+
 
   // 導覽列容器與區塊們
   const navMenu = document.getElementById("navMenu");
@@ -154,8 +166,8 @@
   }
 
   // 初始畫面
-  renderNavTabs();
-  showSection("souvenir");
+  // renderNavTabs(); ❌ 不要在這裡先執行！
+ 
 
   // ===== 以下為原有資料載入功能 =====
   // 取得紀念品清單

@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>好管家股東紀念品代領</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">  <script type="module">
+  <link rel="stylesheet" href="style.css">
+
+    <script type="module">
     // 從 Firebase CDN 導入所需模組
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js'; // 導入 onAuthStateChanged 和 signOut
@@ -34,8 +36,8 @@
       { id: "recommend", label: "推薦清單" },
       { id: "notice", label: "注意事項" },
       { id: "about", label: "關於我" },
-      { id: "register", label: "註冊" },
-      { id: "login", label: "登入"}
+      { id: "register", label: "註冊", link: "register.html" },
+      { id: "login", label: "登入", link: "login.html" }
     ];
 
     const tabsAfterLogin = [
@@ -145,6 +147,7 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu"></ul>
     </div>
   </nav>
+
     <section id="souvenir" class="section active-section">
     <h3>🎁 紀念品</h3>
     <div class="table-responsive mt-3">
@@ -154,6 +157,7 @@
       </table>
     </div>
   </section>
+
   <section id="recommend" class="section">
     <h3>🌟 推薦清單</h3>
     <div class="mb-3 d-flex align-items-center gap-2">

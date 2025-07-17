@@ -137,7 +137,7 @@
                     activeNavLink.classList.add('active');
                 }
             }
-        }
+        });
 
         navMenu.addEventListener("click", function (e) {
             const clickedNavLink = e.target.closest(".nav-link[data-section]");
@@ -174,7 +174,7 @@
                             $('#souvenirTable').DataTable({
                                 destroy: true,
                                 "language": {
-                                    "url": "https://cdn.datatables.net/plug-ins/1.13.8/i18n/zh-Hant.json" // <--- **請看這裡：已修改**
+                                    "url": "https://raw.githubusercontent.com/DataTables/Plugins/master/i18n/Chinese-traditional.json" // <--- **請看這裡：已修改為 GitHub 原始碼路徑**
                                 }
                             });
                         }
@@ -199,7 +199,7 @@
                             $('#recommendTable').DataTable({
                                 destroy: true,
                                 "language": {
-                                    "url": "https://cdn.datatables.net/plug-ins/1.13.8/i18n/zh-Hant.json" // <--- **請看這裡：已修改**
+                                    "url": "https://raw.githubusercontent.com/DataTables/Plugins/master/i18n/Chinese-traditional.json" // <--- **請看這裡：已修改為 GitHub 原始碼路徑**
                                 }
                             });
                         }

@@ -2,6 +2,9 @@
 body {
   background-color: #fffbea;
   font-family: 'Noto Sans TC', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* 防止整頁橫向滾動 */
 }
 
 .navbar {
@@ -22,21 +25,28 @@ body {
 }
 
 /* ===== 表格樣式 ===== */
-table {
-  table-layout: auto !important; /* 根據內容自動調整欄寬 */
+.table-responsive {
   width: 100%;
+  overflow-x: auto; /* 只限表格容器滾動（實際上會因設定寬度自動排除） */
+}
+
+table {
   border-collapse: collapse;
+  margin: 0 auto;
+  max-width: 100%;
+  width: auto; /* 表格依內容自動調整寬度 */
+  table-layout: auto !important;
 }
 
 th, td {
-  white-space: nowrap; /* 不自動換行 */
+  white-space: nowrap;
   padding: 0.5rem;
   text-align: center;
   vertical-align: middle;
   border: 1px solid #dee2e6;
 }
 
-/* 指定前3欄為較窄欄位（如 ID、股號、股名） */
+/* ✅ 指定前3欄為較窄欄位（如 ID、股號、股名） */
 th:nth-child(1), td:nth-child(1) {
   width: 40px;
 }
@@ -47,9 +57,17 @@ th:nth-child(2), td:nth-child(2) {
 
 th:nth-child(3), td:nth-child(3) {
   width: 90px;
+  text-align: left; /* 股名靠左 */
 }
 
-/* 調整推薦分類下拉選單寬度 */
+/* ✅ 指定「紀念品」「股代」「委託條件」靠左 */
+th:nth-child(4), td:nth-child(4),  /* 紀念品 */
+th:nth-child(6), td:nth-child(6),  /* 股代 */
+th:nth-child(8), td:nth-child(8) { /* 委託條件 */
+  text-align: left;
+}
+
+/* 推薦分類下拉選單寬度 */
 #recommendSheet {
   max-width: 300px;
 }

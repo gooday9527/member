@@ -6,21 +6,19 @@
     <title>好管家股東紀念品代領</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css"/>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.min.css"/>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light px-4">
         <a class="navbar-brand fw-bold" href="#">好管家代領</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
-            </ul>
+                </ul>
         </div>
     </nav>
 
     <div class="container-fluid">
         <section id="souvenir" class="section active-section">
-            <h3 class="text-center">🎁 紀念品</h3>
+            <h3>🎁 紀念品</h3>
             <div class="table-responsive mt-3">
                 <table class="table table-bordered table-sm" id="souvenirTable">
                     <thead class="table-warning"></thead>
@@ -30,7 +28,7 @@
         </section>
 
         <section id="recommend" class="section">
-            <h3 class="text-center">🌟 推薦清單</h3>
+            <h3>🌟 推薦清單</h3>
             <div class="mb-3 d-flex align-items-center gap-2">
                 <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
                 <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 300px;">
@@ -50,22 +48,18 @@
         </section>
 
         <section id="notice" class="section">
-            <h3 class="text-center">📌 注意事項</h3>
+            <h3>📌 注意事項</h3>
             <p>本服務為好管家團隊提供之股東紀念品代領平台，請確認資料正確性後再進行登記。</p>
         </section>
 
         <section id="about" class="section">
-            <h3 class="text-center">👤 關於我們</h3>
+            <h3>👤 關於我們</h3>
             <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
         </section>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
-
     <script type="module">
+        // 從 Firebase CDN 導入所需模組
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
@@ -79,6 +73,7 @@
             measurementId: "G-J3Z7YTHJ9P"
         };
 
+        // 初始化 Firebase 應用程式和認證服務
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
@@ -110,14 +105,16 @@
         ];
 
         function renderNavTabs() {
-            navMenu.innerHTML = "";
+            navMenu.innerHTML = ""; // 清空現有導覽列
             const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
             tabs.forEach(tab => {
                 const li = document.createElement("li");
                 li.className = "nav-item";
                 if (tab.link) {
+                    // 如果有 link 屬性 (例如 register.html, login.html)，則使用它
                     li.innerHTML = `<a class="nav-link" href="${tab.link}">${tab.label}</a>`;
                 } else {
+                    // 否則，表示是內部區塊切換，使用 data-section
                     li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
                 }
                 navMenu.appendChild(li);
@@ -129,6 +126,7 @@
             const target = document.getElementById(id);
             if (target) {
                 target.classList.add("active-section");
+                // 同步更新導覽列的 active 狀態
                 document.querySelectorAll('.nav-link').forEach(link => {
                     link.classList.remove('active');
                 });
@@ -137,28 +135,33 @@
                     activeNavLink.classList.add('active');
                 }
             }
-        });
+        }
 
+        // 點擊事件監聽 (使用事件代理，這樣動態生成的元素也能被監聽)
         navMenu.addEventListener("click", function (e) {
-            const clickedNavLink = e.target.closest(".nav-link[data-section]");
-            if (clickedNavLink) {
-                e.preventDefault();
-                const id = clickedNavLink.getAttribute("data-section");
-                if (id === "logout") {
-                    signOut(auth).then(() => {
-                        console.log("用戶已登出");
-                        loginEmail = null;
-                        renderNavTabs();
-                        showSection("souvenir");
-                    }).catch((error) => {
-                        console.error("登出失敗:", error);
-                    });
-                } else {
-                    showSection(id);
-                }
-            }
-        });
+    // 找到最近的、帶有 data-section 屬性的 .nav-link 元素
+    const clickedNavLink = e.target.closest(".nav-link[data-section]");
 
+    // 如果找到了這樣的元素
+    if (clickedNavLink) {
+        e.preventDefault(); // 阻止預設的錨點跳轉
+        const id = clickedNavLink.getAttribute("data-section"); // 從找到的元素獲取 id
+
+        if (id === "logout") {
+            signOut(auth).then(() => {
+                console.log("用戶已登出");
+                loginEmail = null;
+                renderNavTabs();
+                showSection("souvenir");
+            }).catch((error) => {
+                console.error("登出失敗:", error);
+            });
+        } else {
+            showSection(id);
+        }
+    }
+});
+        // 載入紀念品資料的函數
         function loadSouvenirData() {
             fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
                 .then(res => res.json())
@@ -170,19 +173,12 @@
                         const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
                         table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
                         table.querySelector('tbody').innerHTML = tbody;
-                        if (typeof $ !== 'undefined' && $.fn.DataTable) {
-                            $('#souvenirTable').DataTable({
-                                destroy: true,
-                                "language": {
-                                    "url": "https://raw.githubusercontent.com/DataTables/Plugins/master/i18n/Chinese-traditional.json" // <--- **請看這裡：已修改為 GitHub 原始碼路徑**
-                                }
-                            });
-                        }
                     }
                 })
                 .catch(error => console.error('載入紀念品資料時發生錯誤:', error));
         }
 
+        // 載入推薦清單資料的函數
         function loadRecommend(sheetName) {
             const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
             fetch(url)
@@ -195,40 +191,30 @@
                         const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
                         table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
                         table.querySelector('tbody').innerHTML = tbody;
-                        if (typeof $ !== 'undefined' && $.fn.DataTable) {
-                            $('#recommendTable').DataTable({
-                                destroy: true,
-                                // === 請在這裡加入或修改以下行 ===
-                        searching: false, // 禁用搜尋功能
-                        paging: false,    // 禁用分頁功能
-                        info: false,      // 禁用顯示條目資訊
-                        // ==============================
-                                "language": {
-                                    "url": "https://raw.githubusercontent.com/DataTables/Plugins/master/i18n/Chinese-traditional.json" // <--- **請看這裡：已修改為 GitHub 原始碼路徑**
-                                }
-                            });
-                        }
                     }
                 })
                 .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
         }
 
+        // 當 DOM 內容完全載入後，執行這些操作
         document.addEventListener('DOMContentLoaded', () => {
+            // Firebase 登入狀態監聽
             onAuthStateChanged(auth, (user) => {
                 loginEmail = user ? user.email : null;
                 console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
                 
-                renderNavTabs();
-                showSection("souvenir");
+                renderNavTabs(); // 根據登入狀態渲染導覽列
+                showSection("souvenir"); // 預設顯示紀念品區塊
 
-                loadSouvenirData();
+                loadSouvenirData(); // 載入紀念品資料
 
+                // 推薦清單下拉選單事件綁定和預設載入
                 const recommendSheetSelect = document.getElementById('recommendSheet');
                 if (recommendSheetSelect) {
                     recommendSheetSelect.addEventListener('change', function () {
                         loadRecommend(this.value);
                     });
-                    loadRecommend('我全都要（不需證件）');
+                    loadRecommend('我全都要（不需證件）'); // 預設載入第一個分類
                 }
             });
         });

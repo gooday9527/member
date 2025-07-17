@@ -30,27 +30,27 @@
     const allSections = document.querySelectorAll(".section");
 
     const tabsBeforeLogin = [
-      { id: "souvenir", label: "紀念品" },
-      { id: "recommend", label: "推薦清單" },
-      { id: "notice", label: "注意事項" },
-      { id: "about", label: "關於我" },
-      { id: "register", label: "註冊", link: "register.html" },
-      { id: "login", label: "登入", link: "login.html" }
-    ];
+      { id: "souvenir", label: "紀念品", link: "#" }, // 新增 link: "#"
+      { id: "recommend", label: "推薦清單", link: "#" }, // 新增 link: "#"
+      { id: "notice", label: "注意事項", link: "#" }, // 新增 link: "#"
+      { id: "about", label: "關於我", link: "#" }, // 新增 link: "#"
+      { id: "register", label: "註冊", link: "register.html" },
+      { id: "login", label: "登入", link: "login.html" }
+    ];
 
-    const tabsAfterLogin = [
-      { id: "souvenir", label: "紀念品" },
-      { id: "recommend", label: "推薦清單" },
-      { id: "notice", label: "注意事項" },
-      { id: "about", label: "關於我" },
-      { id: "account", label: "帳號/持股" },
-      { id: "delegation", label: "可委託" },
-      { id: "delegated", label: "已委託" },
-      { id: "announcement", label: "公告欄" },
-      { id: "souvenir-manage", label: "紀念品管理" },
-      { id: "billing", label: "帳戶管理" },
-      { id: "logout", label: "登出" }
-    ];
+    const tabsAfterLogin = [
+      { id: "souvenir", label: "紀念品", link: "#" }, // 新增 link: "#"
+      { id: "recommend", label: "推薦清單", link: "#" }, // 新增 link: "#"
+      { id: "notice", label: "注意事項", link: "#" }, // 新增 link: "#"
+      { id: "about", label: "關於我", link: "#" }, // 新增 link: "#"
+      { id: "account", label: "帳號/持股", link: "#" }, // 新增 link: "#"
+      { id: "delegation", label: "可委託", link: "#" }, // 新增 link: "#"
+      { id: "delegated", label: "已委託", link: "#" }, // 新增 link: "#"
+      { id: "announcement", label: "公告欄", link: "#" }, // 新增 link: "#"
+      { id: "souvenir-manage", label: "紀念品管理", link: "#" }, // 新增 link: "#"
+      { id: "billing", label: "帳戶管理", link: "#" }, // 新增 link: "#"
+      { id: "logout", label: "登出", link: "#" } // 登出也應該有 link: "#" 讓事件監聽器處理
+    ];
 
     function renderNavTabs() {
       navMenu.innerHTML = "";

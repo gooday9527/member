@@ -174,7 +174,7 @@
                             $('#souvenirTable').DataTable({
                                 destroy: true,
                                 "language": {
-                                    "url": "https://raw.githubusercontent.com/DataTables/Plugins/master/i18n/Chinese-traditional.json" // <--- **請看這裡：已修改為 GitHub 原始碼路徑**
+                                    "url": "https://raw.githubusercontent.com/DataTables/Plugins/master/i18n/Chinese-traditional.json"
                                 }
                             });
                         }
@@ -198,8 +198,11 @@
                         if (typeof $ !== 'undefined' && $.fn.DataTable) {
                             $('#recommendTable').DataTable({
                                 destroy: true,
+                                searching: false, // 禁用搜尋功能
+                                paging: false,    // 禁用分頁功能
+                                info: false,      // 禁用顯示條目資訊
                                 "language": {
-                                    "url": "https://raw.githubusercontent.com/DataTables/Plugins/master/i18n/Chinese-traditional.json" // <--- **請看這裡：已修改為 GitHub 原始碼路徑**
+                                    "url": "https://raw.githubusercontent.com/DataTables/Plugins/master/i18n/Chinese-traditional.json"
                                 }
                             });
                         }

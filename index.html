@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>好管家股東紀念品代領</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.10/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.10/css/dataTables.bootstrap5.min.css"/> 
@@ -80,18 +79,12 @@
         }
 
         /* ===== 表格樣式 ===== */
-        /* 移除 table-responsive 的 overflow-x: hidden; 讓它正常提供滾動 */
-        .table-responsive {
-            width: 100%;
-            /* overflow-x: hidden; <--- 刪除這行，這會阻止水平滾動條出現 */
-            /* 讓 DataTables 接管滾動，所以這裡不需要特別設定 overflow-x: auto; */
-            /* DataTables 自己會創建滾動容器 */
-        }
+        /* 讓 DataTables 自己接管滾動，因此這裡不需要特別設定 overflow-x */
+        /* .table-responsive { width: 100%; } 無需保留，DataTables會創建自己的滾動容器 */
 
         table {
             border-collapse: collapse;
             width: 100%;
-            /* table-layout: auto; 如果使用 DataTables 的 autoWidth: false, 這裡可以不設定 */
             word-wrap: break-word;
         }
 
@@ -133,7 +126,8 @@
             max-width: 300px;
         }
 
-        /* 新增 DataTables 相關的自訂樣式，以確保其正常顯示和下拉選單寬度 */
+        /* DataTables 相關的自訂樣式，以確保其正常顯示和下拉選單寬度 */
+        /* 這些是針對 DataTables 生成的元素樣式，應與 DataTables 的 CSS 協同工作 */
         .dataTables_wrapper .dataTables_length select {
             min-width: 80px; 
             width: auto; 
@@ -150,6 +144,7 @@
         }
 
         /* 確保 DataTables 生成的表頭和內容容器對齊 */
+        /* DataTables 在 scrollX: true 時會創建 .dataTables_scrollHead 和 .dataTables_scrollBody */
         .dataTables_scrollHeadInner, .dataTables_scrollBody {
             width: 100% !important; 
         }
@@ -157,6 +152,23 @@
             width: 100% !important; 
             margin-bottom: 0 !important; 
         }
+        /* 處理可能由 DataTables 內聯樣式引起的問題 */
+        div.dataTables_wrapper div.dataTables_filter label,
+        div.dataTables_wrapper div.dataTables_length label {
+            display: flex; /* 使用 flexbox 確保內容和標籤在同一行 */
+            align-items: center; /* 垂直置中 */
+            gap: 0.5em; /* 元素之間增加一些間距 */
+        }
+        div.dataTables_wrapper div.dataTables_filter input {
+            flex-grow: 1; /* 讓輸入框佔用剩餘空間 */
+        }
+        /* 修復 DataTables 輸入框的寬度問題，確保其在手機上不會過寬 */
+        .dataTables_wrapper .dataTables_filter input {
+            box-sizing: border-box; /* 確保 padding 和 border 不會增加元素總寬度 */
+            max-width: 100%; /* 防止在小螢幕上超出容器 */
+            width: auto; /* 讓其根據內容自適應 */
+        }
+
 
         @media only screen and (max-width: 768px) {
             body { padding: 10px; } 
@@ -190,7 +202,8 @@
 
     <div class="container-fluid">
         <section id="souvenir" class="section active-section">
-            <h3 class="text-center">🎁 紀念品</h3> <div class="mt-3"> 
+            <h3 class="text-center">🎁 紀念品</h3> 
+            <div class="mt-3"> 
                 <table class="table table-bordered table-sm" id="souvenirTable">
                     <thead class="table-warning"></thead>
                     <tbody></tbody>
@@ -199,7 +212,8 @@
         </section>
 
         <section id="recommend" class="section">
-            <h3 class="text-center">🌟 推薦清單</h3> <div class="mb-3 d-flex align-items-center gap-2">
+            <h3 class="text-center">🌟 推薦清單</h3> 
+            <div class="mb-3 d-flex align-items-center gap-2">
                 <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
                 <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 300px;">
                     <option value="我全都要（不需證件）">我全都要（不需證件）</option>
@@ -218,11 +232,13 @@
         </section>
 
         <section id="notice" class="section">
-            <h3 class="text-center">📌 注意事項</h3> <p>本服務為好管家團隊提供之股東紀念品代領平台，請確認資料正確性後再進行登記。</p>
+            <h3 class="text-center">📌 注意事項</h3> 
+            <p>本服務為好管家團隊提供之股東紀念品代領平台，請確認資料正確性後再進行登記。</p>
         </section>
 
         <section id="about" class="section">
-            <h3 class="text-center">👤 關於我們</h3> <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
+            <h3 class="text-center">👤 關於我們</h3> 
+            <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
         </section>
     </div>
 
@@ -328,7 +344,7 @@
             }
         });
 
-        let souvenirDataTable = null; // 宣告 DataTables 實例變數
+        let souvenirDataTable = null; 
 
         function loadSouvenirData() {
             fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
@@ -336,7 +352,7 @@
                 .then(data => {
                     const tableElement = document.getElementById('souvenirTable');
                     if (tableElement) {
-                        if (souvenirDataTable) { // 如果 DataTables 已經初始化，先銷毀它
+                        if (souvenirDataTable) { 
                             souvenirDataTable.destroy(); 
                         }
                         tableElement.querySelector('tbody').innerHTML = ''; 
@@ -352,17 +368,17 @@
 
                             // DataTables 初始化
                             souvenirDataTable = $('#souvenirTable').DataTable({
-                                destroy: true, // 允許重新初始化
+                                destroy: true, 
                                 language: {
                                     url: "https://cdn.datatables.net/plug-ins/1.13.10/i18n/zh-Hant.json" // 中文語系
                                 },
-                                paging: true,      // 啟用分頁
-                                searching: true,   // 啟用搜尋
-                                info: true,        // 啟用資訊顯示
-                                ordering: true,    // 啟用排序
+                                paging: true,      
+                                searching: true,   
+                                info: true,        
+                                ordering: true,    
                                 scrollX: true,     // 啟用水平滾動
-                                autoWidth: false,  // 禁用自動寬度，讓 DataTables 配合 scrollX 自己計算
-                                scrollCollapse: true, // 允許表格高度調整以適應滾動條
+                                autoWidth: false,  // 禁用自動寬度
+                                scrollCollapse: true, 
                                 initComplete: function(settings, json) {
                                     // 在 DataTables 完全初始化後，重新調整列寬以確保對齊
                                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
@@ -371,14 +387,14 @@
                         } else {
                             tableElement.querySelector('thead').innerHTML = '';
                             tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                            souvenirDataTable = null; // 清除實例
+                            souvenirDataTable = null; 
                         }
                     }
                 })
                 .catch(error => console.error('載入紀念品資料時發生錯誤:', error));
         }
 
-        let recommendDataTable = null; // 宣告 DataTables 實例變數
+        let recommendDataTable = null; 
 
         function loadRecommend(sheetName) {
             const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
@@ -387,7 +403,7 @@
                 .then(data => {
                     const tableElement = document.getElementById('recommendTable');
                     if (tableElement) {
-                        if (recommendDataTable) { // 如果 DataTables 已經初始化，先銷毀它
+                        if (recommendDataTable) { 
                             recommendDataTable.destroy(); 
                         }
                         tableElement.querySelector('tbody').innerHTML = '';
@@ -404,16 +420,16 @@
                             // DataTables 初始化
                             recommendDataTable = $('#recommendTable').DataTable({
                                 destroy: true, 
-                                searching: false, // 推薦清單通常不需要搜尋
-                                paging: false,    // 推薦清單通常不需要分頁
-                                info: false,      // 推薦清單通常不需要資訊顯示
+                                searching: false, 
+                                paging: false,    
+                                info: false,      
                                 language: {
                                     url: "https://cdn.datatables.net/plug-ins/1.13.10/i18n/zh-Hant.json"
                                 },
                                 ordering: true,    
-                                scrollX: true,     // 啟用水平滾動
-                                autoWidth: false,  // 禁用自動寬度
-                                scrollCollapse: true, // 允許表格高度調整以適應滾動條
+                                scrollX: true,     
+                                autoWidth: false,  
+                                scrollCollapse: true, 
                                 initComplete: function(settings, json) {
                                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
                                 }
@@ -421,7 +437,7 @@
                         } else {
                             tableElement.querySelector('thead').innerHTML = '';
                             tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                            recommendDataTable = null; // 清除實例
+                            recommendDataTable = null; 
                         }
                     }
                 })
@@ -429,22 +445,21 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 在DOM加載後，Firebase認證狀態變化時觸發
             onAuthStateChanged(auth, (user) => {
                 loginEmail = user ? user.email : null;
                 console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
                 
-                renderNavTabs(); // 根據登入狀態渲染導覽列
-                showSection("souvenir"); // 預設顯示紀念品區塊
+                renderNavTabs(); 
+                showSection("souvenir"); 
 
-                loadSouvenirData(); // 載入紀念品資料
+                loadSouvenirData(); 
 
                 const recommendSheetSelect = document.getElementById('recommendSheet');
                 if (recommendSheetSelect) {
                     recommendSheetSelect.addEventListener('change', function () {
                         loadRecommend(this.value);
                     });
-                    loadRecommend('我全都要（不需證件）'); // 預設載入第一個分類
+                    loadRecommend('我全都要（不需證件）'); 
                 }
             });
         });
@@ -453,7 +468,7 @@
         $(window).on('resize', function () {
             // 使用 setTimeout 讓其在 DOM 渲染穩定後執行，防止在快速縮放時的閃爍或錯誤
             setTimeout(function() {
-                if ($.fn.dataTable.tables(true).length) { // 檢查是否存在DataTables實例
+                if ($.fn.dataTable.tables(true).length) { 
                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
                 }
             }, 100);

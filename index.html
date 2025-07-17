@@ -73,13 +73,9 @@
             display: block; 
             z-index: 10; 
             opacity: 1; /* 顯示時透明度為1 */
-            position: relative; /* 這裡的 relative 是為了讓 JS 計算高度時可以正確讀取其內容高度 */
-                               /* 但請注意，實際顯示時會通過 JS 設置父容器高度，然後再轉回 absolute */
-                               /* 這是為了在計算高度時，元素能參與正常文檔流，計算完再藏起來或定位 */
+            /* 為了正確獲取高度，我們需要暫時將其從 absolute 變為 relative 或 static */
+            /* 這將由 JS 處理，在計算高度時臨時改變，計算完後恢復 absolute */
         }
-        /* 為了平滑過渡和正確高度計算，我們需要更精確的 JS 控制，而不是純 CSS display/position 切換 */
-        /* JS 會控制 display 和 position */
-
 
         /* ===== 表格樣式 ===== */
         table {
@@ -303,6 +299,7 @@
         const allSections = document.querySelectorAll(".section");
         const containerFluid = document.querySelector(".container-fluid");
 
+
         const tabsBeforeLogin = [
             { id: "souvenir", label: "紀念品" },
             { id: "recommend", label: "推薦清單" },
@@ -345,50 +342,70 @@
         function setContainerHeight() {
             const activeSection = document.querySelector(".section.active-section");
             if (activeSection) {
-                // 將 activeSection 暫時設為 relative 以便正確獲取其內容高度
-                // 並將其寬度暫時設為 auto，避免 absolute 定位影響 content-box 計算
-                activeSection.style.position = 'relative';
-                activeSection.style.width = 'auto'; // 確保能正確計算內容寬度
-                
-                // 延遲獲取高度，確保 DOM 渲染和 DataTables 調整完成
-                setTimeout(() => {
-                    let contentHeight = activeSection.scrollHeight; // 獲取包括溢出內容在內的高度
-                    // 加上 container-fluid 的 padding-top 和 padding-bottom
-                    const containerPaddingTop = parseFloat(window.getComputedStyle(containerFluid).paddingTop);
-                    const containerPaddingBottom = parseFloat(window.getComputedStyle(containerFluid).paddingBottom);
-                    
-                    containerFluid.style.height = `${contentHeight + containerPaddingTop + containerPaddingBottom}px`;
-                    
-                    // 恢復 activeSection 的定位和寬度，使其符合 section 樣式定義
-                    activeSection.style.position = 'absolute';
-                    activeSection.style.width = `calc(100% - ${containerPaddingTop + containerPaddingBottom}px)`; // 恢復為根據父容器計算的寬度
-                                                                                                                   // 這裡要用 container-fluid 的水平 padding 總和
-                    
-                    // 修正：應該是 calc(100% - (padding-left + padding-right))
-                    const containerPaddingLeft = parseFloat(window.getComputedStyle(containerFluid).paddingLeft);
-                    const containerPaddingRight = parseFloat(window.getComputedStyle(containerFluid).paddingRight);
-                    activeSection.style.width = `calc(100% - ${containerPaddingLeft + containerPaddingRight}px)`;
+                // 為了正確獲取高度，需要暫時改變其定位和寬度，使其參與正常文檔流
+                // 先保存原始樣式
+                const originalPosition = activeSection.style.position;
+                const originalWidth = activeSection.style.width;
+                const originalDisplay = activeSection.style.display;
 
-                }, 100); // 增加延遲，確保 DataTables 渲染完成
+                activeSection.style.position = 'static'; // 設為 static，讓其撐開高度
+                activeSection.style.width = ''; // 清空寬度，讓其自動計算
+                activeSection.style.display = 'block'; // 確保是 block 顯示
+                
+                // 立即獲取高度
+                let contentHeight = activeSection.scrollHeight; 
+                
+                // 恢復原始樣式，避免視覺問題
+                activeSection.style.position = originalPosition;
+                activeSection.style.width = originalWidth;
+                activeSection.style.display = originalDisplay;
+
+                // 加上 container-fluid 的 padding-top 和 padding-bottom
+                const containerPaddingTop = parseFloat(window.getComputedStyle(containerFluid).paddingTop);
+                const containerPaddingBottom = parseFloat(window.getComputedStyle(containerFluid).paddingBottom);
+                
+                // 設定 container-fluid 的高度
+                containerFluid.style.height = `${contentHeight + containerPaddingTop + containerPaddingBottom}px`;
+                
+                // 再次嘗試調整 activeSection 的絕對定位寬度，以防誤差
+                const containerPaddingLeft = parseFloat(window.getComputedStyle(containerFluid).paddingLeft);
+                const containerPaddingRight = parseFloat(window.getComputedStyle(containerFluid).paddingRight);
+                activeSection.style.width = `calc(100% - ${containerPaddingLeft + containerPaddingRight}px)`;
+
             }
         }
 
 
         function showSection(id) {
             allSections.forEach(sec => {
+                // 先將所有 section 隱藏並重置為絕對定位
                 sec.classList.remove("active-section");
-                sec.style.display = 'none'; // 隱藏所有 section
                 sec.style.opacity = '0';
+                sec.style.display = 'none'; // 隱藏
+                sec.style.position = 'absolute'; // 確保是絕對定位
+                sec.style.zIndex = '1'; // 確保背景層級低
             });
 
             const target = document.getElementById(id);
             if (target) {
                 target.style.display = 'block'; // 顯示目標 section
-                // 為了動畫效果，先顯示再加 active-section
+                target.style.position = 'absolute'; // 確保顯示時是絕對定位
+                target.style.zIndex = '10'; // 確保前景層級高
+
+                // 短暫延遲，讓 display: block 生效後再執行過渡和 active-class
                 setTimeout(() => {
                     target.classList.add("active-section");
                     target.style.opacity = '1';
-                }, 10); // 短暫延遲，讓 display: block 生效後再執行過渡
+                    // 這裡是關鍵：確保在 active-section 顯示且動畫開始後，再調整 DataTables 和容器高度
+                    setTimeout(() => {
+                        if (id === 'souvenir' && souvenirDataTable) {
+                            souvenirDataTable.columns.adjust().draw();
+                        } else if (id === 'recommend' && recommendDataTable) {
+                            recommendDataTable.columns.adjust().draw();
+                        }
+                        setContainerHeight(); // 每次切換 section 後調整容器高度
+                    }, 100); // 100ms 延遲，給 CSS 過渡和 DataTables 繪製留足時間
+                }, 10); 
 
                 document.querySelectorAll('.nav-link').forEach(link => {
                     link.classList.remove('active');
@@ -398,16 +415,6 @@
                     activeNavLink.classList.add('active');
                 }
             }
-
-            // 確保在切換到表格所在區塊後，延遲調整列寬並設定容器高度
-            setTimeout(() => {
-                if (id === 'souvenir' && souvenirDataTable) {
-                    souvenirDataTable.columns.adjust().draw();
-                } else if (id === 'recommend' && recommendDataTable) {
-                    recommendDataTable.columns.adjust().draw();
-                }
-                setContainerHeight(); // 每次切換 section 後調整容器高度
-            }, 150); // 增加延遲，確保所有渲染完成
             
             // 由於導覽列是單頁應用切換，確保在點擊導覽列連結後收起導覽列
             const navbarCollapse = document.getElementById('navbarNav');
@@ -489,6 +496,8 @@
                     scrollX: true,     
                     autoWidth: false,  
                     scrollCollapse: true, 
+                    // **恢復搜尋功能**
+                    searching: true, 
                     
                     columns: headers.map((header, index) => {
                         if (tableId === 'souvenirTable') { 
@@ -519,7 +528,7 @@
                             setContainerHeight();
                         }, 100); 
                     },
-                    // **新增：每次繪製後調整列寬和容器高度**
+                    // 每次繪製後調整列寬和容器高度
                     drawCallback: function(settings) {
                         const api = this.api();
                         api.columns.adjust();
@@ -532,8 +541,8 @@
 
             } else {
                 const maxExpectedColumns = Math.max(
-                    tableId === 'souvenirTable' ? 5 : 0, // souvenirTable 至少有 5 列是固定寬度或可變寬度
-                    tableId === 'recommendTable' ? 5 : 0 // recommendTable 至少有 5 列是固定寬度或可變寬度
+                    tableId === 'souvenirTable' ? 5 : 0, 
+                    tableId === 'recommendTable' ? 5 : 0 
                 );
                 tableElement.querySelector('thead').innerHTML = ''; 
                 tableElement.querySelector('tbody').innerHTML = `<tr><td colspan="${headers.length > 0 ? headers.length : maxExpectedColumns}" style="text-align: center;">沒有可用的資料</td></tr>`;
@@ -548,7 +557,7 @@
                     const headers = data && data.length > 0 ? Object.keys(data[0]) : [];
                     souvenirDataTable = initializeDataTable('souvenirTable', data, headers, {
                         paging: true,      
-                        searching: true,   
+                        searching: true,   // **恢復搜尋功能**
                         info: true,        
                         ordering: true,    
                     });
@@ -556,7 +565,7 @@
                 })
                 .catch(error => {
                     console.error('載入紀念品資料時發生錯誤:', error);
-                    initializeDataTable('souvenirTable', [], [], {}); 
+                    initializeDataTable('souvenirTable', [], [], { searching: true }); // **恢復搜尋功能，即使無數據**
                     setContainerHeight(); // 錯誤發生後也調整容器高度
                 });
         }
@@ -568,7 +577,7 @@
                 .then(data => {
                     const headers = data && data.length > 0 ? Object.keys(data[0]) : [];
                     recommendDataTable = initializeDataTable('recommendTable', data, headers, {
-                        searching: false, 
+                        searching: false, // 推薦清單依然不顯示搜尋框
                         paging: false,    
                         info: false,      
                         ordering: true,    
@@ -577,7 +586,7 @@
                 })
                 .catch(error => {
                     console.error('載入推薦清單資料時發生錯誤:', error);
-                    initializeDataTable('recommendTable', [], [], {}); 
+                    initializeDataTable('recommendTable', [], [], { searching: false }); // 推薦清單依然不顯示搜尋框
                     setContainerHeight(); // 錯誤發生後也調整容器高度
                 });
         }

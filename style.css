@@ -1,8 +1,9 @@
-/* style.css - 好管家紀念品代領 專用樣式 */
-
+/* ==== 共用樣式 ==== */
 body {
   background-color: #fffbea;
   font-family: 'Noto Sans TC', sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 .navbar {
@@ -22,22 +23,41 @@ body {
   display: block;
 }
 
-.table {
-  background-color: white;
-  width: 100%;              /* 滿版寬度 */
-  table-layout: fixed;      /* 等寬欄位 */
-  word-wrap: break-word;    /* 超出自動斷字 */
-}
-
-th, td {
-  white-space: nowrap;      /* 不換行 */
-  overflow: hidden;         /* 超出隱藏 */
-  text-overflow: ellipsis;  /* 超出顯示省略號 */
-  font-size: 14px;          /* 小字體 */
-  padding: 0.5rem;          /* 精簡內距 */
-}
-
-/* 表格容器不允許橫向滾動 */
+/* ==== 表格樣式 ==== */
 .table-responsive {
-  overflow-x: hidden;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  table-layout: auto; /* ✅ 根據內容自動調整欄寬 */
+  word-break: keep-all; /* ✅ 不強制斷字，避免換行 */
+  white-space: nowrap;  /* ✅ 單行顯示 */
+  background-color: white;
+}
+
+.table th,
+.table td {
+  padding: 8px 12px;
+  vertical-align: middle;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.table thead {
+  background-color: #fff3cd;
+}
+
+/* 手機畫面調整 */
+@media (max-width: 576px) {
+  .section {
+    padding: 15px;
+  }
+
+  .table th,
+  .table td {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+  }
 }

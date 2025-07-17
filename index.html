@@ -6,13 +6,15 @@
     <title>好管家股東紀念品代領</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.min.css"/>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light px-4">
         <a class="navbar-brand fw-bold" href="#">好管家代領</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
-                </ul>
+            </ul>
         </div>
     </nav>
 
@@ -57,6 +59,11 @@
             <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
         </section>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
 
     <script type="module">
         // 從 Firebase CDN 導入所需模組
@@ -139,28 +146,28 @@
 
         // 點擊事件監聽 (使用事件代理，這樣動態生成的元素也能被監聽)
         navMenu.addEventListener("click", function (e) {
-    // 找到最近的、帶有 data-section 屬性的 .nav-link 元素
-    const clickedNavLink = e.target.closest(".nav-link[data-section]");
+            // 找到最近的、帶有 data-section 屬性的 .nav-link 元素
+            const clickedNavLink = e.target.closest(".nav-link[data-section]");
 
-    // 如果找到了這樣的元素
-    if (clickedNavLink) {
-        e.preventDefault(); // 阻止預設的錨點跳轉
-        const id = clickedNavLink.getAttribute("data-section"); // 從找到的元素獲取 id
+            // 如果找到了這樣的元素
+            if (clickedNavLink) {
+                e.preventDefault(); // 阻止預設的錨點跳轉
+                const id = clickedNavLink.getAttribute("data-section"); // 從找到的元素獲取 id
 
-        if (id === "logout") {
-            signOut(auth).then(() => {
-                console.log("用戶已登出");
-                loginEmail = null;
-                renderNavTabs();
-                showSection("souvenir");
-            }).catch((error) => {
-                console.error("登出失敗:", error);
-            });
-        } else {
-            showSection(id);
-        }
-    }
-});
+                if (id === "logout") {
+                    signOut(auth).then(() => {
+                        console.log("用戶已登出");
+                        loginEmail = null;
+                        renderNavTabs();
+                        showSection("souvenir");
+                    }).catch((error) => {
+                        console.error("登出失敗:", error);
+                    });
+                } else {
+                    showSection(id);
+                }
+            }
+        });
         // 載入紀念品資料的函數
         function loadSouvenirData() {
             fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
@@ -173,6 +180,17 @@
                         const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
                         table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
                         table.querySelector('tbody').innerHTML = tbody;
+                        // 初始化 DataTables
+                        // 注意：這裡應該在 DataTables 函式庫載入後才執行
+                        // 並且要確定 jQuery 是可用的 ($)
+                        if (typeof $ !== 'undefined' && $.fn.DataTable) {
+                            $('#souvenirTable').DataTable({
+                                destroy: true, // 允許重新初始化 DataTables
+                                "language": {
+                                    "url": "//cdn.datatables.net/plug-ins/2.0.8/i18n/zh-Hant.json" // 中文語系檔案
+                                }
+                            });
+                        }
                     }
                 })
                 .catch(error => console.error('載入紀念品資料時發生錯誤:', error));
@@ -191,6 +209,15 @@
                         const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
                         table.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
                         table.querySelector('tbody').innerHTML = tbody;
+                        // 初始化 DataTables
+                        if (typeof $ !== 'undefined' && $.fn.DataTable) {
+                            $('#recommendTable').DataTable({
+                                destroy: true, // 允許重新初始化 DataTables
+                                "language": {
+                                    "url": "//cdn.datatables.net/plug-ins/2.0.8/i18n/zh-Hant.json" // 中文語系檔案
+                                }
+                            });
+                        }
                     }
                 })
                 .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));

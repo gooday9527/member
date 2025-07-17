@@ -1,3 +1,6 @@
+導覽列成功
+
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -17,6 +20,7 @@
             text-align: center;
         }
 
+        /* ----- 從您提供的 style.css 中複製並微調的部分 ----- */
         body {
             background-color: #fffbea;
             font-family: 'Noto Sans TC', sans-serif;
@@ -48,62 +52,65 @@
             padding-left: 1rem !important;
             padding-right: 1rem !important;
             position: relative; 
-            /* min-height 將由 JavaScript 動態設定 */
+            min-height: 600px; 
             padding-top: 3rem; 
             padding-bottom: 3rem; 
-            overflow: hidden; /* 確保內容不會溢出容器邊界 */
-            transition: height 0.3s ease-out; /* 平滑過渡高度變化 */
         }
 
-        /* 區塊 (section) 顯示/隱藏和層疊樣式 - 恢復為純粹的絕對定位切換 */
+        /* 區塊 (section) 顯示/隱藏和層疊樣式 */
         .section {
             display: none; 
-            position: absolute; /* 保持絕對定位 */
-            width: calc(100% - 2rem); /* 根據 container-fluid 的 padding 計算寬度 */
-            top: 1rem; /* 距離 container-fluid 頂部的偏移 */
+            position: absolute; 
+            width: calc(100% - 2rem); 
+            top: 1rem; 
             left: 1rem; 
             right: 1rem; 
-            box-sizing: border-box; /* 確保 padding 不會增加寬度 */
-            opacity: 0; /* 初始透明度為0 */
-            transition: opacity 0.3s ease-out; /* 透明度過渡效果 */
         }
 
         /* 只有帶有 active-section class 的區塊才顯示出來 */
         .section.active-section {
             display: block; 
             z-index: 10; 
-            opacity: 1; /* 顯示時透明度為1 */
-            /* 為了正確獲取高度，我們需要暫時將其從 absolute 變為 relative 或 static */
-            /* 這將由 JS 處理，在計算高度時臨時改變，計算完後恢復 absolute */
         }
 
         /* ===== 表格樣式 ===== */
         table {
             border-collapse: collapse;
-            width: 100%; 
-            word-wrap: break-word; 
+            width: 100%;
+            word-wrap: break-word;
         }
 
         th {
             white-space: nowrap; 
-            text-align: left; 
-            background-color: #fff3cd; 
-            padding: 0.5rem; 
-            vertical-align: middle; 
-            border: 1px solid #dee2e6; 
+            text-align: left;
+            background-color: #fff3cd;
+            padding: 0.5rem;
+            vertical-align: middle;
+            border: 1px solid #dee2e6;
         }
 
         td {
             white-space: normal; 
-            text-align: left; 
-            padding: 0.5rem; 
-            vertical-align: middle; 
-            border: 1px solid #dee2e6; 
+            text-align: left;
+            padding: 0.5rem;
+            vertical-align: middle;
+            border: 1px solid #dee2e6;
         }
 
-        /* 紀念品欄限制最大寬度 (這個保留，因為它不是固定寬度，而是限制) */
+        /* 前三欄欄寬固定 */
+        th:nth-child(1), td:nth-child(1) {
+            width: 40px;
+        }
+        th:nth-child(2), td:nth-child(2) {
+            width: 60px;
+        }
+        th:nth-child(3), td:nth-child(3) {
+            width: 90px;
+        }
+
+        /* 紀念品欄限制最大寬度 */
         th:nth-child(4), td:nth-child(4) {
-            max-width: 300px; /* 只是建議，最終由 DataTables column width 和 scrollX 決定 */
+            max-width: 300px;
         }
 
         /* 推薦分類下拉選單寬度 */
@@ -127,35 +134,14 @@
             font-size: 1.1rem; 
         }
 
-        /* **重要修正**：強制 DataTables 內部容器和表格的寬度與佈局 */
-        /* 這對於 scrollX 的對齊至關重要，因為 DataTables 會生成自己的內聯樣式 */
-        /* DataTables 產生的外層滾動容器 */
-        .dataTables_scroll {
-            width: 100%; /* 確保 DataTables 滾動容器本身佔滿其父容器寬度 */
-            overflow: hidden; /* 讓 DataTables 自己處理內部滾動 */
+        /* 確保 DataTables 生成的表頭和內容容器對齊 */
+        .dataTables_scrollHeadInner, .dataTables_scrollBody {
+            width: 100% !important; 
         }
-        /* DataTables 生成的表頭滾動容器 */
-        div.dataTables_scrollHead {
-            overflow: hidden !important; /* 表頭不允許自身滾動 */
-            width: 100% !important; /* 強制寬度 */
-            border-bottom: none; /* 移除表頭底部邊框，避免雙重邊框 */
+        .dataTables_scrollHead table, .dataTables_scrollBody table {
+            width: 100% !important; 
+            margin-bottom: 0 !important; 
         }
-        /* DataTables 生成的表身滾動容器 */
-        div.dataTables_scrollBody {
-            overflow: auto !important; /* 表身允許水平和垂直滾動 */
-            -webkit-overflow-scrolling: touch; /* 改善 iOS 上的滾動體驗 */
-            width: 100% !important; /* 強制寬度 */
-            border-top: none; /* 移除表身頂部邊框，避免雙重邊框 */
-        }
-
-        /* DataTables 內部的實際 table 元素 */
-        .dataTables_scrollHeadInner table, 
-        .dataTables_scrollBody table {
-            width: 100% !important; /* 強制表格寬度為 100% */
-            margin-bottom: 0 !important; /* 移除底部間距 */
-            table-layout: fixed !important; /* 強制固定列寬模式，非常關鍵 */
-        }
-        
         /* 處理可能由 DataTables 內聯樣式引起的問題 */
         div.dataTables_wrapper div.dataTables_filter label,
         div.dataTables_wrapper div.dataTables_length label {
@@ -169,28 +155,24 @@
             width: auto; 
         }
 
-        /* **手機版 Media Query 強化** */
+
         @media only screen and (max-width: 768px) {
-            /* 移除 body { padding: 5px; } 避免干擾整體縮放 */
-            h3 { font-size: 1.4rem; margin-bottom: 12px; } /* 縮小標題 */
-            .container-fluid {
-                padding-left: 0.5rem !important; /* 減少容器邊距 */
-                padding-right: 0.5rem !important;
-                padding-top: 1rem; /* 調整上下邊距 */
-                padding-bottom: 1rem;
-            }
+            body { padding: 10px; } 
+            h3 { font-size: 1.5rem; margin-bottom: 15px; } 
             .dataTables_wrapper .dataTables_length, 
             .dataTables_wrapper .dataTables_filter {
-                margin-bottom: 10px; 
+                margin-bottom: 12px; 
             }
             .dataTables_wrapper .dataTables_info, 
             .dataTables_wrapper .dataTables_paginate {
-                margin-top: 10px; 
-                font-size: 0.8rem; /* 縮小信息文字 */
+                margin-top: 12px; 
+                font-size: 0.9rem; 
             }
-            .table td, .table th { 
-                font-size: 12px; /* 縮小表格文字 */
-                padding: 4px 2px; /* 縮小表格內邊距 */
+            .table td { 
+                font-size: 14px; 
+            }
+            .table th, .table td { 
+                padding: 6px 3px; 
             }
 
             /* 確保手機版導覽列的漢堡按鈕可見並正常工作 */
@@ -203,14 +185,6 @@
                 flex-grow: 1; 
                 flex-basis: 100%; 
                 margin-top: 0.5rem; 
-            }
-
-            /* **重要**：再次確保手機版 DataTables 的滾動行為 */
-            div.dataTables_scrollHead {
-                overflow-x: hidden !important; 
-            }
-            div.dataTables_scrollBody {
-                overflow-x: auto !important; 
             }
         }
     </style>
@@ -238,7 +212,7 @@
             </div>
         </section>
 
-        <section id="recommend" class="section"> 
+        <section id="recommend" class="section">
             <h3 class="text-center">🌟 推薦清單</h3> 
             <div class="mb-3 d-flex align-items-center gap-2">
                 <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
@@ -297,8 +271,6 @@
         let loginEmail = null;
         const navMenu = document.getElementById("navMenu");
         const allSections = document.querySelectorAll(".section");
-        const containerFluid = document.querySelector(".container-fluid");
-
 
         const tabsBeforeLogin = [
             { id: "souvenir", label: "紀念品" },
@@ -338,75 +310,11 @@
             });
         }
 
-        // **新增函數：動態調整 container-fluid 的高度**
-        function setContainerHeight() {
-            const activeSection = document.querySelector(".section.active-section");
-            if (activeSection) {
-                // 為了正確獲取高度，需要暫時改變其定位和寬度，使其參與正常文檔流
-                // 先保存原始樣式
-                const originalPosition = activeSection.style.position;
-                const originalWidth = activeSection.style.width;
-                const originalDisplay = activeSection.style.display;
-
-                activeSection.style.position = 'static'; // 設為 static，讓其撐開高度
-                activeSection.style.width = ''; // 清空寬度，讓其自動計算
-                activeSection.style.display = 'block'; // 確保是 block 顯示
-                
-                // 立即獲取高度
-                let contentHeight = activeSection.scrollHeight; 
-                
-                // 恢復原始樣式，避免視覺問題
-                activeSection.style.position = originalPosition;
-                activeSection.style.width = originalWidth;
-                activeSection.style.display = originalDisplay;
-
-                // 加上 container-fluid 的 padding-top 和 padding-bottom
-                const containerPaddingTop = parseFloat(window.getComputedStyle(containerFluid).paddingTop);
-                const containerPaddingBottom = parseFloat(window.getComputedStyle(containerFluid).paddingBottom);
-                
-                // 設定 container-fluid 的高度
-                containerFluid.style.height = `${contentHeight + containerPaddingTop + containerPaddingBottom}px`;
-                
-                // 再次嘗試調整 activeSection 的絕對定位寬度，以防誤差
-                const containerPaddingLeft = parseFloat(window.getComputedStyle(containerFluid).paddingLeft);
-                const containerPaddingRight = parseFloat(window.getComputedStyle(containerFluid).paddingRight);
-                activeSection.style.width = `calc(100% - ${containerPaddingLeft + containerPaddingRight}px)`;
-
-            }
-        }
-
-
         function showSection(id) {
-            allSections.forEach(sec => {
-                // 先將所有 section 隱藏並重置為絕對定位
-                sec.classList.remove("active-section");
-                sec.style.opacity = '0';
-                sec.style.display = 'none'; // 隱藏
-                sec.style.position = 'absolute'; // 確保是絕對定位
-                sec.style.zIndex = '1'; // 確保背景層級低
-            });
-
+            allSections.forEach(sec => sec.classList.remove("active-section"));
             const target = document.getElementById(id);
             if (target) {
-                target.style.display = 'block'; // 顯示目標 section
-                target.style.position = 'absolute'; // 確保顯示時是絕對定位
-                target.style.zIndex = '10'; // 確保前景層級高
-
-                // 短暫延遲，讓 display: block 生效後再執行過渡和 active-class
-                setTimeout(() => {
-                    target.classList.add("active-section");
-                    target.style.opacity = '1';
-                    // 這裡是關鍵：確保在 active-section 顯示且動畫開始後，再調整 DataTables 和容器高度
-                    setTimeout(() => {
-                        if (id === 'souvenir' && souvenirDataTable) {
-                            souvenirDataTable.columns.adjust().draw();
-                        } else if (id === 'recommend' && recommendDataTable) {
-                            recommendDataTable.columns.adjust().draw();
-                        }
-                        setContainerHeight(); // 每次切換 section 後調整容器高度
-                    }, 100); // 100ms 延遲，給 CSS 過渡和 DataTables 繪製留足時間
-                }, 10); 
-
+                target.classList.add("active-section");
                 document.querySelectorAll('.nav-link').forEach(link => {
                     link.classList.remove('active');
                 });
@@ -415,7 +323,6 @@
                     activeNavLink.classList.add('active');
                 }
             }
-            
             // 由於導覽列是單頁應用切換，確保在點擊導覽列連結後收起導覽列
             const navbarCollapse = document.getElementById('navbarNav');
             const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
@@ -445,7 +352,6 @@
         });
 
         let souvenirDataTable = null; 
-        let recommendDataTable = null; 
 
         // 將 zh-Hant.json 的內容直接放在這裡
         const dataTablesZhHant = {
@@ -473,122 +379,98 @@
             }
         };
 
-        function initializeDataTable(tableId, data, headers, options) {
-            const tableElement = document.getElementById(tableId);
-            if (!tableElement) return null;
-
-            // 確保 DataTables 實例在重新初始化前被銷毀
-            const currentTableInstance = $.fn.dataTable.isDataTable(`#${tableId}`) ? $(`#${tableId}`).DataTable() : null;
-            if (currentTableInstance) {
-                currentTableInstance.destroy();
-                // 清空表格內容，避免舊數據殘留導致的錯位
-                tableElement.querySelector('thead').innerHTML = ''; 
-                tableElement.querySelector('tbody').innerHTML = ''; 
-            }
-            
-            if (data && data.length > 0 && headers && headers.length > 0) {
-                tableElement.querySelector('thead').innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-                tableElement.querySelector('tbody').innerHTML = data.map(row => `<tr>${headers.map(k => `<td>${row[k] === undefined ? '' : row[k]}</td>`).join('')}</tr>`).join('');
-
-                const defaultOptions = {
-                    destroy: true, 
-                    language: dataTablesZhHant, 
-                    scrollX: true,     
-                    autoWidth: false,  
-                    scrollCollapse: true, 
-                    // **恢復搜尋功能**
-                    searching: true, 
-                    
-                    columns: headers.map((header, index) => {
-                        if (tableId === 'souvenirTable') { 
-                            if (index === 0) return { width: '40px' }; 
-                            if (index === 1) return { width: '60px' }; 
-                            if (index === 2) return { width: '90px' }; 
-                            if (index === 3) return { width: '250px' }; 
-                            // 對於其他列，讓 DataTables 自動分配
-                            return { width: 'auto' }; 
-                        }
-                        if (tableId === 'recommendTable') {
-                            if (index === 0) return { width: '40px' }; 
-                            if (index === 1) return { width: '60px' }; 
-                            if (index === 2) return { width: '90px' }; 
-                            if (index === 3) return { width: '250px' }; 
-                            // 對於其他列，讓 DataTables 自動分配
-                            return { width: 'auto' };
-                        }
-                        return { width: 'auto' }; 
-                    }).filter(Boolean), 
-                    
-                    initComplete: function(settings, json) {
-                        const api = this.api();
-                        // 確保 DataTables 內部列寬調整
-                        api.columns.adjust().draw();
-                        // 延遲設定容器高度，確保繪製完成
-                        setTimeout(() => {
-                            setContainerHeight();
-                        }, 100); 
-                    },
-                    // 每次繪製後調整列寬和容器高度
-                    drawCallback: function(settings) {
-                        const api = this.api();
-                        api.columns.adjust();
-                        setContainerHeight();
-                    }
-                };
-
-                const newDataTable = $(`#${tableId}`).DataTable($.extend(true, defaultOptions, options)); 
-                return newDataTable;
-
-            } else {
-                const maxExpectedColumns = Math.max(
-                    tableId === 'souvenirTable' ? 5 : 0, 
-                    tableId === 'recommendTable' ? 5 : 0 
-                );
-                tableElement.querySelector('thead').innerHTML = ''; 
-                tableElement.querySelector('tbody').innerHTML = `<tr><td colspan="${headers.length > 0 ? headers.length : maxExpectedColumns}" style="text-align: center;">沒有可用的資料</td></tr>`;
-                return null;
-            }
-        }
 
         function loadSouvenirData() {
             fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
                 .then(res => res.json())
                 .then(data => {
-                    const headers = data && data.length > 0 ? Object.keys(data[0]) : [];
-                    souvenirDataTable = initializeDataTable('souvenirTable', data, headers, {
-                        paging: true,      
-                        searching: true,   // **恢復搜尋功能**
-                        info: true,        
-                        ordering: true,    
-                    });
-                    setContainerHeight(); // 數據載入完成後調整容器高度
+                    const tableElement = document.getElementById('souvenirTable');
+                    if (tableElement) {
+                        if (souvenirDataTable) { 
+                            souvenirDataTable.destroy(); 
+                        }
+                        tableElement.querySelector('tbody').innerHTML = ''; 
+                        tableElement.querySelector('thead').innerHTML = ''; 
+
+                        if (data && data.length > 0) {
+                            const headers = Object.keys(data[0]);
+                            const thead = headers.map(h => `<th>${h}</th>`).join('');
+                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+                            
+                            tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+                            tableElement.querySelector('tbody').innerHTML = tbody;
+
+                            // DataTables 初始化
+                            souvenirDataTable = $('#souvenirTable').DataTable({
+                                destroy: true, 
+                                language: dataTablesZhHant, 
+                                paging: true,      
+                                searching: true,   
+                                info: true,        
+                                ordering: true,    
+                                scrollX: true,     
+                                autoWidth: false,  
+                                scrollCollapse: true, 
+                                initComplete: function(settings, json) {
+                                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+                               }
+                            });
+                        } else {
+                            tableElement.querySelector('thead').innerHTML = '';
+                            tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                            souvenirDataTable = null; 
+                        }
+                    }
                 })
-                .catch(error => {
-                    console.error('載入紀念品資料時發生錯誤:', error);
-                    initializeDataTable('souvenirTable', [], [], { searching: true }); // **恢復搜尋功能，即使無數據**
-                    setContainerHeight(); // 錯誤發生後也調整容器高度
-                });
+                .catch(error => console.error('載入紀念品資料時發生錯誤:', error));
         }
+
+        let recommendDataTable = null; 
 
         function loadRecommend(sheetName) {
             const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
-                    const headers = data && data.length > 0 ? Object.keys(data[0]) : [];
-                    recommendDataTable = initializeDataTable('recommendTable', data, headers, {
-                        searching: false, // 推薦清單依然不顯示搜尋框
-                        paging: false,    
-                        info: false,      
-                        ordering: true,    
-                    });
-                    setContainerHeight(); // 數據載入完成後調整容器高度
+                    const tableElement = document.getElementById('recommendTable');
+                    if (tableElement) {
+                        if (recommendDataTable) { 
+                            recommendDataTable.destroy(); 
+                        }
+                        tableElement.querySelector('tbody').innerHTML = '';
+                        tableElement.querySelector('thead').innerHTML = ''; 
+
+                        if (data && data.length > 0) {
+                            const headers = Object.keys(data[0]);
+                            const thead = headers.map(h => `<th>${h}</th>`).join('');
+                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+                            
+                            tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+                            tableElement.querySelector('tbody').innerHTML = tbody;
+
+                            // DataTables 初始化
+                            recommendDataTable = $('#recommendTable').DataTable({
+                                destroy: true, 
+                                searching: false, 
+                                paging: false,    
+                                info: false,      
+                                language: dataTablesZhHant, 
+                                ordering: true,    
+                                scrollX: true,     
+                                autoWidth: false,  
+                                scrollCollapse: true, 
+                                initComplete: function(settings, json) {
+                                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+                                }
+                            });
+                        } else {
+                            tableElement.querySelector('thead').innerHTML = '';
+                            tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                            recommendDataTable = null; 
+                        }
+                    }
                 })
-                .catch(error => {
-                    console.error('載入推薦清單資料時發生錯誤:', error);
-                    initializeDataTable('recommendTable', [], [], { searching: false }); // 推薦清單依然不顯示搜尋框
-                    setContainerHeight(); // 錯誤發生後也調整容器高度
-                });
+                .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -597,9 +479,9 @@
                 console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
                 
                 renderNavTabs(); 
-                showSection("souvenir"); // 預設顯示紀念品區塊，會觸發高度調整
+                showSection("souvenir"); 
 
-                loadSouvenirData(); // 首次載入紀念品資料
+                loadSouvenirData(); 
 
                 const recommendSheetSelect = document.getElementById('recommendSheet');
                 if (recommendSheetSelect) {
@@ -611,23 +493,13 @@
             });
         });
 
-        let resizeTimer;
+        // 監聽視窗大小變化，當視窗大小改變時，重新調整 DataTables 列寬
         $(window).on('resize', function () {
-            clearTimeout(resizeTimer); 
-            resizeTimer = setTimeout(function() {
-                if ($('#souvenir').hasClass('active-section') && souvenirDataTable) {
-                    souvenirDataTable.columns.adjust().draw();
+            setTimeout(function() {
+                if ($.fn.dataTable.tables(true).length) { 
+                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
                 }
-                if ($('#recommend').hasClass('active-section') && recommendDataTable) {
-                    recommendDataTable.columns.adjust().draw();
-                }
-                setContainerHeight(); // 視窗大小改變時調整容器高度
-            }, 200); // 稍微增加延遲，確保 resize 穩定後再調整
-        });
-
-        // 確保在頁面完全載入後，初始設置一次高度
-        $(window).on('load', function() {
-            setContainerHeight();
+            }, 100);
         });
     </script>
 </body>

@@ -104,55 +104,47 @@
             max-width: 250px; /* 下拉選單最大寬度 */
         }
 
-        /* DataTables 相關的自訂樣式 */
-        .dataTables_wrapper .dataTables_length select {
-            min-width: 80px; 
-            width: auto; 
-            display: inline-block; 
-        }
-        .dataTables_wrapper .dataTables_length, 
-        .dataTables_wrapper .dataTables_filter { 
-            margin-bottom: 18px; 
-        }
-        .dataTables_wrapper .dataTables_info, 
-        .dataTables_wrapper .dataTables_paginate { 
-            margin-top: 12px; 
-            font-size: 1.1rem; 
+/* ... (現有的 CSS 樣式，在 DataTables 相關的自訂樣式區塊內) ... */
+
+        /* 徹底移除 DataTables 分頁按鈕的所有格子、背景和陰影 */
+        .dataTables_wrapper .dataTables_paginate .paginate_button,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            border: none !important;                /* 徹底移除所有邊框 */
+            background: none !important;            /* 徹底移除所有背景 */
+            box-shadow: none !important;            /* 徹底移除所有陰影 */
+            padding: 0.5em 0.8em !important;        /* 保持適當的間距，您可以微調 */
+            margin: 0 2px !important;               /* 頁碼之間的小間距 */
+            border-radius: 0 !important;            /* 移除所有圓角 */
+            cursor: pointer;                        /* 確保可點擊的頁碼有鼠標指針 */
         }
 
-        /* 新增或修改以下規則，用於移除分頁按鈕的格子樣式 */
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            border: none !important; /* 移除邊框 */
-            background: none !important; /* 移除背景 */
-            padding: 0.5em 0.8em !important; /* 調整內邊距，讓數字之間有適當間距，但不形成方塊感 */
-            margin: 0 !important; /* 移除外部邊距 */
-            border-radius: 0 !important; /* 移除圓角 */
-            color: inherit !important; /* 繼承父元素文字顏色 */
-        }
-
-        /* 針對當前頁碼的樣式調整，使其僅高亮顯示文字 */
+        /* 針對當前頁碼的文字顏色和樣式 */
         .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            background-color: transparent !important; /* 移除背景色 */
-            color: #0d6efd !important; /* 設置為 Bootstrap 的藍色，作為高亮色，可以自訂 */
-            font-weight: bold; /* 加粗當前頁碼 */
-            box-shadow: none !important; /* 移除陰影 */
+            color: #0d6efd !important; /* 當前頁碼的文字顏色，例如 Bootstrap primary 藍色 */
+            font-weight: bold !important; /* 加粗當前頁碼 */
+            text-decoration: underline !important; /* 當前頁碼可以加底線強調 */
         }
 
-        /* 針對啟用狀態的分頁按鈕的 hover 和 active 效果 */
-        .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.disabled):not(.current) {
-            background-color: transparent !important; /* 移除 hover 時的背景色 */
+        /* 針對非當前頁碼的文字顏色 */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:not(.current):not(.disabled) {
+            color: #495057 !important; /* 非當前頁碼的文字顏色，例如深灰色 */
+        }
+
+        /* 針對非當前頁碼在 hover 時的樣式 */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:not(.current):not(.disabled):hover {
             color: #0a58ca !important; /* hover 時的文字顏色 */
-            text-decoration: underline; /* 添加底線作為 hover 效果 */
-            border: none !important; /* 確保沒有邊框 */
-            box-shadow: none !important; /* 確保沒有陰影 */
+            text-decoration: underline !important; /* hover 時添加底線 */
         }
-
+        
         /* 針對禁用狀態的按鈕（例如「上一頁」「下一頁」在首尾時） */
         .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
             color: #6c757d !important; /* 禁用狀態的顏色 */
-            background: none !important; /* 移除背景 */
-            border: none !important; /* 移除邊框 */
+            cursor: not-allowed; /* 禁用時顯示不可點擊的鼠標 */
         }
+        /* ... (其餘 CSS 樣式) ... */
 
 
         /* 確保 DataTables 生成的表頭和內容容器對齊 */

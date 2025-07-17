@@ -214,6 +214,8 @@ firebase.auth().onAuthStateChanged((user) => {
       window.location.href = "login.html";
     }
   });
+  // ✅ 加這一行就不會報錯 auth is not defined
+  const auth = firebase.auth();  
 </script>
 </body>
 </html>

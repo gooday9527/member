@@ -95,13 +95,13 @@ td {
 
 /* ✅ 前三欄欄寬固定 */
 th:nth-child(1), td:nth-child(1) {
-    width: 40px;
+    width: 30px;
 }
 th:nth-child(2), td:nth-child(2) {
     width: 60px;
 }
 th:nth-child(3), td:nth-child(3) {
-    width: 90px;
+    width: 60px;
 }
 
 /* ✅ 紀念品欄限制最大寬度 */

@@ -111,3 +111,23 @@ th:nth-child(4), td:nth-child(4) {
 #recommendSheet {
     max-width: 300px;
 }
+
+/* ===== 推薦清單欄寬調整 ===== */
+#recommendTable th:nth-child(1),
+#recommendTable td:nth-child(1) {
+    width: 80px;  /* 股號欄 */
+    white-space: nowrap;
+}
+
+#recommendTable th:nth-child(2),
+#recommendTable td:nth-child(2) {
+    width: 160px;  /* 股名欄 */
+    white-space: nowrap;
+}
+
+/* 可選：限制整體推薦清單表格寬度不超出邊界 */
+#recommendTable {
+    table-layout: auto;
+    word-break: break-word;
+}
+

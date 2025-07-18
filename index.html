@@ -430,7 +430,7 @@ function loadSouvenirDataWithoutDataTables() {
             const headers = Object.keys(data[0]);
             let currentPage = 1;
             let rowsPerPage = 10;
-            let sortKey = headers[0];
+            let sortKey = "股號"; // 強制用 股號 排序
             let sortAsc = true;
             let sortedData = [...data];
             let filteredData = [...data];

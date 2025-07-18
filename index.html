@@ -388,50 +388,92 @@
         };
 
 
-        function loadSouvenirData() {
-            fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
-                .then(res => res.json())
-                .then(data => {
-                    const tableElement = document.getElementById('souvenirTable');
-                    if (tableElement) {
-                        if (souvenirDataTable) { 
-                            souvenirDataTable.destroy(); 
-                        }
-                        tableElement.querySelector('tbody').innerHTML = ''; 
-                        tableElement.querySelector('thead').innerHTML = ''; 
+function loadSouvenirDataWithoutDataTables() {
+    fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
+        .then(res => res.json())
+        .then(data => {
+            const tableElement = document.getElementById('souvenirTable');
+            const tableHead = tableElement.querySelector('thead');
+            const tableBody = tableElement.querySelector('tbody');
+            const rowsPerPage = 10;
+            let currentPage = 1;
 
-                        if (data && data.length > 0) {
-                            const headers = Object.keys(data[0]);
-                            const thead = headers.map(h => `<th>${h}</th>`).join('');
-                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]|| ''}</td>`).join('')}</tr>`).join('');
-                            
-                            tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
-                            tableElement.querySelector('tbody').innerHTML = tbody;
+            if (!data || data.length === 0) {
+                tableHead.innerHTML = '';
+                tableBody.innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                return;
+            }
 
-                            // DataTables 初始化
-                            souvenirDataTable = $('#souvenirTable').DataTable({
-                                destroy: true, 
-                                language: dataTablesZhHant, 
-                                paging: true,      
-                                searching: true,   
-                                info: true,        
-                                ordering: true,    
-                                scrollX: true,     
-                                autoWidth: false,  
-                                scrollCollapse: true, 
-                                initComplete: function(settings, json) {
-                                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-                                }
-                            });
-                        } else {
-                            tableElement.querySelector('thead').innerHTML = '';
-                            tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                            souvenirDataTable = null; 
-                        }
-                    }
-                })
-                .catch(error => console.error('載入紀念品資料時發生錯誤:', error));
-        }
+            const headers = Object.keys(data[0]);
+
+            // Render Header
+            tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} ▲</th>`).join('')}</tr>`;
+
+            let sortedData = [...data];
+            let sortKey = headers[0];
+            let sortAsc = true;
+
+            function renderTable() {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                const pageData = sortedData.slice(start, end);
+                tableBody.innerHTML = pageData.map(row =>
+                    `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`
+                ).join('');
+
+                renderPagination();
+            }
+
+            function renderPagination() {
+                const totalPages = Math.ceil(sortedData.length / rowsPerPage);
+                const paginationRow = document.createElement('tr');
+                paginationRow.innerHTML = `<td colspan="${headers.length}" style="text-align:center;">
+                    <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上一頁</button>
+                    ${Array.from({length: totalPages}, (_, i) => `
+                        <button ${i + 1 === currentPage ? 'disabled' : ''} onclick="goToPage(${i + 1})">${i + 1}</button>
+                    `).join('')}
+                    <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下一頁</button>
+                </td>`;
+                tableBody.appendChild(paginationRow);
+            }
+
+            function sortTable(key) {
+                sortAsc = (sortKey === key) ? !sortAsc : true;
+                sortKey = key;
+                sortedData.sort((a, b) => {
+                    const valA = a[key] || '';
+                    const valB = b[key] || '';
+                    return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                });
+                currentPage = 1;
+                renderTable();
+            }
+
+            headers.forEach(h => {
+                const th = tableHead.querySelector(`th[data-key="${h}"]`);
+                if (th) {
+                    th.style.cursor = 'pointer';
+                    th.addEventListener('click', () => sortTable(h));
+                }
+            });
+
+            window.changePage = function(offset) {
+                currentPage += offset;
+                renderTable();
+            };
+
+            window.goToPage = function(page) {
+                currentPage = page;
+                renderTable();
+            };
+
+            sortTable(sortKey); // Initial sort and render
+        })
+        .catch(error => {
+            console.error('載入紀念品資料時發生錯誤:', error);
+        });
+}
+
 
         let recommendDataTable = null; 
 

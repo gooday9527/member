@@ -395,8 +395,20 @@ function loadSouvenirDataWithoutDataTables() {
             const tableElement = document.getElementById('souvenirTable');
             const tableHead = tableElement.querySelector('thead');
             const tableBody = tableElement.querySelector('tbody');
+            const container = document.querySelector('#souvenir .mt-3');
+            container.insertAdjacentHTML('afterbegin', `
+                <div class="d-flex justify-content-end mb-2">
+                    <label class="form-label me-2" for="souvenirSearch">搜尋：</label>
+                    <input type="text" id="souvenirSearch" class="form-control form-control-sm" style="max-width: 300px;">
+                </div>
+            `);
+
             const rowsPerPage = 10;
             let currentPage = 1;
+            let filteredData = [...data];
+            let sortedData = [...data];
+            let sortKey = Object.keys(data[0])[0];
+            let sortAsc = true;
 
             if (!data || data.length === 0) {
                 tableHead.innerHTML = '';
@@ -409,45 +421,63 @@ function loadSouvenirDataWithoutDataTables() {
             // Render Header
             tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} ▲</th>`).join('')}</tr>`;
 
-            let sortedData = [...data];
-            let sortKey = headers[0];
-            let sortAsc = true;
-
             function renderTable() {
                 const start = (currentPage - 1) * rowsPerPage;
                 const end = start + rowsPerPage;
-                const pageData = sortedData.slice(start, end);
+                const pageData = filteredData.slice(start, end);
                 tableBody.innerHTML = pageData.map(row =>
                     `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`
                 ).join('');
-
                 renderPagination();
             }
 
             function renderPagination() {
-                const totalPages = Math.ceil(sortedData.length / rowsPerPage);
-                const maxPageLinks = 5; // 中央顯示幾個頁碼
-                let startPage = Math.max(1, currentPage - Math.floor(maxPageLinks / 2));
-                let endPage = Math.min(totalPages, startPage + maxPageLinks - 1);
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    const maxVisible = 5; // 最多顯示幾個連續頁碼
+    const pageButtons = [];
 
-                // 確保總是顯示固定數量頁碼
-                if (endPage - startPage < maxPageLinks - 1) {
-                    startPage = Math.max(1, endPage - maxPageLinks + 1);
-                }
+    // 前一頁按鈕
+    pageButtons.push(`
+        <button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上一頁</button>
+    `);
 
-                const paginationRow = document.createElement('tr');
-                paginationRow.innerHTML = `
-                    <td colspan="${headers.length}" style="text-align:center;">
-                        <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上一頁</button>
-                        ${Array.from({length: endPage - startPage + 1}, (_, i) => {
-                            const pageNum = startPage + i;
-                            return `<button ${pageNum === currentPage ? 'disabled' : ''} onclick="goToPage(${pageNum})">${pageNum}</button>`;
-                        }).join('')}
-                        <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下一頁</button>
-                    </td>
-                `;
-                tableBody.appendChild(paginationRow);
-            }
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start < maxVisible - 1) {
+        start = Math.max(1, end - maxVisible + 1);
+    }
+
+    if (start > 1) {
+        pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
+        if (start > 2) {
+            pageButtons.push(`<span class="me-1">...</span>`);
+        }
+    }
+
+    for (let i = start; i <= end; i++) {
+        pageButtons.push(`
+            <button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>
+        `);
+    }
+
+    if (end < totalPages) {
+        if (end < totalPages - 1) {
+            pageButtons.push(`<span class="me-1">...</span>`);
+        }
+        pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
+    }
+
+    // 後一頁按鈕
+    pageButtons.push(`
+        <button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下一頁</button>
+    `);
+
+    const paginationRow = document.createElement('tr');
+    paginationRow.innerHTML = `<td colspan="${headers.length}" class="text-center">${pageButtons.join('')}</td>`;
+    tableBody.appendChild(paginationRow);
+}
+
 
             function sortTable(key) {
                 sortAsc = (sortKey === key) ? !sortAsc : true;
@@ -455,8 +485,23 @@ function loadSouvenirDataWithoutDataTables() {
                 sortedData.sort((a, b) => {
                     const valA = a[key] || '';
                     const valB = b[key] || '';
-                    return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                    const isNumber = !isNaN(valA) && !isNaN(valB);
+                    return isNumber
+                        ? (sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA))
+                        : (sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA));
                 });
+                applySearch(document.getElementById("souvenirSearch").value);
+            }
+
+            function applySearch(query) {
+                query = query.trim().toLowerCase();
+                if (!query) {
+                    filteredData = [...sortedData];
+                } else {
+                    filteredData = sortedData.filter(row =>
+                        headers.some(h => (row[h] || '').toLowerCase().includes(query))
+                    );
+                }
                 currentPage = 1;
                 renderTable();
             }
@@ -469,6 +514,10 @@ function loadSouvenirDataWithoutDataTables() {
                 }
             });
 
+            document.getElementById("souvenirSearch").addEventListener("input", (e) => {
+                applySearch(e.target.value);
+            });
+
             window.changePage = function(offset) {
                 currentPage += offset;
                 renderTable();
@@ -479,12 +528,13 @@ function loadSouvenirDataWithoutDataTables() {
                 renderTable();
             };
 
-            sortTable(sortKey); // Initial sort and render
+            sortTable(sortKey); // initial render
         })
         .catch(error => {
             console.error('載入紀念品資料時發生錯誤:', error);
         });
 }
+
 
 
         let recommendDataTable = null; 

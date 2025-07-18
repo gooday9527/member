@@ -82,7 +82,7 @@
 
         /* 表頭單元格 (<th>) 的樣式 */
         th {
-            white-space: nowrap; /* 表頭文字不換行，確保標題完整顯示， normal */
+            white-space: normal; /* 表頭文字自動換行 */
             text-align: left; /* 文字左對齊 */
             background-color: #fff3cd; /* 背景顏色 */
             padding: 0.5rem; /* 內邊距 */
@@ -122,10 +122,16 @@
         }
 
         /* 針對 DataTables 分頁按鈕的更精確樣式覆蓋 */
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            /* 針對所有分頁按鈕的通用樣式 */
+        /* 強制重置所有 paginate_button 相關的邊框、背景、陰影和圓角 */
+        .dataTables_wrapper .dataTables_paginate .paginate_button,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.active { /* 添加 .active */
             border: none !important;                /* 徹底移除所有邊框 */
-            background: none !important;            /* 徹底移除所有背景 */
+            background-color: transparent !important; /* 確保背景是透明的 */
+            background-image: none !important;      /* 移除任何背景圖片 */
             box-shadow: none !important;            /* 徹底移除所有陰影 */
             padding: 0.5em 0.8em !important;        /* 保持適當的間距，您可以微調 */
             margin: 0 2px !important;               /* 頁碼之間的小間距 */
@@ -156,7 +162,6 @@
             color: #6c757d !important; /* 禁用狀態的顏色 */
             cursor: not-allowed; /* 禁用時顯示不可點擊的鼠標 */
         }
-
 
         /* 確保 DataTables 生成的表頭和內容容器對齊 */
         /* DataTables 會生成額外的 div 來包裹表頭和表身，為了確保它們的對齊，需要調整這些 div 的寬度 */
@@ -246,6 +251,7 @@
                     <option value="禮券類">禮券類</option>
                     <option value="小資族">小資族</option>
                     <option value="入門組">入門組</option>
+                    <option value="我全都要（不需證件）">我全都要（不需證件）</option>
                 </select>
             </div>
             <div class="mt-3">
@@ -360,7 +366,7 @@
             const navbarCollapse = document.getElementById('navbarNav');
             const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse); // 獲取 Bootstrap 的折疊實例
             if (bsCollapse && navbarCollapse.classList.contains('show')) {
-                 bsCollapse.hide(); // 如果導覽列處於展開狀態，則收起它
+                bsCollapse.hide(); // 如果導覽列處於展開狀態，則收起它
             }
         }
 
@@ -395,26 +401,26 @@
 
         // DataTables 繁體中文語系配置
         const dataTablesZhHant = {
-            "decimal":        "",
-            "emptyTable":     "目前沒有資料",
-            "info":           "顯示第 _START_ 到 _END_ 筆資料，共 _TOTAL_ 筆",
-            "infoEmpty":      "目前沒有資料",
-            "infoFiltered":   "(從 _MAX_ 筆資料中篩選)",
-            "infoPostFix":    "",
-            "thousands":      ",",
-            "lengthMenu":     "顯示 _MENU_ 筆資料",
+            "decimal": "",
+            "emptyTable": "目前沒有資料",
+            "info": "顯示第 _START_ 到 _END_ 筆資料，共 _TOTAL_ 筆",
+            "infoEmpty": "目前沒有資料",
+            "infoFiltered": "(從 _MAX_ 筆資料中篩選)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "顯示 _MENU_ 筆資料",
             "loadingRecords": "載入中...",
-            "processing":     "處理中...",
-            "search":         "搜尋:",
-            "zeroRecords":    "沒有符合的結果",
+            "processing": "處理中...",
+            "search": "搜尋:",
+            "zeroRecords": "沒有符合的結果",
             "paginate": {
-                "first":    "首頁",
-                "last":     "末頁",
-                "next":     "下一頁",
+                "first": "首頁",
+                "last": "末頁",
+                "next": "下一頁",
                 "previous": "上一頁"
             },
             "aria": {
-                "sortAscending":  ": 升冪排列",
+                "sortAscending": ": 升冪排列",
                 "sortDescending": ": 降冪排列"
             }
         };
@@ -446,12 +452,12 @@
                             souvenirDataTable = $('#souvenirTable').DataTable({
                                 destroy: true, // 允許重新初始化 DataTables (重要，因為表格內容會動態更新)
                                 language: dataTablesZhHant, // 設定為繁體中文語系
-                                paging: true,      // 啟用分頁功能
-                                searching: true,   // 啟用搜尋功能
-                                info: true,        // 啟用顯示資料信息 (例如 "顯示第 X 到 Y 筆資料")
-                                ordering: true,    // 啟用排序功能
-                                scrollX: true,     // 啟用水平滾動條，當表格內容超出容器寬度時顯示
-                                autoWidth: false,  // 禁用自動列寬，讓 CSS 控制或手動設定列寬
+                                paging: true,       // 啟用分頁功能
+                                searching: true,    // 啟用搜尋功能
+                                info: true,         // 啟用顯示資料信息 (例如 "顯示第 X 到 Y 筆資料")
+                                ordering: true,     // 啟用排序功能
+                                scrollX: true,      // 啟用水平滾動條，當表格內容超出容器寬度時顯示
+                                autoWidth: false,   // 禁用自動列寬，讓 CSS 控制或手動設定列寬
                                 scrollCollapse: true, // 啟用滾動塌陷，讓表格在滾動時高度適應
                                 initComplete: function(settings, json) {
                                     // DataTables 初始化完成後的回調函數
@@ -500,9 +506,9 @@
                                 paging: false,    // 推薦清單不啟用分頁功能
                                 info: false,      // 推薦清單不顯示資料信息
                                 language: dataTablesZhHant, // 設定為繁體中文語系
-                                ordering: true,    // 啟用排序功能
-                                scrollX: true,     // 啟用水平滾動條
-                                autoWidth: false,  // 禁用自動列寬
+                                ordering: true,   // 啟用排序功能
+                                scrollX: true,    // 啟用水平滾動條
+                                autoWidth: false,   // 禁用自動列寬
                                 scrollCollapse: true, // 啟用滾動塌陷
                                 initComplete: function(settings, json) {
                                     // DataTables 初始化完成後，調整所有 DataTables 實例的列寬
@@ -522,6 +528,16 @@
 
         // 當 DOM 內容完全載入後執行
         document.addEventListener('DOMContentLoaded', () => {
+            // *** 新增的代碼開始 (用於修復分頁格子背景) ***
+            // 禁用 DataTables 對 Bootstrap 分頁按鈕樣式的自動應用
+            // 這會阻止 DataTables 添加如 'btn', 'btn-secondary' 等 Bootstrap 類到分頁按鈕上
+            $.extend(true, $.fn.dataTable.ext.classes, {
+                "sPageButton": "paginate_button", // 恢復到 DataTables 自己的基本類名，不帶 btn btn-secondary
+                "sPageButtonActive": "paginate_button current", // 同上
+                "sPageButtonDisabled": "paginate_button disabled" // 同上
+            });
+            // *** 新增的代碼結束 ***
+
             // 監聽 Firebase 認證狀態的變化
             onAuthStateChanged(auth, (user) => {
                 loginEmail = user ? user.email : null; // 更新登入郵箱狀態

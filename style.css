@@ -111,9 +111,15 @@ th:nth-child(4), td:nth-child(4) {
   background: transparent;
   border: none;
   font-weight: bold;
-  font-size: 0.95rem;
-  color: #ff7043;
+  font-size: 1.1rem;  /* 👈 控制字體大小，可改成 1.2rem、1.3rem 看效果 */
+  color: #e65100;     /* 深橘色 */
   margin: 0 4px;
+}
+
+#souvenirPagination button.active {
+  color: white;
+  background-color: #ff9800; /* 深橘色背景 */
+  border-radius: 4px;
 }
 
 #souvenirPaginationWrapper {

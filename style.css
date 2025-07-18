@@ -1,3 +1,5 @@
+/* styles.css */
+
 /* ===== 全站通用樣式 ===== */
 body {
     background-color: #fffbea;
@@ -10,6 +12,9 @@ body {
 /* 導覽列樣式 */
 .navbar {
     background-color: #ffe082;
+    /* 您原來的 .navbar 樣式中還有 padding-left 和 padding-right，如果需要可以補回 */
+    /* padding-left: 1rem; */
+    /* padding-right: 1rem; */
 }
 
 /* 確保導覽列的排版 */
@@ -62,22 +67,72 @@ body {
     z-index: 10; /* 確保活動區塊在最上層 */
 }
 
+/* 確保紀念品、推薦清單、注意事項、關於我 的標題置中 */
+#souvenir h3, #recommend h3, #notice h3, #about h3 {
+    text-align: center;
+}
 
-/* ===== 表格樣式 ===== */
+/* DataTables 相關的自訂樣式 (從您上一個提供的 style 區塊) */
+.dataTables_wrapper .dataTables_length select {
+    min-width: 80px;
+    width: auto;
+    display: inline-block;
+}
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 18px;
+}
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    margin-top: 16px;
+    font-size: 1.1rem;
+}
+
+/* 確保 DataTables 生成的表頭和內容容器對齊 */
+.dataTables_scrollHeadInner, .dataTables_scrollBody {
+    width: 100% !important;
+}
+.dataTables_scrollHead table, .dataTables_scrollBody table {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+}
+/* 處理可能由 DataTables 內聯樣式引起的問題 */
+div.dataTables_wrapper div.dataTables_filter label,
+div.dataTables_wrapper div.dataTables_length label {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+div.dataTables_wrapper div.dataTables_filter input {
+    box-sizing: border-box;
+    max-width: 100%;
+    width: auto;
+}
+
+
+/* ===== 表格樣式 (優先使用您「原有的」更詳細的 DataTables 相關樣式，並確保欄寬設定) ===== */
+/* 如果要讓表格響應式且有橫向滾動條，建議使用 Bootstrap 的 .table-responsive 包裹 */
+/* 但是 DataTables 啟用 scrollX 後，會自己處理滾動，這兩個可能會衝突。
+   如果您要用 DataTables 的 scrollX，通常不需要 .table-responsive。
+   這裡保留 .table-responsive 只是為了程式碼完整性，實際使用時需考慮 DataTables 設定。
+*/
 .table-responsive {
     width: 100%;
-    overflow-x: hidden; /* 禁止橫向滾動 */
+    /* 這裡的 overflow-x: hidden 可能會與 DataTables 的 scrollX 衝突 */
+    /* 如果 DataTables 啟用 scrollX，則 DataTables 會創建自己的滾動條 */
+    /* 您可能需要移除或調整此處的 overflow-x: hidden */
+    overflow-x: auto; /* 改為 auto 以便在小螢幕時表格可以滾動，或者移除它讓DataTables處理 */
 }
 
 table {
     border-collapse: collapse;
     width: 100%;
-    table-layout: auto; /* 自動依內容調整欄寬 */
+    table-layout: auto; /* 自動依內容調整欄寬，與 DataTables 的 autoWidth 協作 */
     word-wrap: break-word;
 }
 
 th {
-    white-space: nowrap; /* ✅ 標題欄不換行 */
+    white-space: nowrap; /* 標題欄不換行 */
     text-align: left;
     background-color: #fff3cd;
     padding: 0.5rem;
@@ -86,14 +141,14 @@ th {
 }
 
 td {
-    white-space: normal; /* ✅ 內容欄可換行 */
+    white-space: normal; /* 內容欄可換行 */
     text-align: left;
     padding: 0.5rem;
     vertical-align: middle;
     border: 1px solid #dee2e6;
 }
 
-/* ✅ 前三欄欄寬固定 */
+/* 前三欄欄寬固定 */
 th:nth-child(1), td:nth-child(1) {
     width: 30px;
 }
@@ -104,12 +159,44 @@ th:nth-child(3), td:nth-child(3) {
     width: 60px;
 }
 
-/* ✅ 紀念品欄限制最大寬度 */
+/* 紀念品欄限制最大寬度 */
 th:nth-child(4), td:nth-child(4) {
     max-width: 300px;
 }
 
-/* ✅ 推薦分類下拉選單寬度 */
+/* 推薦分類下拉選單寬度 */
 #recommendSheet {
     max-width: 300px;
+}
+
+@media only screen and (max-width: 768px) {
+    body { padding: 10px; }
+    h3 { font-size: 1.5rem; margin-bottom: 15px; }
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 12px;
+    }
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+        margin-top: 12px;
+        font-size: 0.9rem;
+    }
+    .table td {
+        font-size: 14px;
+    }
+    .table th, .table td {
+        padding: 6px 3px;
+    }
+
+    /* 確保手機版導覽列的漢堡按鈕可見並正常工作 */
+    .navbar-toggler {
+        display: block;
+        border: 1px solid rgba(0,0,0,.1);
+    }
+    /* 讓導覽列內容在手機上堆疊 */
+    .navbar-collapse {
+        flex-grow: 1;
+        flex-basis: 100%;
+        margin-top: 0.5rem;
+    }
 }

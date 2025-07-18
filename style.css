@@ -1,5 +1,3 @@
-/* styles.css */
-
 /* ===== 全站通用樣式 ===== */
 body {
     background-color: #fffbea;
@@ -12,9 +10,6 @@ body {
 /* 導覽列樣式 */
 .navbar {
     background-color: #ffe082;
-    /* 從您上一個 index.html 裡的 style 複製過來的 padding */
-    padding-left: 1rem;
-    padding-right: 1rem;
 }
 
 /* 確保導覽列的排版 */
@@ -67,32 +62,22 @@ body {
     z-index: 10; /* 確保活動區塊在最上層 */
 }
 
-/* 確保紀念品、推薦清單、注意事項、關於我 的標題置中 */
-#souvenir h3, #recommend h3, #notice h3, #about h3 {
-    text-align: center;
-}
 
 /* ===== 表格樣式 ===== */
-/* DataTables 在啟用 scrollX 後會自行處理響應式和滾動條，
-   通常不需要外部的 .table-responsive 包裹，也不需要對 table 設置 overflow-x: hidden。
-   如果您要用 DataTables 的 scrollX，請依賴其內部機制。
-   如果這裡的 .table-responsive 引起問題，可以考慮從 HTML 中移除包裹。
-*/
 .table-responsive {
     width: 100%;
-    /* overflow-x: hidden; 這裡改為 auto 以避免衝突或提供備用滾動 */
-    overflow-x: auto;
+    overflow-x: hidden; /* 禁止橫向滾動 */
 }
 
 table {
     border-collapse: collapse;
     width: 100%;
-    table-layout: auto; /* 自動依內容調整欄寬，與 DataTables 的 autoWidth 協作 */
+    table-layout: auto; /* 自動依內容調整欄寬 */
     word-wrap: break-word;
 }
 
 th {
-    white-space: nowrap; /* 標題欄不換行 */
+    white-space: nowrap; /* ✅ 標題欄不換行 */
     text-align: left;
     background-color: #fff3cd;
     padding: 0.5rem;
@@ -101,14 +86,14 @@ th {
 }
 
 td {
-    white-space: normal; /* 內容欄可換行 */
+    white-space: normal; /* ✅ 內容欄可換行 */
     text-align: left;
     padding: 0.5rem;
     vertical-align: middle;
     border: 1px solid #dee2e6;
 }
 
-/* 前三欄欄寬固定 */
+/* ✅ 前三欄欄寬固定 */
 th:nth-child(1), td:nth-child(1) {
     width: 30px;
 }
@@ -119,83 +104,12 @@ th:nth-child(3), td:nth-child(3) {
     width: 60px;
 }
 
-/* 紀念品欄限制最大寬度 */
+/* ✅ 紀念品欄限制最大寬度 */
 th:nth-child(4), td:nth-child(4) {
     max-width: 300px;
 }
 
-/* 推薦分類下拉選單寬度 */
+/* ✅ 推薦分類下拉選單寬度 */
 #recommendSheet {
     max-width: 300px;
-}
-
-/* DataTables 相關的自訂樣式 */
-.dataTables_wrapper .dataTables_length select {
-    min-width: 80px;
-    width: auto;
-    display: inline-block;
-}
-.dataTables_wrapper .dataTables_length,
-.dataTables_wrapper .dataTables_filter {
-    margin-bottom: 18px;
-}
-.dataTables_wrapper .dataTables_info,
-.dataTables_wrapper .dataTables_paginate {
-    margin-top: 16px;
-    font-size: 1.1rem;
-}
-
-/* 確保 DataTables 生成的表頭和內容容器對齊 */
-/* 這些 !important 確保您的規則覆蓋 DataTables 的內聯樣式 */
-.dataTables_scrollHeadInner, .dataTables_scrollBody {
-    width: 100% !important;
-}
-.dataTables_scrollHead table, .dataTables_scrollBody table {
-    width: 100% !important;
-    margin-bottom: 0 !important;
-}
-/* 處理可能由 DataTables 內聯樣式引起的問題 */
-div.dataTables_wrapper div.dataTables_filter label,
-div.dataTables_wrapper div.dataTables_length label {
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
-}
-div.dataTables_wrapper div.dataTables_filter input {
-    box-sizing: border-box;
-    max-width: 100%;
-    width: auto;
-}
-
-
-@media only screen and (max-width: 768px) {
-    body { padding: 10px; }
-    h3 { font-size: 1.5rem; margin-bottom: 15px; }
-    .dataTables_wrapper .dataTables_length,
-    .dataTables_wrapper .dataTables_filter {
-        margin-bottom: 12px;
-    }
-    .dataTables_wrapper .dataTables_info,
-    .dataTables_wrapper .dataTables_paginate {
-        margin-top: 12px;
-        font-size: 0.9rem;
-    }
-    .table td {
-        font-size: 14px;
-    }
-    .table th, .table td {
-        padding: 6px 3px;
-    }
-
-    /* 確保手機版導覽列的漢堡按鈕可見並正常工作 */
-    .navbar-toggler {
-        display: block;
-        border: 1px solid rgba(0,0,0,.1);
-    }
-    /* 讓導覽列內容在手機上堆疊 */
-    .navbar-collapse {
-        flex-grow: 1;
-        flex-basis: 100%;
-        margin-top: 0.5rem;
-    }
 }

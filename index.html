@@ -456,31 +456,34 @@
                             tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
                             tableElement.querySelector('tbody').innerHTML = tbody;
 
-                            // DataTables 初始化
-                            recommendDataTable = $('#recommendTable').DataTable({
-                                destroy: true, 
-                                searching: false, 
-                                paging: false,    
-                                info: false,      
-                                language: dataTablesZhHant, 
-                                ordering: true,   
-                                scrollX: true,    
-                                autoWidth: false, 
-                                scrollCollapse: true, 
-                                initComplete: function(settings, json) {
-                                    // 確保 DataTables 初始化完成後調整列寬，這對於響應式對齊很重要
-                                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-                                }
-                            });
-                        } else {
-                            tableElement.querySelector('thead').innerHTML = '';
-                            tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                            recommendDataTable = null; 
-                        }
-                    }
-                })
-                .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
-        }
+function loadRecommend(sheetName) {
+    const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            const tableElement = document.getElementById('recommendTable');
+            if (tableElement) {
+                // 清空原有表格內容
+                tableElement.querySelector('thead').innerHTML = '';
+                tableElement.querySelector('tbody').innerHTML = '';
+
+                if (data && data.length > 0) {
+                    const headers = Object.keys(data[0]);
+                    const thead = headers.map(h => `<th>${h}</th>`).join('');
+                    const tbody = data.map(row =>
+                        `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`
+                    ).join('');
+
+                    tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+                    tableElement.querySelector('tbody').innerHTML = tbody;
+                } else {
+                    tableElement.querySelector('thead').innerHTML = '';
+                    tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                }
+            }
+        })
+        .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
+}
 
         document.addEventListener('DOMContentLoaded', () => {
             onAuthStateChanged(auth, (user) => {

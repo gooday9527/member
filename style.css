@@ -107,6 +107,12 @@ th:nth-child(4), td:nth-child(4) {
     max-width: 300px;
 }
 
+#souvenirPagination button {
+  border-radius: 20px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+}
+
 /* ✅ 推薦分類下拉選單寬度 */
 #recommendSheet {
     max-width: 300px;

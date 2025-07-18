@@ -12,100 +12,110 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
-        /* 確保所有主標題 (紀念品、推薦清單、注意事項、關於我) 文本居中顯示 */
+        /* 確保紀念品、推薦清單、注意事項、關於我 的標題置中 */
         #souvenir h3, #recommend h3, #notice h3, #about h3 {
             text-align: center;
         }
 
         /* ----- 從您提供的 style.css 中複製並微調的部分 ----- */
-        /* 設定 body 的基本樣式：背景顏色、字體、邊距和防止橫向滾動 */
         body {
-            background-color: #fffbea; /* 淺黃色背景 */
-            font-family: 'Noto Sans TC', sans-serif; /* 使用思源黑體 (或其他無襯線字體) */
-            margin: 0; /* 移除預設外邊距 */
-            padding: 0; /* 移除預設內邊距 */
-            overflow-x: hidden; /* 防止頁面出現水平滾動條，即便是內容溢出也不會橫向滾動 */
+            background-color: #fffbea;
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* 避免整頁橫向捲動 */
         }
 
-        /* 導覽列 (navbar) 的樣式 */
+        /* 導覽列樣式 */
         .navbar {
-            background-color: #ffe082; /* 導覽列背景顏色 */
-            padding-left: 1rem; /* 左內邊距 */
-            padding-right: 1rem; /* 右內邊距 */
+            background-color: #ffe082;
+            padding-left: 1rem; 
+            padding-right: 1rem;
         }
 
-        /* 導覽列連結的樣式 */
         .nav-link {
-            font-weight: bold; /* 字體加粗 */
+            font-weight: bold;
         }
 
-        /* 當導覽列連結處於活動 (active) 狀態時的樣式 */
+        /* 確保 nav-link 點擊時的 active 狀態有視覺效果 */
         .nav-link.active {
-            color: #007bff; /* 文本顏色為藍色 */
-            font-weight: bold; /* 字體加粗 */
-            border-bottom: 2px solid #007bff; /* 底部添加藍色邊框，形成強調效果 */
+            color: #007bff; /* 例如，藍色 */
+            font-weight: bold;
+            border-bottom: 2px solid #007bff; /* 添加底部邊框效果 */
         }
 
-        /* 內容容器 (container-fluid) 的樣式 */
+        /* 內容容器樣式 */
         .container-fluid {
-            padding-left: 1rem !important; /* 左內邊距，使用 !important 確保覆蓋 Bootstrap 預設樣式 */
-            padding-right: 1rem !important; /* 右內邊距，使用 !important 確保覆蓋 Bootstrap 預設樣式 */
-            position: relative; /* 設置為相對定位，以便內部絕對定位的 section 相對其定位 */
-            min-height: 600px; /* 最小高度，防止內容過少時頁面過短，可根據實際內容調整或移除 */
-            padding-top: 3rem; /* 頂部內邊距 */
-            padding-bottom: 3rem; /* 底部內邊距 */
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            position: relative; 
+            min-height: 600px; 
+            padding-top: 3rem; 
+            padding-bottom: 3rem; 
         }
 
-        /* 內容區塊 (section) 的顯示/隱藏和層疊樣式 */
+        /* 區塊 (section) 顯示/隱藏和層疊樣式 */
         .section {
-            display: none; /* 預設不顯示所有 section */
-            position: absolute; /* 設置為絕對定位，使其脫離文檔流，便於疊加顯示 */
-            width: calc(100% - 2rem); /* 寬度計算：容器寬度減去左右各 1rem 的 padding */
-            top: 1rem; /* 距離 container-fluid 頂部的偏移 */
-            left: 1rem; /* 距離 container-fluid 左側的偏移 */
-            right: 1rem; /* 距離 container-fluid 右側的偏移 (配合 left 和 width 確保填充) */
+            display: none; 
+            position: absolute; 
+            width: calc(100% - 2rem); 
+            top: 1rem; 
+            left: 1rem; 
+            right: 1rem; 
         }
 
-        /* 只有當 section 擁有 active-section 類別時才顯示它 */
+        /* 只有帶有 active-section class 的區塊才顯示出來 */
         .section.active-section {
-            display: block; /* 顯示該區塊 */
-            z-index: 10; /* 將其 Z-index 設置為更高，確保其疊加在其他隱藏的 section 之上 */
+            display: block; 
+            z-index: 10; 
         }
 
         /* ===== 表格樣式 ===== */
-        /* 表格的基礎樣式 */
         table {
-            border-collapse: collapse; /* 邊框合併 */
-            width: 100%; /* 寬度佔滿父容器 */
-            word-wrap: break-word; /* 長單詞自動換行 */
+            border-collapse: collapse;
+            width: 100%;
+            word-wrap: break-word;
         }
 
-        /* 表頭單元格 (<th>) 的樣式 */
         th {
-            white-space: normal; /* 表頭文字自動換行 */
-            text-align: left; /* 文字左對齊 */
-            background-color: #fff3cd; /* 背景顏色 */
-            padding: 0.5rem; /* 內邊距 */
-            vertical-align: middle; /* 垂直居中對齊 */
-            border: 1px solid #dee2e6; /* 邊框樣式 */
+            white-space: nowrap; 
+            text-align: left;
+            background-color: #fff3cd;
+            padding: 0.5rem;
+            vertical-align: middle;
+            border: 1px solid #dee2e6;
         }
 
-        /* 表格數據單元格 (<td>) 的樣式 */
         td {
-            white-space: normal; /* 正常換行 */
-            text-align: left; /* 文字左對齊 */
-            padding: 0.5rem; /* 內邊距 */
-            vertical-align: middle; /* 垂直居中對齊 */
-            border: 1px solid #dee2e6; /* 邊框樣式 */
+            white-space: normal; 
+            text-align: left;
+            padding: 0.5rem;
+            vertical-align: middle;
+            border: 1px solid #dee2e6;
         }
 
-        /* 推薦分類下拉選單的寬度限制 */
+        /* 前三欄欄寬固定 */
+        th:nth-child(1), td:nth-child(1) {
+            width: 40px;
+        }
+        th:nth-child(2), td:nth-child(2) {
+            width: 60px;
+        }
+        th:nth-child(3), td:nth-child(3) {
+            width: 90px;
+        }
+
+        /* 紀念品欄限制最大寬度 */
+        th:nth-child(4), td:nth-child(4) {
+            max-width: 300px;
+        }
+
+        /* 推薦分類下拉選單寬度 */
         #recommendSheet {
-            max-width: 250px; /* 下拉選單最大寬度 */
+            max-width: 300px;
         }
 
         /* DataTables 相關的自訂樣式 */
-        /* 保留原本針對 .dataTables_length select 的樣式，確保其寬度正常 */
         .dataTables_wrapper .dataTables_length select {
             min-width: 80px; 
             width: auto; 
@@ -117,101 +127,57 @@
         }
         .dataTables_wrapper .dataTables_info, 
         .dataTables_wrapper .dataTables_paginate { 
-            margin-top: 12px; 
+            margin-top: 16px; 
             font-size: 1.1rem; 
         }
 
-        /* 針對 DataTables 分頁按鈕的更精確樣式覆蓋 */
-        /* 強制重置所有 paginate_button 相關的邊框、背景、陰影和圓角 */
-        .dataTables_wrapper .dataTables_paginate .paginate_button,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
-        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.active { /* 添加 .active */
-            border: none !important;                /* 徹底移除所有邊框 */
-            background-color: transparent !important; /* 確保背景是透明的 */
-            background-image: none !important;      /* 移除任何背景圖片 */
-            box-shadow: none !important;            /* 徹底移除所有陰影 */
-            padding: 0.5em 0.8em !important;        /* 保持適當的間距，您可以微調 */
-            margin: 0 2px !important;               /* 頁碼之間的小間距 */
-            border-radius: 0 !important;            /* 移除所有圓角 */
-            cursor: pointer;                        /* 確保可點擊的頁碼有鼠標指針 */
-        }
-
-        /* 針對當前頁碼的文字顏色和樣式 */
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            color: #0d6efd !important; /* 當前頁碼的文字顏色，例如 Bootstrap primary 藍色 */
-            font-weight: bold !important; /* 加粗當前頁碼 */
-            text-decoration: underline !important; /* 當前頁碼可以加底線強調 */
-        }
-
-        /* 針對非當前頁碼的文字顏色 */
-        .dataTables_wrapper .dataTables_paginate .paginate_button:not(.current):not(.disabled) {
-            color: #495057 !important; /* 非當前頁碼的文字顏色，例如深灰色 */
-        }
-
-        /* 針對非當前頁碼在 hover 時的樣式 */
-        .dataTables_wrapper .dataTables_paginate .paginate_button:not(.current):not(.disabled):hover {
-            color: #0a58ca !important; /* hover 時的文字顏色 */
-            text-decoration: underline !important; /* hover 時添加底線 */
-        }
-        
-        /* 針對禁用狀態的按鈕（例如「上一頁」「下一頁」在首尾時） */
-        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
-            color: #6c757d !important; /* 禁用狀態的顏色 */
-            cursor: not-allowed; /* 禁用時顯示不可點擊的鼠標 */
-        }
-
         /* 確保 DataTables 生成的表頭和內容容器對齊 */
-        /* DataTables 會生成額外的 div 來包裹表頭和表身，為了確保它們的對齊，需要調整這些 div 的寬度 */
         .dataTables_scrollHeadInner, .dataTables_scrollBody {
-            width: 100% !important; /* 強制 DataTables 內部滾動容器寬度為 100% */
+            width: 100% !important; 
         }
         .dataTables_scrollHead table, .dataTables_scrollBody table {
-            width: 100% !important; /* 強制 DataTables 內部實際表格寬度為 100% */
-            margin-bottom: 0 !important; /* 移除底部不必要的間距 */
+            width: 100% !important; 
+            margin-bottom: 0 !important; 
         }
-        /* 處理可能由 DataTables 內聯樣式引起的問題，確保搜尋框和顯示條目數的佈局 */
+        /* 處理可能由 DataTables 內聯樣式引起的問題 */
         div.dataTables_wrapper div.dataTables_filter label,
         div.dataTables_wrapper div.dataTables_length label {
-            display: flex; /* 使用 Flexbox 佈局 */
-            align-items: center; /* 垂直居中對齊 */
-            gap: 0.5em; /* 元素之間的間距 */
+            display: flex; 
+            align-items: center; 
+            gap: 0.5em; 
         }
         div.dataTables_wrapper div.dataTables_filter input {
-            box-sizing: border-box; /* 邊框盒模型，確保 padding 不會增加寬度 */
-            max-width: 100%; /* 最大寬度為 100% */
-            width: auto; /* 寬度自動調整 */
+            box-sizing: border-box; 
+            max-width: 100%; 
+            width: auto; 
         }
 
 
-        /* 手機版 (小於或等於 768px 寬度) 的響應式樣式 */
         @media only screen and (max-width: 768px) {
-            body { padding: 10px; } /* 調整 body 的整體內邊距 */
-            h3 { font-size: 1.5rem; margin-bottom: 10px; } /* 縮小標題字體大小和下邊距 */
+            body { padding: 10px; } 
+            h3 { font-size: 1.5rem; margin-bottom: 15px; } 
             .dataTables_wrapper .dataTables_length, 
             .dataTables_wrapper .dataTables_filter {
-                margin-bottom: 12px; /* 調整手機版 DataTables 控件的下邊距 */
+                margin-bottom: 12px; 
             }
             .dataTables_wrapper .dataTables_info, 
             .dataTables_wrapper .dataTables_paginate {
-                margin-top: 12px; /* 調整手機版 DataTables 資訊和分頁的上邊距 */
-                font-size: 0.9rem; /* 縮小手機版 DataTables 資訊和分頁的字體大小 */
+                margin-top: 12px; 
+                font-size: 0.9rem; 
             }
             .table td { 
-                font-size: 14px; /* 縮小手機版表格數據的字體大小 */
+                font-size: 14px; 
             }
             .table th, .table td { 
-                padding: 6px 3px; /* 縮小手機版表格單元格的內邊距 */
+                padding: 6px 3px; 
             }
 
             /* 確保手機版導覽列的漢堡按鈕可見並正常工作 */
             .navbar-toggler {
-                display: block; /* 確保漢堡按鈕在手機版顯示 */
-                border: 1px solid rgba(0,0,0,.1); /* 漢堡按鈕邊框 */
+                display: block; 
+                border: 1px solid rgba(0,0,0,.1); 
             }
-            /* 讓導覽列內容在手機上堆疊 (垂直排列) */
+            /* 讓導覽列內容在手機上堆疊 */
             .navbar-collapse {
                 flex-grow: 1; 
                 flex-basis: 100%; 
@@ -228,7 +194,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav"> 
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
-                </ul>
+            </ul>
         </div>
     </nav>
 
@@ -237,11 +203,13 @@
             <h3 class="text-center">🎁 紀念品</h3> 
             <div class="mt-3"> 
                 <table class="table table-bordered table-sm" id="souvenirTable">
-                    <thead class="table-warning"></thead> <tbody></tbody> </table>
+                    <thead class="table-warning"></thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </section>
 
-        <section id="recommend" class="section"> 
+        <section id="recommend" class="section">
             <h3 class="text-center">🌟 推薦清單</h3> 
             <div class="mb-3 d-flex align-items-center gap-2">
                 <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
@@ -251,12 +219,13 @@
                     <option value="禮券類">禮券類</option>
                     <option value="小資族">小資族</option>
                     <option value="入門組">入門組</option>
-                    <option value="我全都要（不需證件）">我全都要（不需證件）</option>
                 </select>
             </div>
             <div class="mt-3">
                 <table class="table table-bordered table-sm" id="recommendTable">
-                    <thead class="table-warning"></thead> <tbody></tbody> </table>
+                    <thead class="table-warning"></thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </section>
 
@@ -280,11 +249,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" integrity="sha512-J/0uB3zIgK1t5OJAA7Js1qntoZ1aI7V3C2aygtlNt9rSAbRRxvKakIDhMKRcX7gs3PEz+XRTS1G0BqT/91Q56A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script type="module">
-        // 從 Firebase SDK 導入必要的模塊
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-        // Firebase 專案配置信息 (請替換為您的實際配置)
         const firebaseConfig = {
             apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
             authDomain: "goodaymember.firebaseapp.com",
@@ -295,25 +262,22 @@
             measurementId: "G-J3Z7YTHJ9P"
         };
 
-        // 初始化 Firebase 應用和認證服務
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        let loginEmail = null; // 用於儲存當前登入用戶的郵箱，預設為空 (未登入)
-        const navMenu = document.getElementById("navMenu"); // 獲取導覽列菜單的 DOM 元素
-        const allSections = document.querySelectorAll(".section"); // 獲取所有內容區塊的 DOM 元素
+        let loginEmail = null;
+        const navMenu = document.getElementById("navMenu");
+        const allSections = document.querySelectorAll(".section");
 
-        // 未登入狀態下導覽列顯示的選項
         const tabsBeforeLogin = [
             { id: "souvenir", label: "紀念品" },
             { id: "recommend", label: "推薦清單" },
             { id: "notice", label: "注意事項" },
             { id: "about", label: "關於我" },
-            { id: "register", label: "註冊", link: "register.html" }, // 外部連結
-            { id: "login", label: "登入", link: "login.html" } // 外部連結
+            { id: "register", label: "註冊", link: "register.html" },
+            { id: "login", label: "登入", link: "login.html" }
         ];
 
-        // 登入狀態下導覽列顯示的選項
         const tabsAfterLogin = [
             { id: "souvenir", label: "紀念品" },
             { id: "recommend", label: "推薦清單" },
@@ -325,250 +289,214 @@
             { id: "announcement", label: "公告欄" },
             { id: "souvenir-manage", label: "紀念品管理" },
             { id: "billing", label: "帳戶管理" },
-            { id: "logout", label: "登出" } // 登出功能
+            { id: "logout", label: "登出" }
         ];
 
-        // 根據登入狀態渲染導覽列菜單
         function renderNavTabs() {
-            navMenu.innerHTML = ""; // 清空現有菜單內容
-            const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin; // 根據登入狀態選擇要顯示的菜單
+            navMenu.innerHTML = ""; 
+            const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
             tabs.forEach(tab => {
-                const li = document.createElement("li"); // 創建列表項元素
-                li.className = "nav-item"; // 添加 Bootstrap 導覽列項目的類別
+                const li = document.createElement("li");
+                li.className = "nav-item";
                 if (tab.link) {
-                    // 如果有外部連結，則創建一個普通連結
                     li.innerHTML = `<a class="nav-link" href="${tab.link}">${tab.label}</a>`;
                 } else {
-                    // 如果是內部區塊切換，則創建一個帶有 data-section 屬性的連結
                     li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
                 }
-                navMenu.appendChild(li); // 將列表項添加到導覽列菜單中
+                navMenu.appendChild(li);
             });
         }
 
-        // 顯示指定的內容區塊
         function showSection(id) {
-            allSections.forEach(sec => sec.classList.remove("active-section")); // 移除所有區塊的 active-section 類別，隱藏它們
-            const target = document.getElementById(id); // 獲取目標區塊的 DOM 元素
+            allSections.forEach(sec => sec.classList.remove("active-section"));
+            const target = document.getElementById(id);
             if (target) {
-                target.classList.add("active-section"); // 為目標區塊添加 active-section 類別，使其顯示
-                // 移除所有導覽列連結的 active 類別
+                target.classList.add("active-section");
                 document.querySelectorAll('.nav-link').forEach(link => {
                     link.classList.remove('active');
                 });
-                // 為當前活動區塊對應的導覽列連結添加 active 類別
                 const activeNavLink = document.querySelector(`.nav-link[data-section="${id}"]`);
                 if (activeNavLink) {
                     activeNavLink.classList.add('active');
                 }
             }
-            // 由於導覽列是單頁應用切換，確保在點擊導覽列連結後收起導覽列 (特別是手機版)
+            // 由於導覽列是單頁應用切換，確保在點擊導覽列連結後收起導覽列
             const navbarCollapse = document.getElementById('navbarNav');
-            const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse); // 獲取 Bootstrap 的折疊實例
+            const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
             if (bsCollapse && navbarCollapse.classList.contains('show')) {
-                bsCollapse.hide(); // 如果導覽列處於展開狀態，則收起它
+                 bsCollapse.hide();
             }
         }
 
-        // 監聽導覽列菜單的點擊事件
         navMenu.addEventListener("click", function (e) {
-            // 查找最近的帶有 data-section 屬性的 .nav-link 元素
             const clickedNavLink = e.target.closest(".nav-link[data-section]");
             if (clickedNavLink) {
-                e.preventDefault(); // 阻止連結的預設行為 (跳轉頁面)
-                const id = clickedNavLink.getAttribute("data-section"); // 獲取 data-section 的值
+                e.preventDefault(); 
+                const id = clickedNavLink.getAttribute("data-section"); 
                 if (id === "logout") {
-                    // 如果點擊的是登出連結
                     signOut(auth).then(() => {
-                        // 登出成功
                         console.log("用戶已登出");
-                        loginEmail = null; // 清除登入狀態
-                        renderNavTabs(); // 重新渲染導覽列為未登入狀態
-                        showSection("souvenir"); // 顯示紀念品區塊
+                        loginEmail = null;
+                        renderNavTabs();
+                        showSection("souvenir");
                     }).catch((error) => {
-                        // 登出失敗
                         console.error("登出失敗:", error);
                     });
                 } else {
-                    // 如果點擊的是內部區塊切換連結
-                    showSection(id); // 顯示對應的區塊
+                    showSection(id);
                 }
             }
         });
 
-        let souvenirDataTable = null; // 儲存紀念品表格的 DataTables 實例
-        let recommendDataTable = null; // 儲存推薦清單表格的 DataTables 實例
+        let souvenirDataTable = null; 
 
-        // DataTables 繁體中文語系配置
+        // 將 zh-Hant.json 的內容直接放在這裡
         const dataTablesZhHant = {
-            "decimal": "",
-            "emptyTable": "目前沒有資料",
-            "info": "顯示第 _START_ 到 _END_ 筆資料，共 _TOTAL_ 筆",
-            "infoEmpty": "目前沒有資料",
-            "infoFiltered": "(從 _MAX_ 筆資料中篩選)",
-            "infoPostFix": "",
-            "thousands": ",",
-            "lengthMenu": "顯示 _MENU_ 筆資料",
+            "decimal":        "",
+            "emptyTable":     "目前沒有資料",
+            "info":           "顯示第 _START_ 到 _END_ 筆資料，共 _TOTAL_ 筆",
+            "infoEmpty":      "目前沒有資料",
+            "infoFiltered":   "(從 _MAX_ 筆資料中篩選)",
+            "infoPostFix":    "",
+            "thousands":      ",",
+            "lengthMenu":     "顯示 _MENU_ 筆資料",
             "loadingRecords": "載入中...",
-            "processing": "處理中...",
-            "search": "搜尋:",
-            "zeroRecords": "沒有符合的結果",
+            "processing":     "處理中...",
+            "search":         "搜尋:",
+            "zeroRecords":    "沒有符合的結果",
             "paginate": {
-                "first": "首頁",
-                "last": "末頁",
-                "next": "下一頁",
+                "first":    "首頁",
+                "last":     "末頁",
+                "next":     "下一頁",
                 "previous": "上一頁"
             },
             "aria": {
-                "sortAscending": ": 升冪排列",
+                "sortAscending":  ": 升冪排列",
                 "sortDescending": ": 降冪排列"
             }
         };
 
-        // 載入紀念品資料並初始化 DataTables
+
         function loadSouvenirData() {
             fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
-                .then(res => res.json()) // 將響應解析為 JSON 格式
-                .then(data => {
-                    const tableElement = document.getElementById('souvenirTable'); // 獲取紀念品表格元素
-                    if (tableElement) {
-                        if (souvenirDataTable) { 
-                            souvenirDataTable.destroy(); // 如果 DataTables 實例已存在，則先銷毀它，以便重新初始化
-                        }
-                        tableElement.querySelector('tbody').innerHTML = ''; // 清空表格 tbody 內容
-                        tableElement.querySelector('thead').innerHTML = ''; // 清空表格 thead 內容
-
-                        if (data && data.length > 0) {
-                            const headers = Object.keys(data[0]); // 從第一行數據中提取所有鍵作為表頭
-                            // 生成表頭的 HTML
-                            const thead = headers.map(h => `<th>${h}</th>`).join('');
-                            // 生成表身的 HTML
-                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
-                            
-                            tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`; // 將表頭插入到表格中
-                            tableElement.querySelector('tbody').innerHTML = tbody; // 將表身數據插入到表格中
-
-                            // 初始化 DataTables
-                            souvenirDataTable = $('#souvenirTable').DataTable({
-                                destroy: true, // 允許重新初始化 DataTables (重要，因為表格內容會動態更新)
-                                language: dataTablesZhHant, // 設定為繁體中文語系
-                                paging: true,       // 啟用分頁功能
-                                searching: true,    // 啟用搜尋功能
-                                info: true,         // 啟用顯示資料信息 (例如 "顯示第 X 到 Y 筆資料")
-                                ordering: true,     // 啟用排序功能
-                                scrollX: true,      // 啟用水平滾動條，當表格內容超出容器寬度時顯示
-                                autoWidth: false,   // 禁用自動列寬，讓 CSS 控制或手動設定列寬
-                                scrollCollapse: true, // 啟用滾動塌陷，讓表格在滾動時高度適應
-                                initComplete: function(settings, json) {
-                                    // DataTables 初始化完成後的回調函數
-                                    // 調整所有 DataTables 實例的列寬，確保表格對齊
-                                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-                                }
-                            });
-                        } else {
-                            // 如果沒有數據，則顯示「沒有可用的資料」
-                            tableElement.querySelector('thead').innerHTML = '';
-                            tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                            souvenirDataTable = null; // 清除 DataTables 實例
-                        }
-                    }
-                })
-                .catch(error => console.error('載入紀念品資料時發生錯誤:', error)); // 捕獲並打印錯誤
-        }
-
-        // 載入推薦清單資料並初始化 DataTables
-        function loadRecommend(sheetName) {
-            // 構建 OpenSheet URL，使用 encodeURIComponent 確保工作表名稱中的特殊字符被正確編碼
-            const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
-            fetch(url)
                 .then(res => res.json())
                 .then(data => {
-                    const tableElement = document.getElementById('recommendTable'); // 獲取推薦清單表格元素
+                    const tableElement = document.getElementById('souvenirTable');
                     if (tableElement) {
-                        if (recommendDataTable) { 
-                            recommendDataTable.destroy(); // 如果 DataTables 實例已存在，則先銷毀它
+                        if (souvenirDataTable) { 
+                            souvenirDataTable.destroy(); 
                         }
-                        tableElement.querySelector('tbody').innerHTML = ''; // 清空表格 tbody 內容
-                        tableElement.querySelector('thead').innerHTML = ''; // 清空表格 thead 內容
+                        tableElement.querySelector('tbody').innerHTML = ''; 
+                        tableElement.querySelector('thead').innerHTML = ''; 
 
                         if (data && data.length > 0) {
-                            const headers = Object.keys(data[0]); // 從第一行數據中提取所有鍵作為表頭
+                            const headers = Object.keys(data[0]);
                             const thead = headers.map(h => `<th>${h}</th>`).join('');
                             const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
                             
                             tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
                             tableElement.querySelector('tbody').innerHTML = tbody;
 
-                            // 初始化 DataTables
-                            recommendDataTable = $('#recommendTable').DataTable({
-                                destroy: true, // 允許重新初始化
-                                searching: false, // 推薦清單不啟用搜尋功能
-                                paging: false,    // 推薦清單不啟用分頁功能
-                                info: false,      // 推薦清單不顯示資料信息
-                                language: dataTablesZhHant, // 設定為繁體中文語系
-                                ordering: true,   // 啟用排序功能
-                                scrollX: true,    // 啟用水平滾動條
-                                autoWidth: false,   // 禁用自動列寬
-                                scrollCollapse: true, // 啟用滾動塌陷
+                            // DataTables 初始化
+                            souvenirDataTable = $('#souvenirTable').DataTable({
+                                destroy: true, 
+                                language: dataTablesZhHant, 
+                                paging: true,      
+                                searching: true,   
+                                info: true,        
+                                ordering: true,    
+                                scrollX: true,     
+                                autoWidth: false,  
+                                scrollCollapse: true, 
                                 initComplete: function(settings, json) {
-                                    // DataTables 初始化完成後，調整所有 DataTables 實例的列寬
+                                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+                               }
+                            });
+                        } else {
+                            tableElement.querySelector('thead').innerHTML = '';
+                            tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                            souvenirDataTable = null; 
+                        }
+                    }
+                })
+                .catch(error => console.error('載入紀念品資料時發生錯誤:', error));
+        }
+
+        let recommendDataTable = null; 
+
+        function loadRecommend(sheetName) {
+            const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const tableElement = document.getElementById('recommendTable');
+                    if (tableElement) {
+                        if (recommendDataTable) { 
+                            recommendDataTable.destroy(); 
+                        }
+                        tableElement.querySelector('tbody').innerHTML = '';
+                        tableElement.querySelector('thead').innerHTML = ''; 
+
+                        if (data && data.length > 0) {
+                            const headers = Object.keys(data[0]);
+                            const thead = headers.map(h => `<th>${h}</th>`).join('');
+                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+                            
+                            tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+                            tableElement.querySelector('tbody').innerHTML = tbody;
+
+                            // DataTables 初始化
+                            recommendDataTable = $('#recommendTable').DataTable({
+                                destroy: true, 
+                                searching: false, 
+                                paging: false,    
+                                info: false,      
+                                language: dataTablesZhHant, 
+                                ordering: true,    
+                                scrollX: true,     
+                                autoWidth: false,  
+                                scrollCollapse: true, 
+                                initComplete: function(settings, json) {
                                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
                                 }
                             });
                         } else {
-                            // 如果沒有數據，則顯示「沒有可用的資料」
                             tableElement.querySelector('thead').innerHTML = '';
                             tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                            recommendDataTable = null; // 清除 DataTables 實例
+                            recommendDataTable = null; 
                         }
                     }
                 })
-                .catch(error => console.error('載入推薦清單資料時發生錯誤:', error)); // 捕獲並打印錯誤
+                .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
         }
 
-        // 當 DOM 內容完全載入後執行
         document.addEventListener('DOMContentLoaded', () => {
-            // *** 新增的代碼開始 (用於修復分頁格子背景) ***
-            // 禁用 DataTables 對 Bootstrap 分頁按鈕樣式的自動應用
-            // 這會阻止 DataTables 添加如 'btn', 'btn-secondary' 等 Bootstrap 類到分頁按鈕上
-            $.extend(true, $.fn.dataTable.ext.classes, {
-                "sPageButton": "paginate_button", // 恢復到 DataTables 自己的基本類名，不帶 btn btn-secondary
-                "sPageButtonActive": "paginate_button current", // 同上
-                "sPageButtonDisabled": "paginate_button disabled" // 同上
-            });
-            // *** 新增的代碼結束 ***
-
-            // 監聽 Firebase 認證狀態的變化
             onAuthStateChanged(auth, (user) => {
-                loginEmail = user ? user.email : null; // 更新登入郵箱狀態
-                console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入"); // 打印登入狀態
+                loginEmail = user ? user.email : null;
+                console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
                 
-                renderNavTabs(); // 根據登入狀態渲染導覽列
-                showSection("souvenir"); // 預設顯示紀念品區塊
+                renderNavTabs(); 
+                showSection("souvenir"); 
 
-                loadSouvenirData(); // 首次載入紀念品資料
+                loadSouvenirData(); 
 
-                const recommendSheetSelect = document.getElementById('recommendSheet'); // 獲取推薦清單下拉選單
+                const recommendSheetSelect = document.getElementById('recommendSheet');
                 if (recommendSheetSelect) {
-                    // 為下拉選單添加 'change' 事件監聽器
                     recommendSheetSelect.addEventListener('change', function () {
-                        loadRecommend(this.value); // 根據選中的值載入對應的推薦清單
+                        loadRecommend(this.value);
                     });
-                    loadRecommend('我全都要（不需證件）'); // 預設載入「我全都要（不需證件）」
+                    loadRecommend('我全都要（不需證件）'); 
                 }
             });
         });
 
-        // 監聽視窗大小變化事件 (使用 jQuery 的 resize 事件)
+        // 監聽視窗大小變化，當視窗大小改變時，重新調整 DataTables 列寬
         $(window).on('resize', function () {
-            // 使用 setTimeout 進行延遲處理 (debounce)，避免在調整大小過程中頻繁觸發
             setTimeout(function() {
-                // 檢查頁面上是否有 DataTables 實例
                 if ($.fn.dataTable.tables(true).length) { 
-                    // 調整所有 DataTables 實例的列寬，確保在視窗大小變化時表格佈局正確
                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
                 }
-            }, 100); // 延遲 100 毫秒執行
+            }, 100);
         });
     </script>
 </body>

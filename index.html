@@ -438,22 +438,22 @@ tableElement.parentNode.insertBefore(controls, tableElement);
                 return;
             }
             // 搜尋功能
-const searchInput = document.getElementById('searchInput');
-searchInput.addEventListener('input', () => {
-    const keyword = searchInput.value.toLowerCase();
-    filteredData = data.filter(row =>
-        Object.values(row).some(v => (v || '').toLowerCase().includes(keyword))
-    );
-    currentPage = 1;
-    renderTable();
-});
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', () => {
+            const keyword = searchInput.value.toLowerCase();
+               filteredData = data.filter(row =>
+               Object.values(row).some(v => (v || '').toLowerCase().includes(keyword))
+            );
+             currentPage = 1;
+             renderTable();
+            });
 
-// 每頁筆數控制
-document.getElementById('rowsPerPageSelect').addEventListener('change', (e) => {
-    rowsPerPage = parseInt(e.target.value);
-    currentPage = 1;
-    renderTable();
-});
+            // 每頁筆數控制
+            document.getElementById('rowsPerPageSelect').addEventListener('change', (e) => {
+                rowsPerPage = parseInt(e.target.value);
+                currentPage = 1;
+                renderTable();
+            });
 
             const headers = Object.keys(data[0]);
 

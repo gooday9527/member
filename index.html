@@ -526,7 +526,7 @@ function loadSouvenirDataWithoutDataTables() {
 
                 const paginationRow = document.createElement('tr');
                 paginationRow.innerHTML = `<td colspan="${headers.length}" class="text-center">${pageButtons.join('')}</td>`;
-                tableBody.appendChild(paginationRow);
+                document.getElementById('souvenirPagination').innerHTML = pageButtons.join('');
             }
 
             window.changePage = function(offset) {

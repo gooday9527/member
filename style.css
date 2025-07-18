@@ -108,10 +108,14 @@ th:nth-child(4), td:nth-child(4) {
 }
 
 #souvenirPagination button {
-  border-radius: 20px;
-  padding: 6px 10px;
-  font-size: 0.9rem;
+  background: transparent;
+  border: none;
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #ff7043;
+  margin: 0 4px;
 }
+
 
 /* ✅ 推薦分類下拉選單寬度 */
 #recommendSheet {

@@ -426,14 +426,26 @@ function loadSouvenirDataWithoutDataTables() {
 
             function renderPagination() {
                 const totalPages = Math.ceil(sortedData.length / rowsPerPage);
+                const maxPageLinks = 5; // 中央顯示幾個頁碼
+                let startPage = Math.max(1, currentPage - Math.floor(maxPageLinks / 2));
+                let endPage = Math.min(totalPages, startPage + maxPageLinks - 1);
+
+                // 確保總是顯示固定數量頁碼
+                if (endPage - startPage < maxPageLinks - 1) {
+                    startPage = Math.max(1, endPage - maxPageLinks + 1);
+                }
+
                 const paginationRow = document.createElement('tr');
-                paginationRow.innerHTML = `<td colspan="${headers.length}" style="text-align:center;">
-                    <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上一頁</button>
-                    ${Array.from({length: totalPages}, (_, i) => `
-                        <button ${i + 1 === currentPage ? 'disabled' : ''} onclick="goToPage(${i + 1})">${i + 1}</button>
-                    `).join('')}
-                    <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下一頁</button>
-                </td>`;
+                paginationRow.innerHTML = `
+                    <td colspan="${headers.length}" style="text-align:center;">
+                        <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上一頁</button>
+                        ${Array.from({length: endPage - startPage + 1}, (_, i) => {
+                            const pageNum = startPage + i;
+                            return `<button ${pageNum === currentPage ? 'disabled' : ''} onclick="goToPage(${pageNum})">${pageNum}</button>`;
+                        }).join('')}
+                        <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下一頁</button>
+                    </td>
+                `;
                 tableBody.appendChild(paginationRow);
             }
 

@@ -518,7 +518,7 @@ function loadSouvenirDataWithoutDataTables() {
 
                 if (end < totalPages) {
                     if (end < totalPages - 1) pageButtons.push(`<span class="me-1">...</span>`);
-                    pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
+                    pageButtons.push(`<button class="${i === currentPage ? 'btn-orange' : ''}" onclick="goToPage(${i})">${i}</button>`);
                 }
 
                 // 下一頁
@@ -540,8 +540,7 @@ function loadSouvenirDataWithoutDataTables() {
 
             sortAsc = true;      // ✅ 加這行，強制預設為升冪排序
             sortTable(sortKey);  // 再執行排序
-
-        })
+      })
         .catch(error => {
             console.error('載入紀念品資料錯誤：', error);
         });

@@ -403,7 +403,7 @@
                         if (data && data.length > 0) {
                             const headers = Object.keys(data[0]);
                             const thead = headers.map(h => `<th>${h}</th>`).join('');
-                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('');
+                            const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]|| ''}</td>`).join('')}</tr>`).join('');
                             
                             tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
                             tableElement.querySelector('tbody').innerHTML = tbody;
@@ -450,7 +450,7 @@
                              const headers = Object.keys(data[0]);
                              const thead = headers.map(h => `<th>${h}</th>`).join('');
                              const tbody = data.map(row =>
-                                 `<tr>${headers.map(k => `<td>${row[k]}</td>`).join('')}</tr>`
+                                 `<tr>${headers.map(k => `<td>${row[k]|| ''}</td>`).join('')}</tr>`
                              ).join('');
 
                              tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;

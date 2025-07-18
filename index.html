@@ -538,7 +538,9 @@ function loadSouvenirDataWithoutDataTables() {
                 renderTable();
             };
 
-            sortTable(sortKey); // 初始排序並渲染
+            sortAsc = true;      // ✅ 加這行，強制預設為升冪排序
+            sortTable(sortKey);  // 再執行排序
+
         })
         .catch(error => {
             console.error('載入紀念品資料錯誤：', error);

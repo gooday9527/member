@@ -392,76 +392,93 @@ function loadSouvenirDataWithoutDataTables() {
     fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
         .then(res => res.json())
         .then(data => {
-         const tableElement = document.getElementById('souvenirTable');
-
-// 插入搜尋與筆數控制元件
-const controls = document.createElement('div');
-controls.className = 'd-flex justify-content-between align-items-center mb-2 flex-wrap';
-controls.innerHTML = `
-    <div class="mb-2">
-        <label for="searchInput" class="me-2">搜尋：</label>
-        <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 200px;" placeholder="輸入關鍵字">
-    </div>
-    <div class="mb-2">
-        <label for="rowsPerPageSelect" class="me-2">每頁顯示筆數：</label>
-        <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block" style="width: 100px;">
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-        </select>
-    </div>
-`;
-tableElement.parentNode.insertBefore(controls, tableElement);
-
-           
             const tableElement = document.getElementById('souvenirTable');
             const tableHead = tableElement.querySelector('thead');
             const tableBody = tableElement.querySelector('tbody');
-            const container = document.querySelector('#souvenir .mt-3');
-            container.insertAdjacentHTML('afterbegin', `
-                <div class="d-flex justify-content-end mb-2">
-                    <label class="form-label me-2" for="souvenirSearch">搜尋：</label>
-                    <input type="text" id="souvenirSearch" class="form-control form-control-sm" style="max-width: 300px;">
-                </div>
-            `);
 
-            const rowsPerPage = 10;
-            let currentPage = 1;
-            let filteredData = [...data];
-            let sortedData = [...data];
-            let sortKey = Object.keys(data[0])[0];
-            let sortAsc = true;
-            let rowsPerPage = 10;
-            let filteredData = [...data];
+            // 插入搜尋與筆數控制元件（先取得 table 才能插入）
+            const controls = document.createElement('div');
+            controls.className = 'd-flex justify-content-between align-items-center mb-2 flex-wrap';
+            controls.innerHTML = `
+                <div class="mb-2">
+                    <label for="searchInput" class="me-2">搜尋：</label>
+                    <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 200px;" placeholder="輸入關鍵字">
+                </div>
+                <div class="mb-2">
+                    <label for="rowsPerPageSelect" class="me-2">每頁顯示筆數：</label>
+                    <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block" style="width: 100px;">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            `;
+            tableElement.parentNode.insertBefore(controls, tableElement);
 
             if (!data || data.length === 0) {
                 tableHead.innerHTML = '';
                 tableBody.innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
                 return;
             }
-            // 搜尋功能
-            const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', () => {
-            const keyword = searchInput.value.toLowerCase();
-               filteredData = data.filter(row =>
-               Object.values(row).some(v => (v || '').toLowerCase().includes(keyword))
-            );
-             currentPage = 1;
-             renderTable();
+
+            const headers = Object.keys(data[0]);
+            let currentPage = 1;
+            let rowsPerPage = 10;
+            let sortKey = headers[0];
+            let sortAsc = true;
+            let sortedData = [...data];
+            let filteredData = [...data];
+
+            // 建立表頭
+            tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} ▲</th>`).join('')}</tr>`;
+
+            // 點擊排序
+            headers.forEach(h => {
+                const th = tableHead.querySelector(`th[data-key="${h}"]`);
+                if (th) {
+                    th.style.cursor = 'pointer';
+                    th.addEventListener('click', () => sortTable(h));
+                }
             });
 
-            // 每頁筆數控制
+            // 搜尋
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const keyword = e.target.value.trim().toLowerCase();
+                filteredData = sortedData.filter(row =>
+                    headers.some(h => (row[h] || '').toLowerCase().includes(keyword))
+                );
+                currentPage = 1;
+                renderTable();
+            });
+
+            // 每頁筆數
             document.getElementById('rowsPerPageSelect').addEventListener('change', (e) => {
                 rowsPerPage = parseInt(e.target.value);
                 currentPage = 1;
                 renderTable();
             });
 
-            const headers = Object.keys(data[0]);
-
-            // Render Header
-            tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} ▲</th>`).join('')}</tr>`;
+            function sortTable(key) {
+                sortAsc = (sortKey === key) ? !sortAsc : true;
+                sortKey = key;
+                sortedData.sort((a, b) => {
+                    const valA = a[key] || '';
+                    const valB = b[key] || '';
+                    const isNumber = !isNaN(valA) && !isNaN(valB);
+                    return isNumber
+                        ? (sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA))
+                        : (sortAsc ? valA.localeCompare(valB, 'zh-Hant') : valB.localeCompare(valA, 'zh-Hant'));
+                });
+                const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+                filteredData = keyword
+                    ? sortedData.filter(row =>
+                        headers.some(h => (row[h] || '').toLowerCase().includes(keyword))
+                    )
+                    : [...sortedData];
+                currentPage = 1;
+                renderTable();
+            }
 
             function renderTable() {
                 const start = (currentPage - 1) * rowsPerPage;
@@ -474,108 +491,55 @@ tableElement.parentNode.insertBefore(controls, tableElement);
             }
 
             function renderPagination() {
-    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-    const maxVisible = 5; // 最多顯示幾個連續頁碼
-    const pageButtons = [];
+                const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+                const maxVisible = 5;
+                const pageButtons = [];
 
-    // 前一頁按鈕
-    pageButtons.push(`
-        <button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上一頁</button>
-    `);
+                // 上一頁
+                pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上一頁</button>`);
 
-    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-    let end = Math.min(totalPages, start + maxVisible - 1);
+                let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                let end = Math.min(totalPages, start + maxVisible - 1);
+                if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
 
-    if (end - start < maxVisible - 1) {
-        start = Math.max(1, end - maxVisible + 1);
-    }
-
-    if (start > 1) {
-        pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
-        if (start > 2) {
-            pageButtons.push(`<span class="me-1">...</span>`);
-        }
-    }
-
-    for (let i = start; i <= end; i++) {
-        pageButtons.push(`
-            <button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>
-        `);
-    }
-
-    if (end < totalPages) {
-        if (end < totalPages - 1) {
-            pageButtons.push(`<span class="me-1">...</span>`);
-        }
-        pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
-    }
-
-    // 後一頁按鈕
-    pageButtons.push(`
-        <button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下一頁</button>
-    `);
-
-    const paginationRow = document.createElement('tr');
-    paginationRow.innerHTML = `<td colspan="${headers.length}" class="text-center">${pageButtons.join('')}</td>`;
-    tableBody.appendChild(paginationRow);
-}
-
-
-            function sortTable(key) {
-                sortAsc = (sortKey === key) ? !sortAsc : true;
-                sortKey = key;
-                sortedData.sort((a, b) => {
-                    const valA = a[key] || '';
-                    const valB = b[key] || '';
-                    const isNumber = !isNaN(valA) && !isNaN(valB);
-                    return isNumber
-                        ? (sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA))
-                        : (sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA));
-                });
-                applySearch(document.getElementById("souvenirSearch").value);
-            }
-
-            function applySearch(query) {
-                query = query.trim().toLowerCase();
-                if (!query) {
-                    filteredData = [...sortedData];
-                } else {
-                    filteredData = sortedData.filter(row =>
-                        headers.some(h => (row[h] || '').toLowerCase().includes(query))
-                    );
+                if (start > 1) {
+                    pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
+                    if (start > 2) pageButtons.push(`<span class="me-1">...</span>`);
                 }
-                currentPage = 1;
-                renderTable();
-            }
 
-            headers.forEach(h => {
-                const th = tableHead.querySelector(`th[data-key="${h}"]`);
-                if (th) {
-                    th.style.cursor = 'pointer';
-                    th.addEventListener('click', () => sortTable(h));
+                for (let i = start; i <= end; i++) {
+                    pageButtons.push(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>`);
                 }
-            });
 
-            document.getElementById("souvenirSearch").addEventListener("input", (e) => {
-                applySearch(e.target.value);
-            });
+                if (end < totalPages) {
+                    if (end < totalPages - 1) pageButtons.push(`<span class="me-1">...</span>`);
+                    pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
+                }
+
+                // 下一頁
+                pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下一頁</button>`);
+
+                const paginationRow = document.createElement('tr');
+                paginationRow.innerHTML = `<td colspan="${headers.length}" class="text-center">${pageButtons.join('')}</td>`;
+                tableBody.appendChild(paginationRow);
+            }
 
             window.changePage = function(offset) {
                 currentPage += offset;
                 renderTable();
             };
-
             window.goToPage = function(page) {
                 currentPage = page;
                 renderTable();
             };
 
-            sortTable(sortKey); // initial render
+            sortTable(sortKey); // 初始排序並渲染
         })
         .catch(error => {
-            console.error('載入紀念品資料時發生錯誤:', error);
+            console.error('載入紀念品資料錯誤：', error);
         });
 }
+
 
 
 

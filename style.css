@@ -1,5 +1,3 @@
-/* styles.css */
-
 /* ===== 全站通用樣式 ===== */
 body {
     background-color: #fffbea;
@@ -12,8 +10,6 @@ body {
 /* 導覽列樣式 */
 .navbar {
     background-color: #ffe082;
-    padding-left: 1rem;
-    padding-right: 1rem;
 }
 
 /* 確保導覽列的排版 */
@@ -41,42 +37,47 @@ body {
 .container-fluid {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
-    position: relative;
-    min-height: 600px;
-    padding-top: 3rem;
-    padding-bottom: 3rem;
+    position: relative; /* 關鍵：讓內部絕對定位的區塊相對於此容器定位 */
+    min-height: 600px; /* 範例值，您可以調整以確保頁面內容足夠高，防止塌陷 */
+    padding-top: 3rem; /* 為內容區塊留出一些頂部空間，避免與導覽列重疊 */
+    padding-bottom: 3rem; /* 底部空間 */
 }
 
 /* 區塊 (section) 顯示/隱藏和層疊樣式 */
 .section {
-    display: none;
-    position: absolute;
-    width: calc(100% - 2rem);
-    top: 1rem;
-    left: 1rem;
-    right: 1rem;
+    display: none; /* 預設隱藏所有區塊 */
+    position: absolute; /* 讓所有區塊疊加在同一個位置 */
+    /* 根據 .container-fluid 的 padding 調整寬度和位置，確保內容在容器內 */
+    width: calc(100% - 2rem); /* 100% 減去左右各 1rem 的 padding */
+    top: 1rem; /* 從 container-fluid 的 padding-top 開始 */
+    left: 1rem; /* 從 container-fluid 的 padding-left 開始 */
+    right: 1rem; /* 從 container-fluid 的 padding-right 開始 */
+    /* background-color: #fffbea; /* 可以考慮添加背景色，以防內容透視 */
+    /* height: auto; /* 高度根據內容自動調整 */
 }
 
 /* 只有帶有 active-section class 的區塊才顯示出來 */
 .section.active-section {
-    display: block;
-    z-index: 10;
+    display: block; /* 顯示當前活動的區塊 */
+    z-index: 10; /* 確保活動區塊在最上層 */
 }
 
-/* 確保紀念品、推薦清單、注意事項、關於我 的標題置中 */
-#souvenir h3, #recommend h3, #notice h3, #about h3 {
-    text-align: center;
+
+/* ===== 表格樣式 ===== */
+.table-responsive {
+    width: 100%;
+    overflow-x: hidden; /* 禁止橫向滾動 */
 }
 
-/* ===== 表格通用樣式 ===== */
 table {
     border-collapse: collapse;
     width: 100%;
+    table-layout: auto; /* 自動依內容調整欄寬 */
     word-wrap: break-word;
 }
 
 th {
-    white-space: nowrap;
+    white-space: nowrap; /* ✅ 標題欄不換行 */
     text-align: left;
     background-color: #fff3cd;
     padding: 0.5rem;
@@ -85,14 +86,14 @@ th {
 }
 
 td {
-    white-space: normal;
+    white-space: normal; /* ✅ 內容欄可換行 */
     text-align: left;
     padding: 0.5rem;
     vertical-align: middle;
     border: 1px solid #dee2e6;
 }
 
-/* 前三欄欄寬固定 */
+/* ✅ 前三欄欄寬固定 */
 th:nth-child(1), td:nth-child(1) {
     width: 30px;
 }
@@ -103,93 +104,12 @@ th:nth-child(3), td:nth-child(3) {
     width: 60px;
 }
 
-/* 紀念品欄限制最大寬度 */
+/* ✅ 紀念品欄限制最大寬度 */
 th:nth-child(4), td:nth-child(4) {
     max-width: 300px;
 }
 
-/* 推薦分類下拉選單寬度 */
+/* ✅ 推薦分類下拉選單寬度 */
 #recommendSheet {
     max-width: 300px;
-}
-
-/* ===== DataTables 相關的自訂樣式 (重點調整) ===== */
-
-/* 確保 DataTables 生成的表頭和內容容器對齊 */
-/* DataTables 在 scrollX: true 時會自動生成 .dataTables_scrollHeadInner 和 .dataTables_scrollBody，
-   我們需要確保它們的寬度與表格內容完全匹配。
-   這裡加強了 `!important` 以覆蓋 DataTables 可能的內聯樣式。
-*/
-.dataTables_scrollHeadInner, .dataTables_scrollBody {
-    width: 100% !important; 
-}
-.dataTables_scrollHead table, .dataTables_scrollBody table {
-    width: 100% !important; /* 確保內部表格佔據 100% 寬度 */
-    margin-bottom: 0 !important; /* 移除 DataTables 可能添加的底部邊距 */
-    /* table-layout: fixed; */ /* 考慮使用 fixed 來幫助對齊，但可能需要細緻調整列寬 */
-    /* 如果 DataTables 列寬還是有問題，可以嘗試解開上面的註解，並在 JS 中精確定義 columns 寬度 */
-}
-
-/* 調整 DataTables 的分頁、搜尋等控制項的樣式 */
-.dataTables_wrapper .dataTables_length select {
-    min-width: 80px;
-    width: auto;
-    display: inline-block;
-}
-.dataTables_wrapper .dataTables_length,
-.dataTables_wrapper .dataTables_filter {
-    margin-bottom: 18px;
-}
-.dataTables_wrapper .dataTables_info,
-.dataTables_wrapper .dataTables_paginate {
-    margin-top: 16px;
-    font-size: 1.1rem;
-}
-
-/* 處理 DataTables 搜尋和顯示條目標籤的 Flex 佈局問題 */
-div.dataTables_wrapper div.dataTables_filter label,
-div.dataTables_wrapper div.dataTables_length label {
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
-}
-div.dataTables_wrapper div.dataTables_filter input {
-    box-sizing: border-box;
-    max-width: 100%;
-    width: auto;
-}
-
-/* ===== 手機版響應式樣式 (Media Queries) ===== */
-@media only screen and (max-width: 768px) {
-    body { padding: 10px; }
-    h3 { font-size: 1.5rem; margin-bottom: 15px; }
-
-    /* 手機版 DataTables 控制項的調整 */
-    .dataTables_wrapper .dataTables_length,
-    .dataTables_wrapper .dataTables_filter {
-        margin-bottom: 12px;
-    }
-    .dataTables_wrapper .dataTables_info,
-    .dataTables_wrapper .dataTables_paginate {
-        margin-top: 12px;
-        font-size: 0.9rem;
-    }
-    .table td {
-        font-size: 14px;
-    }
-    .table th, .table td {
-        padding: 6px 3px;
-    }
-
-    /* 確保手機版導覽列的漢堡按鈕可見並正常工作 */
-    .navbar-toggler {
-        display: block;
-        border: 1px solid rgba(0,0,0,.1);
-    }
-    /* 讓導覽列內容在手機上堆疊 */
-    .navbar-collapse {
-        flex-grow: 1;
-        flex-basis: 100%;
-        margin-top: 0.5rem;
-    }
 }

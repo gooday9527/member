@@ -11,180 +11,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <style>
-        /* 確保紀念品、推薦清單、注意事項、關於我 的標題置中 */
-        #souvenir h3, #recommend h3, #notice h3, #about h3 {
-            text-align: center;
-        }
-
-        /* ----- 從您提供的 style.css 中複製並微調的部分 ----- */
-        body {
-            background-color: #fffbea;
-            font-family: 'Noto Sans TC', sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; /* 避免整頁橫向捲動 */
-        }
-
-        /* 導覽列樣式 */
-        .navbar {
-            background-color: #ffe082;
-            padding-left: 1rem; 
-            padding-right: 1rem;
-        }
-
-        .nav-link {
-            font-weight: bold;
-        }
-
-        /* 確保 nav-link 點擊時的 active 狀態有視覺效果 */
-        .nav-link.active {
-            color: #007bff; /* 例如，藍色 */
-            font-weight: bold;
-            border-bottom: 2px solid #007bff; /* 添加底部邊框效果 */
-        }
-
-        /* 內容容器樣式 */
-        .container-fluid {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-            position: relative; 
-            min-height: 600px; 
-            padding-top: 3rem; 
-            padding-bottom: 3rem; 
-        }
-
-        /* 區塊 (section) 顯示/隱藏和層疊樣式 */
-        .section {
-            display: none; 
-            position: absolute; 
-            width: calc(100% - 2rem); 
-            top: 1rem; 
-            left: 1rem; 
-            right: 1rem; 
-        }
-
-        /* 只有帶有 active-section class 的區塊才顯示出來 */
-        .section.active-section {
-            display: block; 
-            z-index: 10; 
-        }
-
-        /* ===== 表格樣式 ===== */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            word-wrap: break-word;
-        }
-
-        th {
-            white-space: nowrap; 
-            text-align: left;
-            background-color: #fff3cd;
-            padding: 0.5rem;
-            vertical-align: middle;
-            border: 1px solid #dee2e6;
-        }
-
-        td {
-            white-space: normal; 
-            text-align: left;
-            padding: 0.5rem;
-            vertical-align: middle;
-            border: 1px solid #dee2e6;
-        }
-
-        /* 前三欄欄寬固定 */
-        th:nth-child(1), td:nth-child(1) {
-            width: 40px;
-        }
-        th:nth-child(2), td:nth-child(2) {
-            width: 60px;
-        }
-        th:nth-child(3), td:nth-child(3) {
-            width: 90px;
-        }
-
-        /* 紀念品欄限制最大寬度 */
-        th:nth-child(4), td:nth-child(4) {
-            max-width: 300px;
-        }
-
-        /* 推薦分類下拉選單寬度 */
-        #recommendSheet {
-            max-width: 300px;
-        }
-
-        /* DataTables 相關的自訂樣式 */
-        .dataTables_wrapper .dataTables_length select {
-            min-width: 80px; 
-            width: auto; 
-            display: inline-block; 
-        }
-        .dataTables_wrapper .dataTables_length, 
-        .dataTables_wrapper .dataTables_filter { 
-            margin-bottom: 18px; 
-        }
-        .dataTables_wrapper .dataTables_info, 
-        .dataTables_wrapper .dataTables_paginate { 
-            margin-top: 16px; 
-            font-size: 1.1rem; 
-        }
-
-        /* 確保 DataTables 生成的表頭和內容容器對齊 */
-        .dataTables_scrollHeadInner, .dataTables_scrollBody {
-            width: 100% !important; 
-        }
-        .dataTables_scrollHead table, .dataTables_scrollBody table {
-            width: 100% !important; 
-            margin-bottom: 0 !important; 
-        }
-        /* 處理可能由 DataTables 內聯樣式引起的問題 */
-        div.dataTables_wrapper div.dataTables_filter label,
-        div.dataTables_wrapper div.dataTables_length label {
-            display: flex; 
-            align-items: center; 
-            gap: 0.5em; 
-        }
-        div.dataTables_wrapper div.dataTables_filter input {
-            box-sizing: border-box; 
-            max-width: 100%; 
-            width: auto; 
-        }
-
-
-        @media only screen and (max-width: 768px) {
-            body { padding: 10px; } 
-            h3 { font-size: 1.5rem; margin-bottom: 15px; } 
-            .dataTables_wrapper .dataTables_length, 
-            .dataTables_wrapper .dataTables_filter {
-                margin-bottom: 12px; 
-            }
-            .dataTables_wrapper .dataTables_info, 
-            .dataTables_wrapper .dataTables_paginate {
-                margin-top: 12px; 
-                font-size: 0.9rem; 
-            }
-            .table td { 
-                font-size: 14px; 
-            }
-            .table th, .table td { 
-                padding: 6px 3px; 
-            }
-
-            /* 確保手機版導覽列的漢堡按鈕可見並正常工作 */
-            .navbar-toggler {
-                display: block; 
-                border: 1px solid rgba(0,0,0,.1); 
-            }
-            /* 讓導覽列內容在手機上堆疊 */
-            .navbar-collapse {
-                flex-grow: 1; 
-                flex-basis: 100%; 
-                margin-top: 0.5rem; 
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css"> 
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-light"> 
@@ -352,26 +179,26 @@
 
         // 將 zh-Hant.json 的內容直接放在這裡
         const dataTablesZhHant = {
-            "decimal":        "",
-            "emptyTable":     "目前沒有資料",
-            "info":           "顯示第 _START_ 到 _END_ 筆資料，共 _TOTAL_ 筆",
-            "infoEmpty":      "目前沒有資料",
-            "infoFiltered":   "(從 _MAX_ 筆資料中篩選)",
-            "infoPostFix":    "",
-            "thousands":      ",",
-            "lengthMenu":     "顯示 _MENU_ 筆資料",
+            "decimal": "",
+            "emptyTable": "目前沒有資料",
+            "info": "顯示第 _START_ 到 _END_ 筆資料，共 _TOTAL_ 筆",
+            "infoEmpty": "目前沒有資料",
+            "infoFiltered": "(從 _MAX_ 筆資料中篩選)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "顯示 _MENU_ 筆資料",
             "loadingRecords": "載入中...",
-            "processing":     "處理中...",
-            "search":         "搜尋:",
-            "zeroRecords":    "沒有符合的結果",
+            "processing": "處理中...",
+            "search": "搜尋:",
+            "zeroRecords": "沒有符合的結果",
             "paginate": {
-                "first":    "首頁",
-                "last":     "末頁",
-                "next":     "下一頁",
+                "first": "首頁",
+                "last": "末頁",
+                "next": "下一頁",
                 "previous": "上一頁"
             },
             "aria": {
-                "sortAscending":  ": 升冪排列",
+                "sortAscending": ": 升冪排列",
                 "sortDescending": ": 降冪排列"
             }
         };
@@ -410,7 +237,7 @@
                                 scrollCollapse: true, 
                                 initComplete: function(settings, json) {
                                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-                               }
+                                }
                             });
                         } else {
                             tableElement.querySelector('thead').innerHTML = '';
@@ -452,9 +279,9 @@
                                 paging: false,    
                                 info: false,      
                                 language: dataTablesZhHant, 
-                                ordering: true,    
-                                scrollX: true,     
-                                autoWidth: false,  
+                                ordering: true,   
+                                scrollX: true,    
+                                autoWidth: false, 
                                 scrollCollapse: true, 
                                 initComplete: function(settings, json) {
                                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();

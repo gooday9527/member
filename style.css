@@ -116,6 +116,21 @@ th:nth-child(4), td:nth-child(4) {
   margin: 0 4px;
 }
 
+#souvenirPaginationWrapper {
+  background-color: #fffbea;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+#souvenirPaginationWrapper .pagination-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+
 
 /* ✅ 推薦分類下拉選單寬度 */
 #recommendSheet {

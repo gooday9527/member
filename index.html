@@ -94,6 +94,17 @@
             border: 1px solid #dee2e6;
         }
 
+        /* 前三欄欄寬固定 */
+        th:nth-child(1), td:nth-child(1) {
+            width: 40px;
+        }
+        th:nth-child(2), td:nth-child(2) {
+            width: 60px;
+        }
+        th:nth-child(3), td:nth-child(3) {
+            width: 90px;
+        }
+
         /* 紀念品欄限制最大寬度 */
         th:nth-child(4), td:nth-child(4) {
             max-width: 300px;
@@ -442,16 +453,11 @@
                                 info: false,      
                                 language: dataTablesZhHant, 
                                 ordering: true,    
-                                scrollX: true, 
-                                scrollY:${window.innerHeight - document.getElementById('recommendTable').getBoundingClientRect().top - 100}px`, // ✅ 加這一行：啟用垂直滾動區塊
+                                scrollX: true,     
                                 autoWidth: false,  
                                 scrollCollapse: true, 
                                 initComplete: function(settings, json) {
                                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-                                }
-                                #recommendTable.dataTable {
-                                   table-layout: fixed;
-                                   width: 100% !important;
                                 }
                             });
                         } else {

@@ -112,13 +112,12 @@ th:nth-child(4), td:nth-child(4) {
   border: none;
   font-weight: bold;
   font-size: 1.1rem;  /* 👈 控制字體大小，可改成 1.2rem、1.3rem 看效果 */
-  color: #e65100;     /* 深橘色 */
+  color: #000000; /* 黑色文字 */
   margin: 0 4px;
 }
 
 #souvenirPagination button.active {
-  color: white;
-  background-color: #ff9800; /* 深橘色背景 */
+  background-color: #dcdcdc; /* 可有可無，略微灰底 */
   border-radius: 4px;
 }
 
@@ -129,12 +128,13 @@ th:nth-child(4), td:nth-child(4) {
   margin-top: 10px;
 }
 
-#souvenirPaginationWrapper .pagination-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-}
+/*外框（鵝黃色）包分頁區*/
+/* #souvenirPaginationWrapper .pagination-buttons {*/
+ /* display: flex;*/
+/*  flex-wrap: wrap;*/
+ /* justify-content: center;*/
+ /* align-items: center;*/
+/*}*/
 
 
 

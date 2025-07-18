@@ -392,7 +392,9 @@ function loadSouvenirDataWithoutDataTables() {
     fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
         .then(res => res.json())
         .then(data => {
-            // 插入搜尋與筆數控制元件
+         const tableElement = document.getElementById('souvenirTable');
+
+// 插入搜尋與筆數控制元件
 const controls = document.createElement('div');
 controls.className = 'd-flex justify-content-between align-items-center mb-2 flex-wrap';
 controls.innerHTML = `
@@ -412,6 +414,7 @@ controls.innerHTML = `
 `;
 tableElement.parentNode.insertBefore(controls, tableElement);
 
+           
             const tableElement = document.getElementById('souvenirTable');
             const tableHead = tableElement.querySelector('thead');
             const tableBody = tableElement.querySelector('tbody');

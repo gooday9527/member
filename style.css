@@ -93,21 +93,16 @@ td {
     border: 1px solid #dee2e6;
 }
 
-/* 針對 Bootstrap 5 的額外修正 */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+/* ✅ 前三欄欄寬固定 */
+th:nth-child(1), td:nth-child(1) {
+    width: 40px;
 }
-
-/* 防止 Bootstrap 加上的灰色 hover 背景 */
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    background-color: transparent !important;
+th:nth-child(2), td:nth-child(2) {
+    width: 60px;
 }
-.paginate_button {
-  background: none !important;
+th:nth-child(3), td:nth-child(3) {
+    width: 90px;
 }
-
 
 /* ✅ 紀念品欄限制最大寬度 */
 th:nth-child(4), td:nth-child(4) {

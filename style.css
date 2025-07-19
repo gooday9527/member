@@ -4,7 +4,7 @@ body {
     font-family: 'Noto Sans TC', sans-serif;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* 避免整頁橫向捲動 */
+    overflow-x: auto !important; /* 整頁橫向捲動 */
 }
 
 /* 導覽列樣式 */
@@ -46,12 +46,12 @@ body {
 /* 區塊 (section) 顯示/隱藏和層疊樣式 */
 .section {
     display: none; /* 預設隱藏所有區塊 */
-    position: absolute; /* 讓所有區塊疊加在同一個位置 */
+     /* position: absolute; /* 讓所有區塊疊加在同一個位置 */
     /* 根據 .container-fluid 的 padding 調整寬度和位置，確保內容在容器內 */
-    width: calc(100% - 2rem); /* 100% 減去左右各 1rem 的 padding */
-    top: 1rem; /* 從 container-fluid 的 padding-top 開始 */
-    left: 1rem; /* 從 container-fluid 的 padding-left 開始 */
-    right: 1rem; /* 從 container-fluid 的 padding-right 開始 */
+      /*width: calc(100% - 2rem); /* 100% 減去左右各 1rem 的 padding */
+      /*top: 1rem; /* 從 container-fluid 的 padding-top 開始 */
+      /*left: 1rem; /* 從 container-fluid 的 padding-left 開始 */
+      /*right: 1rem; /* 從 container-fluid 的 padding-right 開始 */
     /* background-color: #fffbea; /* 可以考慮添加背景色，以防內容透視 */
     /* height: auto; /* 高度根據內容自動調整 */
 }
@@ -59,14 +59,14 @@ body {
 /* 只有帶有 active-section class 的區塊才顯示出來 */
 .section.active-section {
     display: block; /* 顯示當前活動的區塊 */
-    z-index: 10; /* 確保活動區塊在最上層 */
+     /* z-index: 10; /* 確保活動區塊在最上層 */
 }
 
 
 /* ===== 表格樣式 ===== */
 .table-responsive {
     width: 100%;
-    overflow-x: hidden; /* 禁止橫向滾動 */
+    overflow-x: auto; /* hidden;  禁止橫向滾動 */
 }
 
 table {
@@ -74,6 +74,7 @@ table {
     width: 100%;
     table-layout: auto; /* 自動依內容調整欄寬 */
     word-wrap: break-word;
+    min-width: max-content;
 }
 
 th {

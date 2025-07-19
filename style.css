@@ -163,6 +163,6 @@ th:nth-child(4), td:nth-child(4) {
   left: 1rem;
   right: 1rem;
   padding-top: 0;     /* ✅ 不額外往下推 */
-  margin-top: 0;      /* ✅ 不增加空隙 */
+  margin-top: -3rem;  /* 或 -2rem 視情況微調 */
   padding-bottom: 2rem;
 }

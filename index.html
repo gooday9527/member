@@ -464,6 +464,7 @@ function loadSouvenirDataWithoutDataTables() {
                     sortAsc = true; // 初始強制升冪
                 } else {
                     sortAsc = (sortKey === key) ? !sortAsc : true;
+                }    
                 sortKey = key;
                 sortedData.sort((a, b) => {
                     const valA = a[key] || '';

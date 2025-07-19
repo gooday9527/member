@@ -63,7 +63,7 @@
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
         localStorage.setItem("loginEmail", user.email);
-        const res = await fetch("你的 Apps Script URL", {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "login", email: user.email })

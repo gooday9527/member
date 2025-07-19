@@ -410,9 +410,9 @@ function loadSouvenirDataWithoutDataTables() {
 
             // 插入搜尋與筆數控制元件（先取得 table 才能插入）
             const controls = document.createElement('div');
-            controls.className = 'd-flex justify-content-between align-items-center mb-2 flex-wrap';
+            controls.className = 'd-flex justify-content-between align-items-center mb-1 flex-wrap';
             controls.innerHTML = `
-                <div class="mb-2">
+                <div class="mb-1">
                     <label for="rowsPerPageSelect" class="me-1">筆數：</label>
                     <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block me-3" style="width: 70px;">
                         <option value="10">10</option>
@@ -420,7 +420,7 @@ function loadSouvenirDataWithoutDataTables() {
                         <option value="50">50</option>
                         <option value="100">100</option>
                     </select>
-                </div><div class="mb-2">
+                </div><div class="mb-1">
                     <label for="searchInput" class="me-1">搜尋：</label>
                     <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 100px;" placeholder="輸入關鍵字">
                 </div>   

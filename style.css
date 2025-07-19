@@ -156,6 +156,15 @@ th:nth-child(2), td:nth-child(2) {
     z-index: 2;
   }
 
+  #souvenirControlsContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem; /* ✅ 加這一行，產生左右空隙 */
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+    
   #souvenir #souvenirPaginationWrapper {
     flex: 0 0 auto;
     background-color: #fffbea;

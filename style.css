@@ -1,10 +1,13 @@
 /* ===== 全站通用樣式 ===== */
-@media (min-width: 769px) {
-  body {
+body {
     background-color: #fffbea;
     font-family: 'Noto Sans TC', sans-serif;
     margin: 0;
     padding: 0;
+}
+/* 避免桌機版因 DataTable 超寬橫向捲動 */
+@media (min-width: 769px) {
+  body {
     overflow-x: hidden; /* 避免整頁橫向捲動 */
   }
 }

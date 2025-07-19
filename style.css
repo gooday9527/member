@@ -1,10 +1,12 @@
 /* ===== 全站通用樣式 ===== */
-body {
+@media (min-width: 769px) {
+  body {
     background-color: #fffbea;
     font-family: 'Noto Sans TC', sans-serif;
     margin: 0;
     padding: 0;
     overflow-x: hidden; /* 避免整頁橫向捲動 */
+  }
 }
 
 /* 導覽列樣式 */
@@ -169,4 +171,15 @@ th:nth-child(4), td:nth-child(4) {
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
+}
+ /* 推薦清單的 table-responsive 在小螢幕允許橫向滑動 */
+@media (max-width: 768px) {
+  #recommend .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* iOS 平滑滾動 */
+  }
+
+  #recommend table {
+    min-width: 600px; /* 避免欄位壓縮過頭，可視需要調整 */
+  }
 }

@@ -1,11 +1,65 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>好管家股東紀念品代領</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.10/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.10/css/dataTables.bootstrap5.min.css" /> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
+    /* === 通用 === */
+    body {
+      background-color: #fffbea;
+      font-family: 'Noto Sans TC', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .navbar {
+      background-color: #ffe082;
+    }
+    .nav-link.active {
+      color: #007bff;
+      font-weight: bold;
+      border-bottom: 2px solid #007bff;
+    }
+    .container-fluid {
+      padding: 1rem;
+    }
+
+    /* === Souvenir 區塊樣式 === */
+    #souvenir .souvenir-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+    }
+    #souvenir .search-bar-fixed {
+      flex: 0 0 auto;
+      background-color: #fffbea;
+      padding-bottom: 10px;
+      z-index: 2;
+    }
+    #souvenir .table-scroll-area {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      border: 1px solid #dee2e6;
+    }
+    #souvenir .table-scroll-area thead th {
+      position: sticky;
+      top: 0;
+      background-color: #fff3cd;
+      z-index: 2;
+    }
+    #souvenir #souvenirPaginationWrapper {
+      flex: 0 0 auto;
+      background-color: #fffbea;
+      padding-top: 10px;
+    }
+
+    /* === 手機版 Souvenir === */
     @media (max-width: 768px) {
       #souvenir .table-responsive {
         overflow-x: auto;
@@ -21,185 +75,51 @@
         z-index: 2;
       }
     }
-    @media (min-width: 769px) {
-      #souvenir .souvenir-wrapper {
-        display: flex;
-        flex-direction: column;
-        height: 600px;
-      }
-      #souvenir .search-bar-fixed {
-        flex: 0 0 auto;
-        background-color: #fffbea;
-        padding-bottom: 10px;
-        z-index: 2;
-      }
-      #souvenir .table-scroll-area {
-        flex: 1 1 auto;
-        overflow-y: auto;
-        border: 1px solid #dee2e6;
-      }
-      #souvenir .table-scroll-area thead th {
-        position: sticky;
-        top: 0;
-        background-color: #fff3cd;
-        z-index: 2;
-      }
-      #souvenir #souvenirPaginationWrapper {
-        flex: 0 0 auto;
-        background-color: #fffbea;
-        padding-top: 10px;
-      }
-    }
   </style>
 </head>
 <body>
-  <section id="souvenir">
-    <div class="souvenir-wrapper">
-      <div class="search-bar-fixed">
-        <div class="d-flex align-items-center gap-2 mb-2">
-          <label for="searchInput" class="form-label mb-0">搜尋：</label>
-          <input type="text" id="searchInput" class="form-control form-control-sm" style="max-width: 200px;">
-          <label for="itemsPerPage" class="form-label mb-0 ms-3">每頁筆數：</label>
-          <select id="itemsPerPage" class="form-select form-select-sm" style="max-width: 80px;">
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div>
-      </div>
-      <div class="table-scroll-area table-responsive">
-        <table id="souvenirTable" class="table table-bordered table-sm">
-          <thead class="table-warning"></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div id="souvenirPaginationWrapper"></div>
+  <nav class="navbar navbar-expand-md navbar-light px-3">
+    <a class="navbar-brand fw-bold" href="#">好管家代領</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu"></ul>
     </div>
-  </section>
+  </nav>
 
-  <script>
-    fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/%E7%B4%80%E5%BF%B5%E5%93%81%E8%B3%87%E8%A8%8A')
-      .then(res => res.json())
-      .then(data => {
-        const tableElement = document.getElementById('souvenirTable');
-        const tableHead = tableElement.querySelector('thead');
-        const tableBody = tableElement.querySelector('tbody');
+  <div class="container-fluid">
+    <section id="souvenir" class="section active-section">
+      <h3 class="text-center">🎁 紀念品</h3>
+      <div class="souvenir-wrapper">
+        <!-- 🔍 搜尋區塊 -->
+        <div class="search-bar-fixed">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <label for="searchInput" class="form-label mb-0">搜尋：</label>
+            <input type="text" id="searchInput" class="form-control form-control-sm" style="max-width: 150px;" />
+            <label for="itemsPerPage" class="form-label mb-0 ms-3">筆數：</label>
+            <select id="itemsPerPage" class="form-select form-select-sm" style="max-width: 80px;">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+        </div>
+        <!-- 📊 表格滾動區 -->
+        <div class="table-scroll-area table-responsive">
+          <table id="souvenirTable" class="table table-bordered table-sm">
+            <thead class="table-warning"></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <!-- ⏩ 分頁按鈕 -->
+        <div id="souvenirPaginationWrapper"></div>
+      </div>
+    </section>
+  </div>
 
-        if (!data || data.length === 0) {
-          tableHead.innerHTML = '';
-          tableBody.innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-          return;
-        }
-
-        const headers = Object.keys(data[0]);
-        let currentPage = 1;
-        let rowsPerPage = 10;
-        let sortKey = "股號";
-        let sortAsc = true;
-        let sortedData = [...data];
-        let filteredData = [...data];
-
-        tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} ▲</th>`).join('')}</tr>`;
-
-        headers.forEach(h => {
-          const th = tableHead.querySelector(`th[data-key="${h}"]`);
-          if (th) {
-            th.style.cursor = 'pointer';
-            th.addEventListener('click', () => sortTable(h));
-          }
-        });
-
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-          const keyword = e.target.value.trim().toLowerCase();
-          filteredData = sortedData.filter(row =>
-            headers.some(h => (row[h] || '').toLowerCase().includes(keyword))
-          );
-          currentPage = 1;
-          renderTable();
-        });
-
-        document.getElementById('itemsPerPage').addEventListener('change', (e) => {
-          rowsPerPage = parseInt(e.target.value);
-          currentPage = 1;
-          renderTable();
-        });
-
-        function sortTable(key) {
-          sortAsc = (sortKey === key) ? !sortAsc : true;
-          sortKey = key;
-          sortedData.sort((a, b) => {
-            const valA = a[key] || '';
-            const valB = b[key] || '';
-            const isNumber = !isNaN(valA) && !isNaN(valB);
-            return isNumber
-              ? (sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA))
-              : (sortAsc ? valA.localeCompare(valB, 'zh-Hant') : valB.localeCompare(valA, 'zh-Hant'));
-          });
-          const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-          filteredData = keyword
-            ? sortedData.filter(row =>
-                headers.some(h => (row[h] || '').toLowerCase().includes(keyword))
-              )
-            : [...sortedData];
-          currentPage = 1;
-          renderTable();
-        }
-
-        function renderTable() {
-          const start = (currentPage - 1) * rowsPerPage;
-          const end = start + rowsPerPage;
-          const pageData = filteredData.slice(start, end);
-          tableBody.innerHTML = pageData.map(row =>
-            `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`
-          ).join('');
-          renderPagination();
-        }
-
-        function renderPagination() {
-          const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-          const pageButtons = [];
-
-          pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上頁</button>`);
-
-          const maxVisible = 3;
-          let start = currentPage;
-          let end = Math.min(totalPages, currentPage + 2);
-          if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
-
-          if (start > 1) {
-            pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
-            if (start > 2) pageButtons.push(`<span class="me-1">...</span>`);
-          }
-
-          for (let i = start; i <= end; i++) {
-            pageButtons.push(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>`);
-          }
-
-          if (end < totalPages) {
-            if (end < totalPages - 1) pageButtons.push(`<span class="me-1">...</span>`);
-            pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
-          }
-
-          pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下頁</button>`);
-
-          document.getElementById('souvenirPaginationWrapper').innerHTML = pageButtons.join('');
-        }
-
-        window.changePage = function(offset) {
-          currentPage += offset;
-          renderTable();
-        };
-        window.goToPage = function(page) {
-          currentPage = page;
-          renderTable();
-        };
-
-        sortTable(sortKey);
-      })
-      .catch(error => {
-        console.error('載入紀念品資料錯誤：', error);
-      });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="your-existing-scripts.js"></script>
 </body>
 </html>

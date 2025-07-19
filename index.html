@@ -496,14 +496,14 @@ function loadSouvenirDataWithoutDataTables() {
 
             function renderPagination() {
                 const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-                const maxVisible = 5;
+                const maxVisible = 3; // ⬅️ 就是這一行控制頁碼按鈕數量
                 const pageButtons = [];
 
                 // 上一頁
-                pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上一頁</button>`);
+                pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上頁</button>`);
 
-                let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-                let end = Math.min(totalPages, start + maxVisible - 1);
+                let start = currentPage; // 當前頁面
+                let end = Math.min(totalPages, currentPage + 2); // 只出現目前 + 後2頁
                 if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
 
                 if (start > 1) {
@@ -522,7 +522,7 @@ function loadSouvenirDataWithoutDataTables() {
 
 
                 // 下一頁
-                pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下一頁</button>`);
+                pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下頁</button>`);
 
                 const paginationRow = document.createElement('tr');
                 paginationRow.innerHTML = `<td colspan="${headers.length}" class="text-center">${pageButtons.join('')}</td>`;

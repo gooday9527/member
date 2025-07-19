@@ -70,7 +70,7 @@ const firebaseConfig = {
       const password = document.getElementById("password").value;
       try {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        await fetch("https://script.google.com/macros/s/AKfycbyrAZn-SyUWh5zYxaAnBpkoeEUE1IB7yMJNGs9nIEBsE7Ft7b_XY4p2IwDEPiMeHqHE/exec", {
+        await fetch("https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "register", name, email })

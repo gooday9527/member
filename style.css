@@ -155,12 +155,3 @@ th:nth-child(4), td:nth-child(4) {
     table-layout: auto;
     word-break: break-word;
 }
-
-/* 修正推薦清單在桌機上被擠到導覽列的問題 */
-#recommend.section {
-  position: relative;
-  width: 100%;
-  padding-top: 1rem;     /* ✅ 與導覽列距離 */
-  margin-top: 1rem;      /* ✅ 如果還是不夠可加這個 */
-  padding-bottom: 2rem;  /* 原本就有，可留著 */
-}

@@ -125,55 +125,19 @@ th:nth-child(2), td:nth-child(2) {
   }
 }
 
-/* ===== 桌機版紀念品表格限制高度 + 表頭固定 ===== */
-@media (min-width: 769px) {
-  #souvenir .table-responsive {
-    max-height: 500px;  /* ✅ 可依需求調整表格高度 */
-    overflow-y: auto;
-    position: relative;
-  }
-
-  #souvenir thead th {
-    position: sticky;
-    top: 0;
-    background-color: #fff3cd;
-    z-index: 2;
-  }
+/* 固定紀念品頁面的搜尋與筆數欄位 */
+#souvenir .table-controls-fixed {
+  position: sticky;
+  top: 48px; /* ✅ 若導覽列高度不同可微調 */
+  z-index: 10;
+  background-color: #fffbea;
+  padding: 10px 0;
 }
 
-/* ===== 紀念品頁桌機版：固定搜尋列 + 表格滾動區 + 固定分頁列 ===== */
-@media (min-width: 769px) {
-  #souvenir .souvenir-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 600px;  /* ✅ 可微調整整體高度 */
-  }
-
-  #souvenir .search-bar-fixed {
-    flex: 0 0 auto;
-    background-color: #fffbea;
-    padding-bottom: 10px;
-    z-index: 2;
-  }
-
-  #souvenir .table-scroll-area {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    border: 1px solid #dee2e6;
-  }
-
-  #souvenir .table-scroll-area thead th {
-    position: sticky;
-    top: 0;
-    background-color: #fff3cd;
-    z-index: 2;
-  }
-
-  #souvenir #souvenirPaginationWrapper {
-    flex: 0 0 auto;
-    background-color: #fffbea;
-    padding-top: 10px;
-  }
+/* 限制表格區域高度讓它可捲動 */
+#souvenir .table-scroll-container {
+  max-height: 500px; /* ✅ 依需求調整 */
+  overflow-y: auto;
 }
 
 

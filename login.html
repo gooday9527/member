@@ -1,4 +1,3 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -23,13 +22,19 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
   </style>
+
+  <!-- ✅ Firebase 瀏覽器用 SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script>
     const firebaseConfig = {
-      apiKey: "你的 API KEY",
-      authDomain: "你的 authDomain",
-      projectId: "你的 projectId"
+      apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
+      authDomain: "goodaymember.firebaseapp.com",
+      projectId: "goodaymember",
+      storageBucket: "goodaymember.appspot.com",
+      messagingSenderId: "730801053598",
+      appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
+      measurementId: "G-J3Z7YTHJ9P"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -40,30 +45,35 @@
     <h3 class="text-center mb-4">會員登入</h3>
     <form id="loginForm">
       <div class="mb-3">
-        <input type="email" class="form-control" id="email" placeholder="Email" required />
+        <input type="email" class="form-control" id="email" placeholder="Email" required autocomplete="email">
       </div>
       <div class="mb-3">
-        <input type="password" class="form-control" id="password" placeholder="密碼" required />
+        <input type="password" class="form-control" id="password" placeholder="密碼" required autocomplete="current-password">
       </div>
       <div class="d-grid">
         <button type="submit" class="btn btn-warning">登入</button>
       </div>
     </form>
+    <div id="message" class="text-center mt-3 text-danger"></div>
     <div class="text-center mt-3">
-      <a href="register.html">註冊</a>｜<a href="forgot.html">忘記密碼？</a>
+      <a href="register.html">註冊</a> ｜ <a href="forgot.html">忘記密碼？</a>
     </div>
   </div>
 
   <script>
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    const API_URL = "https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec";
+
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
       e.preventDefault();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
+
       try {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
-        localStorage.setItem("loginEmail", user.email);
-        const res = await fetch("https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec", {
+
+        // ✅ 呼叫 Apps Script 確認是否啟用
+        const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "login", email: user.email })
@@ -72,10 +82,10 @@
         if (result.success) {
           window.location.href = "index.html";
         } else {
-          alert(result.message);
+          document.getElementById("message").textContent = result.message || "登入失敗";
         }
-      } catch (err) {
-        alert("登入失敗：" + err.message);
+      } catch (error) {
+        document.getElementById("message").textContent = "登入失敗：" + error.message;
       }
     });
   </script>

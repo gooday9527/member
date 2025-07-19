@@ -156,3 +156,17 @@ th:nth-child(4), td:nth-child(4) {
     word-break: break-word;
 }
 
+/* 推薦清單表格的滾動容器 */
+#recommend .table-responsive {
+  max-height: 500px; /* ✅ 可自行調整高度 */
+  overflow-y: auto;
+  position: relative;
+}
+
+/* 固定表頭（使用 sticky） */
+#recommend thead th {
+  position: sticky;
+  top: 0;
+  background-color: #fff3cd;
+  z-index: 2;
+}

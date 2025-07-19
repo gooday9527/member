@@ -201,7 +201,10 @@
 <div class="container-fluid">
   <section id="souvenir" class="section active-section">
     <h3 class="text-center">🎁 紀念品</h3> 
-     <div class="mt-3"> 
+      
+    <!-- ✅ 外層容器加上 -->
+     <div class="souvenir-wrapper mt-3"> 
+         
       <div class="table-controls-fixed" id="souvenirControlsContainer"></div> <!-- ✅ 插入搜尋/筆數用 -->
       <div class="table-scroll-container table-responsive">
         <table class="table table-bordered table-sm" id="souvenirTable">
@@ -209,12 +212,15 @@
                 <tbody></tbody>
             </table>
         </div>
+         
         <div id="souvenirPaginationWrapper">
           <div id="souvenirPagination" class="d-flex justify-content-center flex-wrap"></div>
         </div>
+         
      </div>
   </section>
-
+</div>
+    
   <section id="recommend" class="section">
       <h3 class="text-center">🌟 推薦清單</h3> 
       <div class="mb-3 d-flex align-items-center gap-2">

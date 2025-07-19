@@ -1,3 +1,4 @@
+<!-- forgot.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -18,81 +19,43 @@
       max-width: 400px;
       padding: 20px;
       background-color: #fff9c4;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+      border-radius: 10px;
     }
   </style>
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
-    authDomain: "goodaymember.firebaseapp.com",
-    projectId: "goodaymember",
-    storageBucket: "goodaymember.firebasestorage.app",
-    messagingSenderId: "730801053598",
-    appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
-    measurementId: "G-J3Z7YTHJ9P"
-  };
-
-  // 初始化 Firebase
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "你的 API KEY",
+      authDomain: "你的 authDomain",
+      projectId: "你的 projectId"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  </script>
 </head>
 <body>
   <div class="card shadow">
     <h3 class="text-center mb-4">忘記密碼</h3>
-    <div id="message" class="alert d-none"></div>
     <form id="forgotForm">
-      <div class="mb-3">
-        <label for="email" class="form-label">請輸入您的 Email</label>
-        <input type="email" class="form-control" id="email" required />
-      </div>
-      <div class="d-grid">
-        <button type="submit" class="btn btn-info">寄送重設密碼信</button>
-      </div>
+      <input type="email" class="form-control mb-3" id="email" placeholder="輸入 Email" required />
+      <button type="submit" class="btn btn-info w-100">寄送重設信</button>
     </form>
-    <div class="text-center mt-3">
-      <a href="login.html">回到登入頁</a>
-    </div>
+    <div id="message" class="text-center mt-3 text-success"></div>
+    <div class="text-center mt-3"><a href="login.html">返回登入</a></div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwLsybjgF3FgVVDOIHKid2LrCRtbD_ZFnFeOor8BNcXzJPI0koQkOijPpvCYpQBnWyT/exec";
-
-    document.getElementById("forgotForm").addEventListener("submit", function(e) {
+    document.getElementById("forgotForm").addEventListener("submit", async function (e) {
       e.preventDefault();
       const email = document.getElementById("email").value.trim();
-      if (!email) {
-        showMessage("請輸入 Email", "danger");
-        return;
+      try {
+        await auth.sendPasswordResetEmail(email);
+        document.getElementById("message").textContent = "密碼重設信已寄出，請至信箱查看";
+      } catch (error) {
+        document.getElementById("message").textContent = error.message;
       }
-
-      fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "forgot",
-          email: email
-        })
-      })
-      .then(res => res.json())
-      .then(response => {
-        showMessage(response.message, response.success ? "success" : "danger");
-      })
-      .catch(error => {
-        console.error("錯誤:", error);
-        showMessage("系統錯誤，請稍後再試", "danger");
-      });
     });
-
-    function showMessage(msg, type) {
-      const box = document.getElementById("message");
-      box.className = `alert alert-${type}`;
-      box.textContent = msg;
-      box.classList.remove("d-none");
-    }
   </script>
 </body>
 </html>

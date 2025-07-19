@@ -217,13 +217,14 @@
                         <tbody></tbody>
                     </table>
                 </div>
-            </div>
-
-            <!-- 分頁按鈕區塊 -->
-            <div id="souvenirPaginationWrapper" class="d-flex justify-content-center align-items-center flex-wrap p-2" style="background-color: #fffbea;">
-                <div id="souvenirPagination"></div>
-            </div>
-        </section>
+                <!-- ✅ 這就是要新增的分頁容器（放在表格外面，但在這層 div 裡） -->
+                <div id="souvenirPaginationWrapper">
+                  <div id="souvenirPagination" class="d-flex justify-content-center flex-wrap"></div>
+                </div>
+                <!-- ✅ 到這裡為止 -->
+             </div>
+            </section>
+          </div>
 
         <section id="recommend" class="section">
             <h3 class="text-center">🌟 推薦清單</h3> 

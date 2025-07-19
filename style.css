@@ -155,3 +155,14 @@ th:nth-child(4), td:nth-child(4) {
     table-layout: auto;
     word-break: break-word;
 }
+
+/* 修正推薦清單在桌機上被擠到導覽列的問題 */
+#recommend.section {
+  position: relative;
+  width: 100%;
+  padding-bottom: 2rem;
+}
+
+#recommend .table-responsive {
+  overflow-x: auto;
+}

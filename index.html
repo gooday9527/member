@@ -456,8 +456,14 @@ function loadSouvenirDataWithoutDataTables() {
                 renderTable();
             });
 
+            let firstLoad = true;
+            
             function sortTable(key) {
-                sortAsc = (sortKey === key) ? !sortAsc : true;
+                if (firstLoad) {
+                    firstLoad = false;
+                    sortAsc = true; // 初始強制升冪
+                } else {
+                    sortAsc = (sortKey === key) ? !sortAsc : true;
                 sortKey = key;
                 sortedData.sort((a, b) => {
                     const valA = a[key] || '';

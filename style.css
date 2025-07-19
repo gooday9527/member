@@ -155,3 +155,14 @@ th:nth-child(4), td:nth-child(4) {
     table-layout: auto;
     word-break: break-word;
 }
+
+#recommend.section {
+  position: absolute;
+  width: calc(100% - 2rem);
+  top: 0; /* ✅ 避免與 container-fluid 的 padding 重疊 */
+  left: 1rem;
+  right: 1rem;
+  padding-top: 0;     /* ✅ 不額外往下推 */
+  margin-top: 0;      /* ✅ 不增加空隙 */
+  padding-bottom: 2rem;
+}

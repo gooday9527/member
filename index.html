@@ -209,7 +209,7 @@
         <label for="searchInput" class="form-label mb-0">搜尋：</label>
         <input type="text" id="searchInput" class="form-control form-control-sm" style="max-width: 200px;" />
         
-        <label for="itemsPerPage" class="form-label mb-0 ms-3">每頁顯示：</label>
+        <label for="itemsPerPage" class="form-label mb-0 ms-3">每頁筆數：</label>
         <select id="itemsPerPage" class="form-select form-select-sm" style="max-width: 80px;">
           <option value="10">10</option>
           <option value="25">25</option>
@@ -411,24 +411,6 @@ function loadSouvenirDataWithoutDataTables() {
             const tableHead = tableElement.querySelector('thead');
             const tableBody = tableElement.querySelector('tbody');
 
-            // 插入搜尋與筆數控制元件（先取得 table 才能插入）
-            const controls = document.createElement('div');
-            controls.className = 'd-flex justify-content-between align-items-center mb-2 flex-wrap';
-            controls.innerHTML = `
-                <div class="mb-2">
-                    <label for="searchInput" class="me-2">搜尋：</label>
-                    <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 200px;" placeholder="輸入關鍵字">
-                </div>
-                <div class="mb-2">
-                    <label for="rowsPerPageSelect" class="me-2">每頁顯示筆數：</label>
-                    <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block" style="width: 100px;">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
-            `;
             tableElement.parentNode.insertBefore(controls, tableElement);
 
             if (!data || data.length === 0) {

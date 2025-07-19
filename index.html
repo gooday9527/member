@@ -207,9 +207,9 @@
     <div class="search-bar-fixed">
       <div class="d-flex align-items-center gap-2 mb-2">
         <label for="searchInput" class="form-label mb-0">搜尋：</label>
-        <input type="text" id="searchInput" class="form-control form-control-sm" style="max-width: 200px;" />
+        <input type="text" id="searchInput" class="form-control form-control-sm" style="max-width: 150px;" />
         
-        <label for="itemsPerPage" class="form-label mb-0 ms-3">每頁筆數：</label>
+        <label for="itemsPerPage" class="form-label mb-0 ms-3">筆數：</label>
         <select id="itemsPerPage" class="form-select form-select-sm" style="max-width: 80px;">
           <option value="10">10</option>
           <option value="25">25</option>
@@ -229,10 +229,8 @@
 
     <!-- ⏩ 分頁按鈕 -->
     <div id="souvenirPaginationWrapper"></div>
-
   </div>
 </section>
-
 
   <section id="recommend" class="section">
       <h3 class="text-center">🌟 推薦清單</h3> 
@@ -610,5 +608,6 @@ function loadSouvenirDataWithoutDataTables() {
             }, 100);
         });
     </script>
+  </div>
 </body>
 </html>

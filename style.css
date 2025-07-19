@@ -160,12 +160,6 @@ th:nth-child(4), td:nth-child(4) {
 #recommend.section {
   position: relative;
   width: 100%;
-  padding-bottom: 2rem;
-}
-
-#recommend.section {
-  position: relative;
-  width: 100%;
   padding-top: 1rem;     /* ✅ 與導覽列距離 */
   margin-top: 1rem;      /* ✅ 如果還是不夠可加這個 */
   padding-bottom: 2rem;  /* 原本就有，可留著 */

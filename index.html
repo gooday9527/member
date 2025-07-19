@@ -403,8 +403,8 @@ function loadSouvenirDataWithoutDataTables() {
             controls.className = 'd-flex justify-content-between align-items-center mb-2 flex-wrap';
             controls.innerHTML = `
                 <div class="mb-2">
-                    <label for="rowsPerPageSelect" class="me-2">每頁筆數：</label>
-                    <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block" style="width: 100px;">
+                    <label for="rowsPerPageSelect" class="me-2">筆數：</label>
+                    <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block" style="width: 80px;">
                         <option value="10">10</option>
                         <option value="25">25</option>
                         <option value="50">50</option>
@@ -412,7 +412,7 @@ function loadSouvenirDataWithoutDataTables() {
                     </select>
                 </div><div class="mb-2">
                     <label for="searchInput" class="me-2">搜尋：</label>
-                    <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 180px;" placeholder="輸入關鍵字">
+                    <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 120px;" placeholder="輸入關鍵字">
                 </div>   
             `;
             const controlsContainer = document.getElementById('souvenirControlsContainer');

@@ -106,6 +106,25 @@ th:nth-child(2), td:nth-child(2) {
     width: 50px;
 }
 
+/* 手機版紀念品表格：可水平捲動，並固定表頭 */
+@media (max-width: 768px) {
+  #souvenir .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #souvenir table {
+    min-width: 600px;
+  }
+
+  #souvenir thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff3cd;
+    z-index: 2;
+  }
+}
+
 
 /* ✅ 紀念品欄限制最大寬度 */
 th:nth-child(4), td:nth-child(4) {

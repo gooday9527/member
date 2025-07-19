@@ -125,6 +125,27 @@ th:nth-child(2), td:nth-child(2) {
   }
 }
 
+@media (max-width: 768px) {
+  #souvenir .table-scroll-container {
+    max-height: 500px;  /* ✅ 控制垂直高度 */
+    overflow-y: auto;   /* ✅ 開啟垂直捲動 */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+
+  #souvenir table {
+    min-width: 600px;
+  }
+
+  #souvenir thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff3cd;
+    z-index: 2;
+  }
+}
+
 /* ===== 桌機版：紀念品表格固定搜尋 + 固定表頭 + 垂直捲動 + 固定分頁 ===== */
 @media (min-width: 769px) {
   #souvenir .souvenir-wrapper {

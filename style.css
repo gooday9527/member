@@ -141,6 +141,41 @@ th:nth-child(2), td:nth-child(2) {
   }
 }
 
+/* === 紀念品頁：桌機版固定搜尋與分頁列，表格可滾動 === */
+@media (min-width: 769px) {
+  #souvenir .souvenir-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 600px; /* ✅ 視需要可微調整整體容器高度 */
+  }
+
+  #souvenir .search-bar-fixed {
+    flex: 0 0 auto;
+    background-color: #fffbea;
+    padding-bottom: 10px;
+    z-index: 2;
+  }
+
+  #souvenir .table-scroll-area {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+  }
+
+  #souvenir .table-scroll-area thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff3cd;
+    z-index: 2;
+  }
+
+  #souvenir #souvenirPaginationWrapper {
+    flex: 0 0 auto;
+    background-color: #fffbea;
+    padding-top: 10px;
+  }
+}
+
 
 /* ✅ 紀念品欄限制最大寬度 */
 th:nth-child(4), td:nth-child(4) {

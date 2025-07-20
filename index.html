@@ -94,24 +94,6 @@
             border: 1px solid #dee2e6;
         }
 
-        /* 前三欄欄寬固定 */
-        th:nth-child(1), td:nth-child(1) {
-            width: 20px;
-        }
-        th:nth-child(2), td:nth-child(2) {
-            width: 50px;
-        }
-
-        /* 紀念品欄限制最大寬度 */
-        th:nth-child(4), td:nth-child(4) {
-            max-width: 300px;
-        }
-
-        /* 推薦分類下拉選單寬度 */
-        #recommendSheet {
-            max-width: 300px;
-        }
-
         /* DataTables 相關的自訂樣式 (重點調整區域) */
         .dataTables_wrapper .dataTables_length select {
             min-width: 80px; 
@@ -152,17 +134,6 @@
             max-width: 100%; 
             width: auto; 
         }
-
-
-        .nav-link.highlight-tab {
-         border: 2px solid orange !important;
-         border-radius: 8px;
-         padding: 6px 12px;
-         margin: 3px;
-        }
-
-
-
 
         @media only screen and (max-width: 768px) {
             body { padding: 10px; } 
@@ -366,10 +337,10 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
                 if (tab.link) {
                     li.innerHTML = `<a class="nav-link" href="${tab.link}">${tab.label}</a>`;
                 } else {
-                    const highlightTabs = ["account", "delegation", "delegated", "announcement", "souvenir-manage", "billing"];
-                    const extraClass = loginEmail && highlightTabs.includes(tab.id) ? "highlight-tab" : "";
-                    li.innerHTML = `<a class="nav-link ${extraClass}" href="#" data-section="${tab.id}">${tab.label}</a>`;
-
+                    const highlightTabs = ["account", "delegation", "delegated", "announcement", "souvenir-manage", "billing", "logout"];
+                    const isHighlight = highlightTabs.includes(tab.id);
+                    const classList = `nav-link${isHighlight ? " highlight-tab" : ""}`;
+                    li.innerHTML = `<a class="${classList}" href="#" data-section="${tab.id}">${tab.label}</a>`;
                 }
                 navMenu.appendChild(li);
             });

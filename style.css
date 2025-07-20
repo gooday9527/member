@@ -44,10 +44,12 @@ body {
 /* 導覽列登入後的粗體樣式 */
 .nav-link.highlight-tab {
   font-weight: bold;
-  border: none;
-  border-radius: 0;
-  margin: 2px;
-  padding: 6px 10px;
+  color: white;
+  text-shadow:
+    -1px -1px 0 #ffa500,
+     1px -1px 0 #ffa500,
+    -1px  1px 0 #ffa500,
+     1px  1px 0 #ffa500; /* 橘色邊框 */
 }
 
 /* 內容容器樣式 */

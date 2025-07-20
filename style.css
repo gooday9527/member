@@ -41,15 +41,14 @@ body {
   padding: 4px 10px;
 }
 
-/* 導覽列會員鈕 */
-.nav-link.highlight-tab {
-  border: 2px solid #ffa500;
-  border-radius: 6px;
+/* 導覽列登入後的粗體樣式 */
+.nav-link {
+  font-weight: bold;
+  border: none;
+  border-radius: 0;
   margin: 2px;
   padding: 4px 10px;
 }
-
-
 
 /* 內容容器樣式 */
 .container-fluid {

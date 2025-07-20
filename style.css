@@ -45,7 +45,7 @@ body {
     position: relative; /* 關鍵：讓內部絕對定位的區塊相對於此容器定位 */
     min-height: 600px; /* 範例值，您可以調整以確保頁面內容足夠高，防止塌陷 */
     padding-top: 3rem; /* 為內容區塊留出一些頂部空間，避免與導覽列重疊 */
-    padding-bottom: 0.5rem; /* 底部空間 */
+    padding-bottom: 1rem; /* 底部空間 */
 }
 
 /* 區塊 (section) 顯示/隱藏和層疊樣式 */
@@ -134,7 +134,7 @@ th:nth-child(2), td:nth-child(2) {
   #souvenir .souvenir-wrapper {
     display: flex;
     flex-direction: column;
-    height: 700px; /* 可依需求調整整體高度 */
+    height: 600px; /* 可依需求調整整體高度 */
   }
 
   #souvenir .table-controls-fixed {
@@ -162,7 +162,7 @@ th:nth-child(2), td:nth-child(2) {
     align-items: center;
     gap: 1rem; /* ✅ 加這一行，產生左右空隙 */
     flex-wrap: wrap;
-    margin-bottom: 0.3rem; /* 🔁 上下修改這行 */
+    margin-bottom: 1rem;
   }
     
   #souvenir #souvenirPaginationWrapper {
@@ -231,7 +231,7 @@ th:nth-child(4), td:nth-child(4) {
 
 /* 推薦清單表格的滾動容器 */
 #recommend .table-responsive {
-  max-height: 700px; /* ✅ 可自行調整高度 */
+  max-height: 500px; /* ✅ 可自行調整高度 */
   overflow-y: auto;
   position: relative;
 }

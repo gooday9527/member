@@ -184,7 +184,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
         li.className = "nav-item";
 
         const isHighlight = highlightTabs.includes(tab.id);
-        const classList = `nav-link${isHighlight ? " highlight-tab" : ""}`;
+        const classList =  "nav-link";
 
         if (tab.link) {
             li.innerHTML = `<a class="${classList}" href="${tab.link}">${tab.label}</a>`;

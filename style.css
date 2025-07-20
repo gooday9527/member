@@ -39,6 +39,11 @@ body {
   border-radius: 6px;         /* 圓角邊框 */
   margin: 2px;
   padding: 4px 10px;
+  text-shadow:
+    -1px -1px 0 #cc7700,
+     1px -1px 0 #cc7700,
+    -1px  1px 0 #cc7700,
+     1px  1px 0 #cc7700;
 }
 
 /* 讓指定導覽列 tab 保持橘色邊框與粗體 */

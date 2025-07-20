@@ -162,7 +162,7 @@ th:nth-child(2), td:nth-child(2) {
     align-items: center;
     gap: 1rem; /* ✅ 加這一行，產生左右空隙 */
     flex-wrap: wrap;
-    margin-bottom: 0.3rem; /* 🔁 上下修改這行 */
+    margin-bottom: 1rem; /* 🔁 上下修改這行 */
   }
     
   #souvenir #souvenirPaginationWrapper {

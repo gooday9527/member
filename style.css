@@ -231,7 +231,7 @@ th:nth-child(4), td:nth-child(4) {
 
 /* 推薦清單表格的滾動容器 */
 #recommend .table-responsive {
-  max-height: 700px; /* ✅ 可自行調整高度 */
+  max-height: 800px; /* ✅ 可自行調整高度 */
   overflow-y: auto;
   position: relative;
 }

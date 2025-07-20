@@ -40,8 +40,10 @@ body {
 
 /* 導覽列會員鈕 */
 .nav-link.highlight-tab {
-  border: 2px solid orange !important;
-  background-color: #fff8e1;  /* 可加上淡黃色背景看得更明顯 */
+  border: 2px solid #ffa500;
+  border-radius: 6px;
+  margin: 2px;
+  padding: 4px 10px;
 }
 
 

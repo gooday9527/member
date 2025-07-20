@@ -46,13 +46,6 @@
             font-weight: bold;
         }
 
-        /* 確保 nav-link 點擊時的 active 狀態有視覺效果 */
-        .nav-link.active {
-            color: #ffa500; /* 例如，橘色 */
-            font-weight: bold;
-            border-bottom: 2px solid #007bff; /* 添加底部邊框效果 */
-        }
-
         /* 內容容器樣式 */
         .container-fluid {
             padding-left: 1rem !important;
@@ -329,22 +322,27 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
         ];
 
         function renderNavTabs() {
-            navMenu.innerHTML = ""; 
-            const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
-            tabs.forEach(tab => {
-                const li = document.createElement("li");
-                li.className = "nav-item";
-                if (tab.link) {
-                    li.innerHTML = `<a class="nav-link" href="${tab.link}">${tab.label}</a>`;
-                } else {
-                    const highlightTabs = ["account", "delegation", "delegated", "announcement", "souvenir-manage", "billing", "logout"];
-                    const isHighlight = highlightTabs.includes(tab.id);
-                    const classList = `nav-link${isHighlight ? " highlight-tab" : ""}`;
-                    li.innerHTML = `<a class="${classList}" href="#" data-section="${tab.id}">${tab.label}</a>`;
-                }
-                navMenu.appendChild(li);
-            });
+    navMenu.innerHTML = ""; 
+    const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
+
+    const highlightTabs = ["account", "delegation", "delegated", "announcement", "souvenir-manage", "billing", "logout"];
+
+    tabs.forEach(tab => {
+        const li = document.createElement("li");
+        li.className = "nav-item";
+
+        const isHighlight = highlightTabs.includes(tab.id);
+        const classList = `nav-link${isHighlight ? " highlight-tab" : ""}`;
+
+        if (tab.link) {
+            li.innerHTML = `<a class="${classList}" href="${tab.link}">${tab.label}</a>`;
+        } else {
+            li.innerHTML = `<a class="${classList}" href="#" data-section="${tab.id}">${tab.label}</a>`;
         }
+
+        navMenu.appendChild(li);
+    });
+}
 
         function showSection(id) {
             allSections.forEach(sec => sec.classList.remove("active-section"));

@@ -177,7 +177,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     navMenu.innerHTML = ""; 
     const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
 
-    const highlightTabs = ["account", "delegation", "delegated", "announcement", "souvenir-manage", "billing", "logout"];
+    const highlightTabs = ["account", "delegation", "delegated", "delegation-group","announcement", "souvenir-manage", "billing", "logout"];
 
     tabs.forEach(tab => {
         const li = document.createElement("li");

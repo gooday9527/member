@@ -93,9 +93,16 @@
     <button type="submit" class="btn btn-warning w-100">登入</button>
   </form>
 </section>
+<!-- 🔻 把這些新頁面補上 -->
+<section id="account" class="section"><h3 class="text-center">📁 新增帳號/持股</h3></section>
+<section id="delegation" class="section"><h3 class="text-center">📤 可委託</h3></section>
+<section id="delegated" class="section"><h3 class="text-center">📥 已委託</h3></section>
+<section id="announcement" class="section"><h3 class="text-center">📣 公告欄</h3></section>
+<section id="souvenir-manage" class="section"><h3 class="text-center">🧾 紀念品管理</h3></section>
+<section id="billing" class="section"><h3 class="text-center">💰 帳戶管理</h3></section>
 
-
- </div> <!-- 把 container-fluid 導覽列的結尾放到這裡 -->
+<!-- ✅ 然後這個 container-fluid 的結尾放最後 -->
+</div> <!-- container-fluid 結束 -->
     
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -468,29 +475,6 @@ function loadSouvenirDataWithoutDataTables() {
                 showSection("souvenir"); 
 
                 loadSouvenirDataWithoutDataTables(); 
-
-                const ensureSectionExists = (id, label) => {
-  if (!document.getElementById(id)) {
-    const section = document.createElement("section");
-    section.id = id;
-    section.className = "section";
-    section.innerHTML = `<h3 class="text-center">${label}</h3><p class="text-center text-muted">(尚未建立內容)</p>`;
-    document.body.appendChild(section);
-  }
-};
-
-// 登入後才會顯示的頁面（需確保這些 section 存在）
-const protectedSections = [
-  { id: "account", label: "📁 新增帳號/持股" },
-  { id: "delegation", label: "📤 可委託" },
-  { id: "delegated", label: "📥 已委託" },
-  { id: "announcement", label: "📣 公告欄" },
-  { id: "souvenir-manage", label: "🧾 紀念品管理" },
-  { id: "billing", label: "💰 帳戶管理" }
-];
-
-protectedSections.forEach(s => ensureSectionExists(s.id, s.label));
-
 
                 const recommendSheetSelect = document.getElementById('recommendSheet');
                 if (recommendSheetSelect) {

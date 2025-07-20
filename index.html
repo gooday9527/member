@@ -469,6 +469,29 @@ function loadSouvenirDataWithoutDataTables() {
 
                 loadSouvenirDataWithoutDataTables(); 
 
+                const ensureSectionExists = (id, label) => {
+  if (!document.getElementById(id)) {
+    const section = document.createElement("section");
+    section.id = id;
+    section.className = "section";
+    section.innerHTML = `<h3 class="text-center">${label}</h3><p class="text-center text-muted">(尚未建立內容)</p>`;
+    document.body.appendChild(section);
+  }
+};
+
+// 登入後才會顯示的頁面（需確保這些 section 存在）
+const protectedSections = [
+  { id: "account", label: "📁 新增帳號/持股" },
+  { id: "delegation", label: "📤 可委託" },
+  { id: "delegated", label: "📥 已委託" },
+  { id: "announcement", label: "📣 公告欄" },
+  { id: "souvenir-manage", label: "🧾 紀念品管理" },
+  { id: "billing", label: "💰 帳戶管理" }
+];
+
+protectedSections.forEach(s => ensureSectionExists(s.id, s.label));
+
+
                 const recommendSheetSelect = document.getElementById('recommendSheet');
                 if (recommendSheetSelect) {
                     recommendSheetSelect.addEventListener('change', function () {

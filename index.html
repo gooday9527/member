@@ -202,6 +202,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
                 document.querySelectorAll('.nav-link').forEach(link => {
                     link.classList.remove('active');
                 });
+                this.classList.add('active');
                 const activeNavLink = document.querySelector(`.nav-link[data-section="${id}"]`);
                 if (activeNavLink) {
                     activeNavLink.classList.add('active');

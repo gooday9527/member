@@ -42,7 +42,7 @@ body {
 }
 
 /* 導覽列登入後的粗體樣式 */
-.nav-link {
+.nav-link.highlight-tab {
   font-weight: bold;
   border: none;
   border-radius: 0;

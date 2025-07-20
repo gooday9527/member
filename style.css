@@ -162,7 +162,7 @@ th:nth-child(2), td:nth-child(2) {
     align-items: center;
     gap: 1rem; /* ✅ 加這一行，產生左右空隙 */
     flex-wrap: wrap;
-    margin-bottom: 0.5rem; /* 🔁 上下修改這行 */
+    margin-bottom: 0.3rem; /* 🔁 上下修改這行 */
   }
     
   #souvenir #souvenirPaginationWrapper {
@@ -231,7 +231,7 @@ th:nth-child(4), td:nth-child(4) {
 
 /* 推薦清單表格的滾動容器 */
 #recommend .table-responsive {
-  max-height: 800px; /* ✅ 可自行調整高度 */
+  max-height: 700px; /* ✅ 可自行調整高度 */
   overflow-y: auto;
   position: relative;
 }

@@ -258,17 +258,23 @@
         </section>
 
          <section id="login" class="section">
-            <h3 class="text-center">🔐 登入</h3> 
-            <p>這裡未來可以放登入表單</p>
-         </section>
- </div> <!-- 把 container-fluid 的結尾放到這裡 -->
+  <h3 class="text-center">🔐 登入</h3>
+  <form id="loginForm" class="text-center mt-3" style="max-width: 400px; margin: auto;">
+    <div class="mb-3">
+      <input type="email" id="loginEmail" class="form-control" placeholder="Email" required />
+    </div>
+    <div class="mb-3">
+      <input type="password" id="loginPassword" class="form-control" placeholder="密碼" required />
+    </div>
+    <button type="submit" class="btn btn-warning w-100">登入</button>
+  </form>
+</section>
+
+
+ </div> <!-- 把 container-fluid 導覽列的結尾放到這裡 -->
     
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.10/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.10/js/dataTables.bootstrap5.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" integrity="sha512-J/0uB3zIgK1t5OJAA7Js1qntoZ1aI7V3C2aygtlNt9rSAbRRxvKakIDhMKRcX7gs3PEz+XRTS1G0BqT/91Q56A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script type="module">
@@ -287,6 +293,27 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        // 監聽登入按鈕提交
+        // 登入事件處理
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      console.log("登入成功", user.email);
+      loginEmail = user.email;
+      renderNavTabs();
+      showSection("souvenir");
+    })
+    .catch((error) => {
+      console.error("登入失敗", error);
+      alert("登入失敗：" + error.message);
+    });
+});
+
 
         let loginEmail = null;
         const navMenu = document.getElementById("navMenu");

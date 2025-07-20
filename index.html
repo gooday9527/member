@@ -272,6 +272,9 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 
 
 function loadSouvenirDataWithoutDataTables() {
+    // 先清空控制區避免重複
+  document.getElementById("souvenirControlsContainer").innerHTML = "";
+
     fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
         .then(res => res.json())
         .then(data => {

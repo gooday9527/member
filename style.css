@@ -34,7 +34,7 @@ body {
 /* 確保 nav-link 點擊時的 active 狀態有視覺效果 */
 .nav-link.active {
   background-color: #ffa500; /* 橘色底 */
-  color: #ffffff;            /* 白色字 */
+  color: #ffffff !important; /* 白色字 */
   border: 2px solid #ffa500;
   border-radius: 6px;         /* 圓角邊框 */
   margin: 2px;

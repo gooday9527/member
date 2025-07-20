@@ -465,28 +465,31 @@ function loadSouvenirDataWithoutDataTables() {
                  })
                  .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
          }
-
+        
+        let souvenirLoaded = false;
+        
         document.addEventListener('DOMContentLoaded', () => {
-            onAuthStateChanged(auth, (user) => {
-                loginEmail = user ? user.email : null;
-                console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
-                
-                renderNavTabs(); 
-                showSection("souvenir"); 
+       onAuthStateChanged(auth, (user) => {
+    loginEmail = user ? user.email : null;
+    console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
 
-                loadSouvenirDataWithoutDataTables(); 
+    renderNavTabs(); 
+    showSection("souvenir"); 
 
-                const recommendSheetSelect = document.getElementById('recommendSheet');
-                if (recommendSheetSelect) {
-                    recommendSheetSelect.addEventListener('change', function () {
-                        loadRecommend(this.value);
-                    });
-                    // 初始化時載入預設的推薦清單
-                    loadRecommend('我全都要（不需證件）'); 
-                }
-            });
-        });
+    if (!souvenirLoaded) {
+      loadSouvenirDataWithoutDataTables();
+      souvenirLoaded = true;
+    }
 
+    const recommendSheetSelect = document.getElementById('recommendSheet');
+    if (recommendSheetSelect) {
+      recommendSheetSelect.addEventListener('change', function () {
+        loadRecommend(this.value);
+      });
+      loadRecommend('我全都要（不需證件）'); 
+    }
+  });
+});
         // 監聽視窗大小變化，當視窗大小改變時，重新調整 DataTables 列寬
         $(window).on('resize', function () {
             setTimeout(function() {

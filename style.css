@@ -39,12 +39,11 @@ body {
 }
 
 /* 導覽列會員鈕 */
-.nav-link.logged-in-tab {
-  border: 2px solid  #fff8e1;  /* 橘色框線 */
-  border-radius: 6px;
-  margin: 2px;
-  padding: 4px 10px;
+.nav-link.highlight-tab {
+  border: 2px solid orange !important;
+  background-color: #fff8e1;  /* 可加上淡黃色背景看得更明顯 */
 }
+
 
 
 /* 內容容器樣式 */

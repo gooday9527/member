@@ -47,7 +47,7 @@ body {
 }
 
 /* 讓指定導覽列 tab 保持橘色邊框與粗體 */
-.nav-link.always-highlight {
+<!---.nav-link.always-highlight {
   font-weight: bold;
   color: #6c757d ; /*#ffffff 白色文字 */
   text-shadow:
@@ -55,7 +55,7 @@ body {
      1px -1px 0 #cc6600,
     -1px  1px 0 #cc6600,
      1px  1px 0 #cc6600;
-}
+}--->
 
 
 /* 內容容器樣式 */

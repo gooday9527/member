@@ -179,21 +179,21 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 
     const highlightTabs = ["account", "delegation", "delegated", "delegation-group","announcement", "souvenir-manage", "billing", "logout"];
 
-    tabs.forEach(tab => {
-        const li = document.createElement("li");
-        li.className = "nav-item";
+  tabs.forEach(tab => {
+    const li = document.createElement("li");
+    li.className = "nav-item";
 
-        const isHighlight = highlightTabs.includes(tab.id);
-        const classList =  "nav-link";
+    const isHighlight = highlightTabs.includes(tab.id);
+    const classList = `nav-link${isHighlight ? " always-highlight" : ""}`;
 
-        if (tab.link) {
-            li.innerHTML = `<a class="${classList}" href="${tab.link}">${tab.label}</a>`;
-        } else {
-            li.innerHTML = `<a class="${classList}" href="#" data-section="${tab.id}">${tab.label}</a>`;
-        }
+    if (tab.link) {
+      li.innerHTML = `<a class="${classList}" href="${tab.link}">${tab.label}</a>`;
+    } else {
+      li.innerHTML = `<a class="${classList}" href="#" data-section="${tab.id}">${tab.label}</a>`;
+    }
 
-        navMenu.appendChild(li);
-    });
+    navMenu.appendChild(li);
+  });
 }
 
         function showSection(id) {

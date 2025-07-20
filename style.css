@@ -33,10 +33,19 @@ body {
 
 /* 確保 nav-link 點擊時的 active 狀態有視覺效果 */
 .nav-link.active {
-    color: #007bff; /* 例如，藍色 */
+    color: #ffa500; /* 例如，橘色 */
     font-weight: bold;
     border-bottom: 2px solid #007bff; /* 添加底部邊框效果 */
 }
+
+/* 導覽列會員鈕 */
+.nav-link.logged-in-tab {
+  border: 2px solid #ffa500;  /* 橘色框線 */
+  border-radius: 6px;
+  margin: 2px;
+  padding: 4px 10px;
+}
+
 
 /* 內容容器樣式 */
 .container-fluid {

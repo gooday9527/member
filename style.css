@@ -41,16 +41,16 @@ body {
   padding: 4px 10px;
 }
 
-/* 導覽列登入後的粗體樣式 */
-.nav-link.highlight-tab {
+/* 讓指定導覽列 tab 保持橘色邊框與粗體 */
+.nav-link.always-highlight {
   font-weight: bold;
-  color: white;
-  text-shadow:
-    -1px -1px 0 #ffa500,
-     1px -1px 0 #ffa500,
-    -1px  1px 0 #ffa500,
-     1px  1px 0 #ffa500; /* 橘色邊框 */
+  border: 2px solid #cc6600;
+  border-radius: 8px;
+  padding: 4px 10px;
+  margin: 2px;
+  color: inherit; /* 保留原色（active 狀態仍可改色） */
 }
+
 
 /* 內容容器樣式 */
 .container-fluid {

@@ -356,7 +356,9 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
                 if (tab.link) {
                     li.innerHTML = `<a class="nav-link" href="${tab.link}">${tab.label}</a>`;
                 } else {
-                    li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
+                    const extraClass = loginEmail ? "logged-in-tab" : "";
+                    li.innerHTML = `<a class="nav-link ${extraClass}" href="#" data-section="${tab.id}">${tab.label}</a>`;
+   
                 }
                 navMenu.appendChild(li);
             });

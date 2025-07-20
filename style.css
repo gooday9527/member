@@ -44,12 +44,12 @@ body {
 /* 讓指定導覽列 tab 保持橘色邊框與粗體 */
 .nav-link.always-highlight {
   font-weight: bold;
-  color: #ffffff; /* 白色文字 */
+  color: #007bf ; /*#ffffff 白色文字 */
   text-shadow:
-    -1px -1px 0 #cc6600,
-     1px -1px 0 #cc6600,
-    -1px  1px 0 #cc6600,
-     1px  1px 0 #cc6600;
+    -2px -2px 0 #cc6600,
+     2px -2px 0 #cc6600,
+    -2px  2px 0 #cc6600,
+     2px  2px 0 #cc6600;
 }
 
 

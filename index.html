@@ -94,12 +94,12 @@
   </form>
 </section>
 <!-- 🔻 把這些新頁面補上 -->
-<section id="account" class="section"><h3 class="text-center">📁 新增帳號/持股</h3></section>
-<section id="delegation" class="section"><h3 class="text-center">📤 可委託</h3></section>
-<section id="delegated" class="section"><h3 class="text-center">📥 已委託</h3></section>
 <section id="announcement" class="section"><h3 class="text-center">📣 公告欄</h3></section>
-<section id="souvenir-manage" class="section"><h3 class="text-center">🧾 紀念品管理</h3></section>
 <section id="billing" class="section"><h3 class="text-center">💰 帳戶管理</h3></section>
+<section id="delegated" class="section"><h3 class="text-center">📥 委託管理</h3></section>
+<section id="souvenir-manage" class="section"><h3 class="text-center">🧾 紀念品管理</h3></section>
+<section id="account" class="section"><h3 class="text-center">📁 新增帳號/持股</h3></section>
+
 
 <!-- ✅ 然後這個 container-fluid 的結尾放最後 -->
 </div> <!-- container-fluid 結束 -->
@@ -170,8 +170,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
             { id: "notice", label: "注意事項" },
             { id: "about", label: "關於我" },
             { id: "account", label: "新增帳號/持股" },
-            { id: "delegation", label: "可委託" },
-            { id: "delegated", label: "已委託" },
+            { id: "delegation-manage", label: "委託管理" },
             { id: "announcement", label: "公告欄" },
             { id: "souvenir-manage", label: "紀念品管理" },
             { id: "billing", label: "帳戶管理" },

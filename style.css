@@ -264,3 +264,36 @@ th:nth-child(4), td:nth-child(4) {
     min-width: 600px; /* 避免欄位壓縮過頭，可視需要調整 */
   }
 }
+
+        @media only screen and (max-width: 768px) {
+            body { padding: 10px; } 
+            h3 { font-size: 1.5rem; margin-bottom: 15px; } 
+            .dataTables_wrapper .dataTables_length, 
+            .dataTables_wrapper .dataTables_filter {
+                margin-bottom: 12px; 
+            }
+            .dataTables_wrapper .dataTables_info, 
+            .dataTables_wrapper .dataTables_paginate {
+                margin-top: 12px; 
+                font-size: 0.9rem; 
+            }
+            .table td { 
+                font-size: 14px; 
+            }
+            .table th, .table td { 
+                padding: 6px 3px; 
+            }
+
+            /* 確保手機版導覽列的漢堡按鈕可見並正常工作 */
+            .navbar-toggler {
+                display: block; 
+                border: 1px solid rgba(0,0,0,.1); 
+            }
+            /* 讓導覽列內容在手機上堆疊 */
+            .navbar-collapse {
+                flex-grow: 1; 
+                flex-basis: 100%; 
+                margin-top: 0.5rem; 
+            }
+        }
+

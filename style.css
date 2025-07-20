@@ -297,3 +297,35 @@ th:nth-child(4), td:nth-child(4) {
             }
         }
 
+ /* 確保紀念品、推薦清單、注意事項、關於我 的標題置中 */
+        #souvenir h3, #recommend h3, #notice h3, #about h3 {
+            text-align: center;
+        }
+
+        /* ----- 從您提供的 style.css 中複製並微調的部分 ----- */
+        body {
+            background-color: #fffbea;
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* 避免整頁橫向捲動 */
+        }
+
+        /* 導覽列樣式 */
+        .navbar {
+            background-color: #ffe082;
+            padding-left: 1rem; 
+            padding-right: 1rem;
+        }
+        /* 確保導覽列的排版 */
+        .navbar-collapse {
+            justify-content: flex-start !important; /* 確保內容靠左 */
+        }
+        .navbar-nav {
+            margin-right: auto !important; /* 將 nav items 推向左邊 */
+            margin-left: 0 !important; /* 確保沒有左邊距 */
+        }
+
+        .nav-link {
+            font-weight: bold;
+        }

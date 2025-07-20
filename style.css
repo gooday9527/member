@@ -32,9 +32,10 @@ body {
 }
 
 /* 確保 nav-link 點擊時的 active 狀態有視覺效果 */
-.nav-link.active:hover {
-  background-color: #cc6600; /* 深橘色底 */
+.nav-link.active {
+  background-color: #ffa500; /* 橘色底 */
   color: #ffffff;            /* 白色字 */
+  border-radius: 6px;         /* 圓角邊框 */
 }
 
 /* 導覽列會員鈕 */

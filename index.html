@@ -209,7 +209,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
       const memberName = info.name || "未命名";
       const loginStatus = document.getElementById("loginStatus");
       if (loginStatus) {
-        loginStatus.innerText = `登入者：${memberName}`;
+        loginStatus.innerText = `會員：${memberName}`;
         loginStatus.classList.add("text-dark", "fw-bold"); // 深灰字 + 粗體
       }
     })

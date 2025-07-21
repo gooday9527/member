@@ -143,7 +143,8 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
       const user = userCredential.user;
       console.log("登入成功", user.email);
       loginEmail = user.email;
-      loadMemberName(loginEmail); // ✅ 加在這裡，顯示登入者姓名  
+      loadMemberName(loginEmail); // ✅ 加在這裡，顯示登入者姓名 
+      localStorage.setItem("loginEmail", loginEmail); // ✅ 可選：將 Email 存入 localStorage
       renderNavTabs();
       showSection("souvenir");
   })     
@@ -490,7 +491,8 @@ function loadSouvenirDataWithoutDataTables() {
        onAuthStateChanged(auth, (user) => {
     loginEmail = user ? user.email : null;
     console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
-
+    // 如果需要，可以直接從 localStorage 取出名字（若你也有存）
+    loadMemberName(loginEmail);
     renderNavTabs(); 
     showSection("souvenir"); 
 

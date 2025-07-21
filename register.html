@@ -89,7 +89,7 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
     await createUserWithEmailAndPassword(auth, email, password);
 
     // 2️⃣ 呼叫 Apps Script 將資料寫入試算表
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec?action=registerMember";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec";
     const response = await fetch(scriptUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

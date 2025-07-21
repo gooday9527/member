@@ -47,9 +47,9 @@ body {
 }
 
 /* 讓指定導覽列 tab 保持橘色邊框與粗體 */
-/*.nav-link.always-highlight {
- /* font-weight: bold;
-  /* color: #000000 ; /*#ffffff 白色文字 */
+/*.nav-link.always-highlight {*/
+ /* font-weight: bold;*/
+  /* color: #000000 ;*/ /*#ffffff 白色文字 */
 
 
 /* 內容容器樣式 */

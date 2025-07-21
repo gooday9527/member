@@ -39,19 +39,16 @@ body {
 }
 
 /* 確保 nav-link 點擊時的 active 狀態有視覺效果 */
+/* 導覽列目前選取的項目：底部顯示藍線 */
 .nav-link.active {
-  background-color: #ffa500; /* 橘色底 */
-  color: #ffffff !important; /* 白色字 */
-  border: 2px solid #ffa500;
-  border-radius: 6px;         /* 圓角邊框 */
-  margin: 2px;
-  padding: 2px 10px;
-  text-shadow:
-    -1px -1px 0 #cc7700,
-     1px -1px 0 #cc7700,
-    -1px  1px 0 #cc7700,
-     1px  1px 0 #cc7700;
+  border: none;               /* 移除其他邊框 */
+  border-bottom: 4px solid #007bff;  /* 藍色底線，4px */
+  color: #007bff !important;  /* 文字顏色也改藍 */
+  font-weight: bold;          /* 粗體字 */
+  background-color: transparent;
+  border-radius: 0;           /* 移除圓角 */
 }
+
 
 /* 讓指定導覽列 tab 保持橘色邊框與粗體 */
 /*.nav-link.always-highlight {*/

@@ -1,0 +1,30 @@
+:root {
+  /* 主色系 */
+  --color-primary: #f39800;   /* 主色：橘色 */
+  --color-secondary: #007bff; /* 次色：藍色 */
+  --color-info: #6c757d;      /* 說明：灰色 */
+  --color-warning: #dc3545;   /* 警告：紅色 */
+  --color-light: #ffffff;
+  --color-dark: #333333;
+}
+
+/* ========== 文字顏色 class 命名表 ========== */
+
+.text-primary {
+  color: var(--color-primary) !important;
+}
+.text-secondary {
+  color: var(--color-secondary) !important;
+}
+.text-info {
+  color: var(--color-info) !important;
+}
+.text-warning {
+  color: var(--color-warning) !important;
+}
+.text-light {
+  color: var(--color-light) !important;
+}
+.text-dark {
+  color: var(--color-dark) !important;
+}

@@ -26,6 +26,7 @@ body {
 /* 確保導覽列的排版 */
 .navbar-collapse {
     justify-content: flex-start !important; /* 確保內容靠左 */
+    padding-bottom: 1rem; /* 底部空間 */
 }
 
 .navbar-nav {

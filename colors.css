@@ -1,53 +1,48 @@
-/* 🎨 主色調與品牌色 */
 :root {
-  --color-primary: #f39800;     /* 橘色 - 主色 */
-  --color-secondary: #007bff;   /* 藍色 - 次要色 */
-  --color-success: #28a745;     /* 綠色 - 成功提示 */
-  --color-warning: #ffc107;     /* 黃色 - 警告提示 */
-  --color-danger: #dc3545;      /* 紅色 - 錯誤提示 */
-  --color-info: #17a2b8;        /* 青色 - 一般資訊 */
-  --color-muted: #6c757d;       /* 灰色 - 次要說明文字 */
-  --color-dark: #343a40;        /* 深灰色 - 正文 */
-  --color-light: #f8f9fa;       /* 淺灰色背景 */
-  --color-white: #ffffff;       /* 白色 */
-  --color-black: #000000;       /* 黑色 */
+  /* 🎨 主題色彩變數定義 */
+  --color-primary:    #f39800; /* 主色：橘色 */
+  --color-secondary:  #007bff; /* 次色：藍色 */
+  --color-success:    #28a745; /* 成功色：綠色 */
+  --color-warning:    #ffc107; /* 警告色：黃色 */
+  --color-danger:     #dc3545; /* 錯誤色：紅色 */
+  --color-info:       #17a2b8; /* 資訊色：青色 */
+  --color-muted:      #6c757d; /* 說明文字：灰色 */
+  --color-dark:       #343a40; /* 內文字色：深灰 */
+  --color-light:      #f8f9fa; /* 淺背景色：淡灰 */
+  --color-white:      #ffffff; /* 白色 */
+  --color-black:      #000000; /* 黑色 */
 }
 
-/* ✅ 文字顏色設定 */
-.text-primary { color: var(--color-primary) !important; }    /* 橘色 */
-.text-secondary { color: var(--color-secondary) !important; }/* 藍色 */
-.text-success { color: var(--color-success) !important; }    /* 綠色 */
-.text-warning { color: var(--color-warning) !important; }    /* 黃色 */
-.text-danger { color: var(--color-danger) !important; }      /* 紅色 */
-.text-info { color: var(--color-info) !important; }          /* 青色 */
-.text-muted { color: var(--color-muted) !important; }        /* 說明灰 */
-.text-dark { color: var(--color-dark) !important; }          /* 主體深灰 */
-.text-light { color: var(--color-light) !important; }        /* 淺文字 */
-.text-white { color: var(--color-white) !important; }        /* 白字 */
-.text-black { color: var(--color-black) !important; }        /* 黑字 */
+/* ✅ 文字顏色類別定義 */
+.text-primary    { color: var(--color-primary) !important; }  /* 主色橘 */
+.text-secondary  { color: var(--color-secondary) !important; }/* 次色藍 */
+.text-success    { color: var(--color-success) !important; }  /* 成功綠 */
+.text-warning    { color: var(--color-warning) !important; }  /* 警告黃 */
+.text-danger     { color: var(--color-danger) !important; }   /* 錯誤紅 */
+.text-info       { color: var(--color-info) !important; }     /* 資訊青 */
+.text-muted      { color: var(--color-muted) !important; }    /* 灰說明 */
+.text-dark       { color: var(--color-dark) !important; }     /* 內文字色 */
+.text-light      { color: var(--color-light) !important; }    /* 淺灰文字 */
+.text-white      { color: var(--color-white) !important; }    /* 白色文字 */
+.text-black      { color: var(--color-black) !important; }    /* 黑色文字 */
 
-/* ✅ 背景顏色設定（附自動白字） */
-.bg-primary { background-color: var(--color-primary) !important; color: white !important; }
-.bg-secondary { background-color: var(--color-secondary) !important; color: white !important; }
-.bg-success { background-color: var(--color-success) !important; color: white !important; }
-.bg-warning { background-color: var(--color-warning) !important; color: black !important; }
-.bg-danger { background-color: var(--color-danger) !important; color: white !important; }
-.bg-info { background-color: var(--color-info) !important; color: white !important; }
-.bg-muted { background-color: var(--color-muted) !important; color: white !important; }
-.bg-dark { background-color: var(--color-dark) !important; color: white !important; }
-.bg-light { background-color: var(--color-light) !important; color: black !important; }
-.bg-white { background-color: var(--color-white) !important; color: black !important; }
-.bg-black { background-color: var(--color-black) !important; color: white !important; }
-
-/* ✅ 邊框顏色輔助類（可搭配 border） */
-.border-primary { border-color: var(--color-primary) !important; }
+/* ✅ 邊框顏色類別定義（可搭配 border 使用） */
+.border-primary   { border-color: var(--color-primary) !important; }
 .border-secondary { border-color: var(--color-secondary) !important; }
-.border-success { border-color: var(--color-success) !important; }
-.border-warning { border-color: var(--color-warning) !important; }
-.border-danger { border-color: var(--color-danger) !important; }
-.border-info { border-color: var(--color-info) !important; }
-.border-muted { border-color: var(--color-muted) !important; }
-.border-dark { border-color: var(--color-dark) !important; }
-.border-light { border-color: var(--color-light) !important; }
-.border-white { border-color: var(--color-white) !important; }
-.border-black { border-color: var(--color-black) !important; }
+.border-success   { border-color: var(--color-success) !important; }
+.border-warning   { border-color: var(--color-warning) !important; }
+.border-danger    { border-color: var(--color-danger) !important; }
+.border-info      { border-color: var(--color-info) !important; }
+.border-muted     { border-color: var(--color-muted) !important; }
+.border-dark      { border-color: var(--color-dark) !important; }
+
+/* ✅ 背景顏色類別（視需要啟用） */
+.bg-primary    { background-color: var(--color-primary) !important; }
+.bg-secondary  { background-color: var(--color-secondary) !important; }
+.bg-success    { background-color: var(--color-success) !important; }
+.bg-warning    { background-color: var(--color-warning) !important; }
+.bg-danger     { background-color: var(--color-danger) !important; }
+.bg-info       { background-color: var(--color-info) !important; }
+.bg-light      { background-color: var(--color-light) !important; }
+.bg-dark       { background-color: var(--color-dark) !important; }
+.bg-white      { background-color: var(--color-white) !important; }

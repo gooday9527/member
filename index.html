@@ -143,18 +143,9 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
       const user = userCredential.user;
       console.log("登入成功", user.email);
       loginEmail = user.email;
+      loadMemberName(loginEmail); // ✅ 加在這裡，顯示登入者姓名  
       renderNavTabs();
       showSection("souvenir");
-    fetch(`https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec?view=getMemberInfo&email=${encodeURIComponent(loginEmail)}`)
-  .then(res => res.json())
-  .then(info => {
-    const memberName = info.name || "未命名";
-    document.getElementById("loginStatus").innerText = `登入者：${memberName}`;
-   })
-  .catch(err => {
-    console.error("取得會員資料失敗", err);
-   });
-
   })     
     .catch((error) => {
       console.error("登入失敗", error);
@@ -210,6 +201,23 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     navMenu.appendChild(li);
   });
 }
+        function loadMemberName(email) {
+  if (!email) return;
+  fetch(`https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec?view=getMemberInfo&email=${encodeURIComponent(email)}`)
+    .then(res => res.json())
+    .then(info => {
+      const memberName = info.name || "未命名";
+      const loginStatus = document.getElementById("loginStatus");
+      if (loginStatus) {
+        loginStatus.innerText = `登入者：${memberName}`;
+        loginStatus.classList.add("text-dark", "fw-bold"); // 深灰字 + 粗體
+      }
+    })
+    .catch(err => {
+      console.error("取得會員資料失敗", err);
+    });
+}
+
 
         function showSection(id) {
             allSections.forEach(sec => sec.classList.remove("active-section"));

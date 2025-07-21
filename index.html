@@ -497,6 +497,14 @@ function loadSouvenirDataWithoutDataTables() {
   }
 
   loadSouvenirDataWithoutDataTables();
+           
+  const urlParams = new URLSearchParams(window.location.search);
+  const view = urlParams.get("view");
+
+  if (view === "login") {
+    showSection("login");
+  }
+           
 
     const recommendSheetSelect = document.getElementById('recommendSheet');
     if (recommendSheetSelect) {

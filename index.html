@@ -144,7 +144,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
       loginEmail = user.email;
       renderNavTabs();
       showSection("souvenir");
-    fetch(`https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec?view=getMemberInfo&email=${encodeURIComponent(loginEmail)}`)
+    fetch(`https://script.google.com/macros/s/AKfycbxtgfkv7yvyuggvaasceg2zK_BEIa256ZuzFduUGX-WmIE3sWr_u4aYmt-4oQHObK_9/exec?view=getMemberInfo&email=${encodeURIComponent(loginEmail)}`)
   .then(res => res.json())
   .then(info => {
     const memberName = info.name || "未命名";

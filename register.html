@@ -1,84 +1,95 @@
-<!-- register.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>註冊會員</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>註冊會員 | 好管家紀念品代領</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
     body {
-      background-color: #f8f9fa;
+      background-color: #fff9c4; /* 鵝黃色背景 */
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
+      padding: 20px;
     }
+
     .card {
       width: 100%;
-      max-width: 400px;
-      padding: 20px;
-      background-color: #fff9c4;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 420px;
+      padding: 25px;
+      border-radius: 16px;
+      background-color: #ffffff;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-warning {
+      background-color: #ffc107;
+      border: none;
+      font-weight: bold;
+      color: #212529;
+    }
+
+    .btn-warning:hover {
+      background-color: #e0a800;
     }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
-  authDomain: "goodaymember.firebaseapp.com",
-  projectId: "goodaymember",
-  storageBucket: "goodaymember.firebasestorage.app",
-  messagingSenderId: "730801053598",
-  appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f",
-  measurementId: "G-J3Z7YTHJ9P"
-};
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-  </script>
 </head>
+
 <body>
-  <div class="card shadow">
-    <h3 class="text-center mb-4">註冊會員</h3>
+  <div class="card">
+    <h4 class="text-center mb-4">註冊會員</h4>
     <form id="registerForm">
       <div class="mb-3">
-        <input type="text" class="form-control" id="name" placeholder="姓名" required />
+        <label for="name" class="form-label">姓名</label>
+        <input type="text" class="form-control" id="name" required />
       </div>
       <div class="mb-3">
-        <input type="email" class="form-control" id="email" placeholder="Email" required />
+        <label for="email" class="form-label">Email（登入用）</label>
+        <input type="email" class="form-control" id="email" required />
       </div>
       <div class="mb-3">
-        <input type="password" class="form-control" id="password" placeholder="密碼 (6碼以上)" required />
+        <label for="password" class="form-label">密碼</label>
+        <input type="password" class="form-control" id="password" required minlength="6" />
       </div>
-      <div class="d-grid">
-        <button type="submit" class="btn btn-warning">註冊</button>
+      <button type="submit" class="btn btn-warning w-100">註冊</button>
+      <div class="text-center mt-3">
+        已有帳號？<a href="index.html">返回登入</a>
       </div>
     </form>
-    <div id="message" class="text-center mt-3 text-danger"></div>
-    <div class="text-center mt-3">
-      <a href="login.html">已有帳號？前往登入</a>
-    </div>
   </div>
 
-  <script>
-    document.getElementById("registerForm").addEventListener("submit", async function (e) {
+  <!-- Firebase 註冊（可選） -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
+      authDomain: "goodaymember.firebaseapp.com",
+      projectId: "goodaymember",
+      storageBucket: "goodaymember.appspot.com",
+      messagingSenderId: "730801053598",
+      appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
+
       try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        await fetch("https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "register", name, email })
-        });
-        alert("註冊成功，請重新登入");
-        window.location.href = "login.html";
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("✅ 註冊成功！");
+        window.location.href = "index.html"; // 註冊成功回登入頁
       } catch (error) {
-        document.getElementById("message").textContent = error.message;
+        alert("❌ " + error.message);
       }
     });
   </script>

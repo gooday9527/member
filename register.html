@@ -93,9 +93,12 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
     const response = await fetch(scriptUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, name })
+      body: JSON.stringify({
+        action: "register",   // ✅ 這行是關鍵
+        email,
+        name
+      })
     });
-
     const result = await response.json();
     if (result.success) {
       alert("✅ 註冊成功！");

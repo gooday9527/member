@@ -17,7 +17,8 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav"> 
+        <div class="collapse navbar-collapse" id="navbarNav">
+        <div id="loginStatus" class="text-end text-muted mt-2 me-3"></div>
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu">
             </ul>
         </div>
@@ -141,6 +142,17 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
       renderNavTabs();
       showSection("souvenir");
     })
+fetch(`https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec?view=getMemberInfo&email=${encodeURIComponent(loginEmail)}`)
+  .then(res => res.json())
+  .then(info => {
+    const memberName = info.name || "未命名";
+    document.getElementById("loginStatus").innerText = `登入者：${memberName}`;
+  })
+  .catch(err => {
+    console.error("取得會員資料失敗", err);
+  });
+
+      
     .catch((error) => {
       console.error("登入失敗", error);
       alert("登入失敗：" + error.message);

@@ -41,7 +41,7 @@ body {
 /* 導覽列目前選取的項目：底部顯示藍線 */
 .nav-link.active {
   border: none;               /* 移除其他邊框 */
-  border-bottom: 4px solid #007bff;  /* 藍色底線，4px */
+  /* border-bottom: 4px solid #007bff;  藍色底線，4px */
   color: #007bff !important;  /* 文字顏色也改藍 */
   font-weight: bold;          /* 粗體字 */
   background-color: transparent;

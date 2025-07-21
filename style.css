@@ -17,6 +17,12 @@ body {
     background-color: #ffe082;
 }
 
+/* 登入者樣式 */
+.login-user {
+  color: #343a40; /* 深灰色 */
+  font-weight: bold;
+}
+
 /* 確保導覽列的排版 */
 .navbar-collapse {
     justify-content: flex-start !important; /* 確保內容靠左 */

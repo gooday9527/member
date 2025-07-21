@@ -23,7 +23,7 @@
             
          <!-- ✅ 新增登入狀態區塊，放在 nav 裡最右側 -->
         <div class="d-flex align-items-center ms-auto">
-          <div id="loginStatus" class="fw-bold text-primary"></div>
+          <div id="loginStatus" class="text-end me-3 small"></div>
         </div>    
       </div>
     </nav>
@@ -494,10 +494,11 @@ function loadSouvenirDataWithoutDataTables() {
     renderNavTabs(); 
     showSection("souvenir"); 
 
-    if (!souvenirLoaded) {
-      loadSouvenirDataWithoutDataTables();
-      souvenirLoaded = true;
-    }
+     if (loginEmail) {
+    loadMemberName(loginEmail); // ✅ 加這一行
+  }
+
+  loadSouvenirDataWithoutDataTables();
 
     const recommendSheetSelect = document.getElementById('recommendSheet');
     if (recommendSheetSelect) {

@@ -78,20 +78,37 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    document.getElementById("registerForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert("✅ 註冊成功！");
-        window.location.href = "index.html"; // 註冊成功回登入頁
-      } catch (error) {
-        alert("❌ " + error.message);
-      }
+  try {
+    // 1️⃣ 建立 Firebase 帳號
+    await createUserWithEmailAndPassword(auth, email, password);
+
+    // 2️⃣ 呼叫 Apps Script 將資料寫入試算表
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec?action=registerMember";
+    const response = await fetch(scriptUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, name })
     });
+
+    const result = await response.json();
+    if (result.success) {
+      alert("✅ 註冊成功！");
+      window.location.href = "https://member.gooday9527.com/?view=login";
+    } else {
+      alert("⚠️ Firebase 成功，但試算表寫入失敗：" + result.message);
+    }
+
+  } catch (error) {
+    alert("❌ 註冊失敗：" + error.message);
+  }
+});
+
   </script>
 </body>
 </html>

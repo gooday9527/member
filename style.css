@@ -224,52 +224,59 @@ th:nth-child(2), td:nth-child(2) {
   border-color: #ff9800; /* 統一邊框顏色 */
 }
 
+/* --- 推薦清單頁面專屬樣式 (已適配新架構) --- */
+
+/* 假設 recommend.html 的最外層有一個 <div class="recommend-wrapper"> */
+/* 這樣可以確保樣式不會污染到其他頁面 */
+
 /* ✅ 推薦分類下拉選單寬度 */
-#recommendSheet {
-    max-width: 300px;
-}
-
-/* ===== 推薦清單欄寬調整 ===== */
-#recommendTable th:nth-child(1),
-#recommendTable td:nth-child(1) {
-    width: 50px;  /* 股號欄 */
-    white-space: nowrap;
-}
-
-#recommendTable th:nth-child(2),
-#recommendTable td:nth-child(2) {
-    width: 50px;  /* 股名欄 */
-    white-space: nowrap;
-}
-
-/* 可選：限制整體推薦清單表格寬度不超出邊界 */
-#recommendTable {
-    table-layout: auto;
-    word-break: break-word;
+.recommend-wrapper #recommendSheet {
+  max-width: 300px;
 }
 
 /* 推薦清單表格的滾動容器 */
-#recommend .table-responsive {
-  max-height: 500px; /* ✅ 可自行調整高度 */
+.recommend-wrapper .table-responsive {
+  max-height: 70vh; /* ✅ 可自行調整高度，vh 單位更具彈性 */
   overflow-y: auto;
   position: relative;
 }
 
 /* 固定表頭（使用 sticky） */
-#recommend thead th {
+.recommend-wrapper thead th {
   position: sticky;
   top: 0;
-  background-color: #fff3cd;
+  background-color: #fff3cd; /* var(--bs-warning) */
   z-index: 2;
 }
- /* 推薦清單的 table-responsive 在小螢幕允許橫向滑動 */
+
+/* ===== 推薦清單欄寬調整 ===== */
+/* 注意：#recommendTable 是 ID，本身就是唯一的，所以不需要 .recommend-wrapper 前綴 */
+#recommendTable th:nth-child(1),
+#recommendTable td:nth-child(1) {
+  width: 50px;  /* 股號欄 */
+  white-space: nowrap;
+}
+
+#recommendTable th:nth-child(2),
+#recommendTable td:nth-child(2) {
+  width: 50px;  /* 股名欄 */
+  white-space: nowrap;
+}
+
+#recommendTable {
+  table-layout: auto;
+  word-break: break-word;
+}
+
+
+/* 推薦清單在小螢幕允許橫向滑動 */
 @media (max-width: 768px) {
-  #recommend .table-responsive {
+  .recommend-wrapper .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch; /* iOS 平滑滾動 */
   }
 
-  #recommend table {
+  .recommend-wrapper #recommendTable {
     min-width: 600px; /* 避免欄位壓縮過頭，可視需要調整 */
   }
 }

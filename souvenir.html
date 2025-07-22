@@ -1,0 +1,121 @@
+<!-- souvenir.html -->
+<h3 class="text-center">🎁 紀念品</h3>
+<div class="souvenir-wrapper mt-2">
+    <div class="table-controls-fixed d-flex flex-wrap align-items-center gap-2" id="souvenirControlsContainer"></div>
+    <div class="table-scroll-container table-responsive">
+        <table class="table table-bordered table-sm" id="souvenirTable">
+            <thead class="table-warning"></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="souvenirPaginationWrapper">
+        <div id="souvenirPagination" class="d-flex justify-content-center flex-wrap"></div>
+    </div>
+</div>
+<!-- 相關 JavaScript 邏輯將會從 index.html 移到這裡 -->
+<script>
+    // 這些函數原本在 index.html 的 <script type="module"> 裡面
+    // 現在它們將在這個頁面載入時執行
+
+    // 確保這些函數是全局可訪問的，或者在這個腳本內被正確調用
+    // 由於它們會被動態載入，直接寫在這裡即可，它們會在載入時被解析和執行
+    
+    // 紀念品表格載入邏輯
+    function loadSouvenirDataWithoutDataTables() {
+        // 先清空控制區避免重複
+        document.getElementById("souvenirControlsContainer").innerHTML = "";
+
+        fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
+            .then(res => res.json())
+            .then(data => {
+                const tableElement = document.getElementById('souvenirTable');
+                const tableHead = tableElement.querySelector('thead');
+                const tableBody = tableElement.querySelector('tbody');
+
+                // 插入搜尋與筆數控制元件
+                const controls = document.createElement('div');
+                controls.className = 'd-flex justify-content-between align-items-center mb-1 flex-wrap';
+                controls.innerHTML = `
+                    <div class="mb-1">
+                        <label for="rowsPerPageSelect" class="me-1">筆數：</label>
+                        <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block me-3" style="width: 70px;">
+                            <option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option>
+                        </select>
+                    </div><div class="mb-1">
+                        <label for="searchInput" class="me-1">搜尋：</label>
+                        <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 100px;" placeholder="輸入關鍵字">
+                    </div>
+                `;
+                const controlsContainer = document.getElementById('souvenirControlsContainer');
+                if (controlsContainer) controlsContainer.appendChild(controls);
+
+                if (!data || data.length === 0) {
+                    tableHead.innerHTML = ''; tableBody.innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>'; return;
+                }
+
+                const headers = Object.keys(data[0]);
+                let currentPage = 1; let rowsPerPage = 10; let sortKey = "股號"; let sortAsc = true;
+                let sortedData = [...data]; let filteredData = [...data];
+
+                tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} ▲</th>`).join('')}</tr>`;
+                headers.forEach(h => {
+                    const th = tableHead.querySelector(`th[data-key="${h}"]`);
+                    if (th) { th.style.cursor = 'pointer'; th.addEventListener('click', () => sortTable(h)); }
+                });
+
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    const keyword = e.target.value.trim().toLowerCase();
+                    filteredData = sortedData.filter(row => headers.some(h => (row[h] || '').toLowerCase().includes(keyword)));
+                    currentPage = 1; renderTable();
+                });
+
+                document.getElementById('rowsPerPageSelect').addEventListener('change', (e) => {
+                    rowsPerPage = parseInt(e.target.value); currentPage = 1; renderTable();
+                });
+
+                let firstLoad = true;
+                function sortTable(key) {
+                    if (firstLoad) { firstLoad = false; sortAsc = true; } else { sortAsc = (sortKey === key) ? !sortAsc : true; }
+                    sortKey = key;
+                    sortedData.sort((a, b) => {
+                        const valA = a[key] || ''; const valB = b[key] || ''; const isNumber = !isNaN(valA) && !isNaN(valB);
+                        return isNumber ? (sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA)) : (sortAsc ? valA.localeCompare(valB, 'zh-Hant') : valB.localeCompare(a, 'zh-Hant'));
+                    });
+                    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+                    filteredData = keyword ? sortedData.filter(row => headers.some(h => (row[h] || '').toLowerCase().includes(keyword))) : [...sortedData];
+                    currentPage = 1; renderTable();
+                }
+
+                function renderTable() {
+                    const start = (currentPage - 1) * rowsPerPage; const end = start + rowsPerPage;
+                    const pageData = filteredData.slice(start, end);
+                    tableBody.innerHTML = pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('');
+                    renderPagination();
+                }
+
+                function renderPagination() {
+                    const totalPages = Math.ceil(filteredData.length / rowsPerPage); const maxVisible = 3; const pageButtons = [];
+                    pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上頁</button>`);
+                    let start = currentPage; let end = Math.min(totalPages, currentPage + 2);
+                    if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
+                    if (start > 1) { pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`); if (start > 2) pageButtons.push(`<span class="me-1">...</span>`); }
+                    for (let i = start; i <= end; i++) { pageButtons.push(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>`); }
+                    if (end < totalPages) { if (end < totalPages - 1) pageButtons.push(`<span class="me-1">...</span>`); pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`); }
+                    pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下頁</button>`);
+                    document.getElementById('souvenirPagination').innerHTML = pageButtons.join('');
+                }
+
+                // 將這些函數掛載到 window，以便 onclick 屬性可以找到它們
+                window.changePage = function(offset) { currentPage += offset; renderTable(); };
+                window.goToPage = function(page) { currentPage = page; renderTable(); };
+
+                sortAsc = true; sortTable(sortKey);
+            })
+            .catch(error => { console.error('載入紀念品資料錯誤：', error); });
+    }
+
+    // 在頁面載入到 DOM 後立即執行
+    document.addEventListener('DOMContentLoaded', () => {
+        loadSouvenirDataWithoutDataTables();
+    });
+</script>

@@ -29,81 +29,10 @@
     </nav>
 
 <div class="container-fluid">
-  <section id="souvenir" class="section active-section">
-    <h3 class="text-center">🎁 紀念品</h3> 
-      
-    <!-- ✅ 外層容器加上 -->
-     <div class="souvenir-wrapper mt-2"> 
-         
-      <div class="table-controls-fixed d-flex flex-wrap align-items-center gap-2" id="souvenirControlsContainer"></div>
-<!-- ✅ 插入搜尋/筆數用 -->
-      <div class="table-scroll-container table-responsive">
-        <table class="table table-bordered table-sm" id="souvenirTable">
-                <thead class="table-warning"></thead>
-                <tbody></tbody>
-            </table>
-        </div>
-         
-        <div id="souvenirPaginationWrapper">
-          <div id="souvenirPagination" class="d-flex justify-content-center flex-wrap"></div>
-        </div>
-         
-     </div>
-  </section>
-    
-  <section id="recommend" class="section">
-      <h3 class="text-center">🌟 推薦清單</h3> 
-      <div class="mb-3 d-flex align-items-center gap-2">
-          <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
-          <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
-              <option value="我全都要（不需證件）">我全都要（不需證件）</option>
-              <option value="高cp推薦">高cp推薦</option>
-              <option value="禮券類">禮券類</option>
-              <option value="小資族">小資族</option>
-              <option value="入門組">入門組</option>
-          </select>
-      </div>
-      <div class="mt-3 table-responsive">
-          <table class="table table-bordered table-sm" id="recommendTable">
-              <thead class="table-warning"></thead>
-              <tbody></tbody>
-          </table>
-      </div>
-  </section>
-
-        <section id="notice" class="section">
-            <h3 class="text-center">📌 注意事項</h3> 
-            <p>本服務為好管家團隊提供之股東紀念品代領平台，請確認資料正確性後再進行登記。</p>
-        </section>
-
-        <section id="about" class="section">
-            <h3 class="text-center">👤 關於我</h3> 
-            <p>紀念品代領，省時又省力，希望幫助大家簡化紀念品領取流程。</p>
-        </section>
-    
-<section id="login" class="section">
-  <h3 class="text-center">🔐 登入</h3>
-  <form id="loginForm" class="text-center mt-3" style="max-width: 400px; margin: auto;">
-    <div class="mb-3">
-      <input type="email" id="loginEmail" class="form-control" placeholder="Email" required />
-    </div>
-    <div class="mb-3">
-      <input type="password" id="loginPassword" class="form-control" placeholder="密碼" required />
-    </div>
-    <button type="submit" class="btn btn-warning w-100 mb-3">登入</button>
-    
-    <div class="d-flex justify-content-between gap-2">
-      <a href="reset.html" class="btn btn-danger w-100">忘記密碼？</a>
-      <a href="register.html" class="btn btn-primary w-100">註冊新帳號</a>
-    </div>
-  </form>
-</section>
-<!-- 🔻 把這些新頁面補上 -->
-<section id="announcement" class="section"><h3 class="text-center">📣 公告欄</h3></section>
-<section id="billing" class="section"><h3 class="text-center">💰 帳戶管理</h3></section>
-<section id="delegation-manage" class="section"><h3 class="text-center">📥 委託管理</h3></section>
-<section id="souvenir-manage" class="section"><h3 class="text-center">🧾 紀念品管理</h3></section>
-<!-- ✅ 然後這個 container-fluid 的結尾放最後 -->
+    <!-- ✅ 只有這個動態內容載入的容器 -->
+    <section id="dynamic-content-area" class="section active-section">
+        <!-- 外部 HTML 內容將載入到這裡 -->
+    </section>
 </div> <!-- container-fluid 結束 -->
     
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -156,29 +85,41 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 
 
         let loginEmail = null;
-        const navMenu = document.getElementById("navMenu");
-        const allSections = document.querySelectorAll(".section");
+const navMenu = document.getElementById("navMenu");
+// allSections 現在只包含 dynamic-content-area
+const allSections = document.querySelectorAll(".section");
 
-        const tabsBeforeLogin = [
-            { id: "souvenir", label: "紀念品" },
-            { id: "recommend", label: "推薦清單" },
-            { id: "notice", label: "注意事項" },
-            { id: "about", label: "關於我" },
-            { id: "login", label: "登入" }
-        ];
 
-        const tabsAfterLogin = [
-            { id: "souvenir", label: "紀念品" },
-            { id: "recommend", label: "推薦清單" },
-            { id: "notice", label: "注意事項" },
-            { id: "about", label: "關於我" },
-            { id: "announcement", label: "公告欄" },
-            { id: "billing", label: "帳戶管理" },
-            { id: "delegation-manage", label: "委託管理" },
-            { id: "souvenir-manage", label: "紀念品管理" },
-            { id: "logout", label: "登出" }
-        ];
+// 登入前導覽列項目 (現在這些也都是外部載入的頁面)
+const tabsBeforeLogin = [
+    { id: "souvenir", label: "紀念品" },
+    { id: "recommend", label: "推薦清單" },
+    { id: "notice", label: "注意事項" },
+    { id: "about", label: "關於我" },
+    { id: "login", label: "登入" } // 登入頁面也獨立了
+];
 
+// 登入後導覽列項目 (包含下拉選單)
+const tabsAfterLogin = [
+    { id: "souvenir", label: "紀念品" },
+    { id: "recommend", label: "推薦清單" },
+    { id: "notice", label: "注意事項" },
+    { id: "about", label: "關於我" },
+    {
+        id: "account-management-dropdown", // 父級 ID，用於下拉選單的控制
+        label: "帳戶管理",
+        isDropdown: true, // 標記為下拉選單
+        children: [
+            { id: "announcement", label: "📣 公告欄" },
+            { id: "add-account-shares", label: "📊 新增帳號／持股" },
+            { id: "deposit-withdrawal", label: "💵 儲值 / 提款" },
+            { id: "account-query", label: "🔍 帳務查詢" },
+            { id: "delegation-manage", label: "📥 委託管理" },
+            { id: "souvenir-manage", label: "🧾 紀念品管理" }
+        ]
+    },
+    { id: "logout", label: "登出" }
+];
         function renderNavTabs() {
     navMenu.innerHTML = ""; 
     const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;

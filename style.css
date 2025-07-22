@@ -141,6 +141,13 @@ th:nth-child(2), td:nth-child(2) {
     min-width: 600px;
   }
 
+  .table-scroll-container thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff3cd; 
+    z-index: 2;
+  }  
+
 }
 
 /* ===== 桌機版布局 (螢幕寬度 > 768px) ===== */

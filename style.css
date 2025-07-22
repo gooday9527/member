@@ -141,6 +141,7 @@ th:nth-child(2), td:nth-child(2) {
     min-width: 600px;
   }
 
+  /* 黏性表頭 (手機有效) */
   .table-scroll-container thead th {
     position: sticky;
     top: 0;
@@ -175,7 +176,6 @@ th:nth-child(2), td:nth-child(2) {
     border: 1px solid #dee2e6;
   }
 
-  /* ✅✅✅ 在這裡加入或修改 ✅✅✅ */
   /* 明確指定桌機版滾動區內的表格標題為黏性定位 */
   .table-scroll-container thead th {
     position: sticky;

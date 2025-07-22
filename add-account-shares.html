@@ -6,7 +6,6 @@
     
     <!-- ✅【功能】保留您所有的核心功能，並套用 Bootstrap 樣式 -->
     <div class="mb-3">
-        <label for="subAccountSelect" class="form-label">選擇或新增子帳號</label>
         <div class="input-group">
             <select class="form-select" id="subAccountSelect">
                 <option value="">載入中...</option>
@@ -16,14 +15,15 @@
         </div>
     </div>
     
-    <div id="addSubWrapper" class="mb-3 p-3 border rounded bg-light" style="display:none;">
-        <label for="newSubAccountInput" class="form-label">新子帳號名稱</label>
-        <input type="text" class="form-control" id="newSubAccountInput" placeholder="請輸入子帳號名稱">
+<!-- ✅【修正】移除了 p-3, border, rounded, bg-light 等 class -->
+    <div id="addSubWrapper" class="mb-3" style="display:none;">
+        <input type="text" class="form-control" id="newSubAccountInput" placeholder="新子帳號名稱">
         <div class="mt-2 d-flex gap-2 justify-content-end">
             <button type="button" class="btn btn-sm btn-secondary" onclick="window.addAccountShares.toggleSubAccountInput(false)">取消</button>
             <button type="button" class="btn btn-sm btn-primary" onclick="window.addAccountShares.saveNewSubAccount()">儲存</button>
         </div>
-    </div>
+    </div>    
+
 
     <div class="mb-3">
         <label for="stockInput" class="form-label">輸入股號 (用逗號分隔)</label>

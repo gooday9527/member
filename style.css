@@ -141,13 +141,6 @@ th:nth-child(2), td:nth-child(2) {
     min-width: 600px;
   }
 
-  /* 黏性表頭 (通用，手機桌機都有效) */
-  .table-scroll-container thead th {
-    position: sticky;
-    top: 0;
-    background-color: #fff3cd; /* var(--bs-warning) */
-    z-index: 2;
-  }
 }
 
 /* ===== 桌機版布局 (螢幕寬度 > 768px) ===== */
@@ -173,6 +166,15 @@ th:nth-child(2), td:nth-child(2) {
     flex: 1 1 auto; /* 核心：自動伸展佔滿剩餘空間 */
     overflow-y: auto;
     border: 1px solid #dee2e6;
+  }
+
+  /* ✅✅✅ 在這裡加入或修改 ✅✅✅ */
+  /* 明確指定桌機版滾動區內的表格標題為黏性定位 */
+  .table-scroll-container thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff3cd; /* 確保背景色能蓋住下方內容 */
+    z-index: 2;
   }
 
   /* 底部換頁區 - 固定不滾動 */

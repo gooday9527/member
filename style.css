@@ -242,6 +242,7 @@ th:nth-child(2), td:nth-child(2) {
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
+  white-space: nowrap; /* ✅ 加上這一行，強制所有標題不換行 */
 }
 
 /* ===== 手機版布局 (螢幕寬度 <= 768px) ===== */
@@ -257,25 +258,31 @@ th:nth-child(2), td:nth-child(2) {
   }
 }
 
-/* ===== 桌機版 Flexbox 特殊佈局 (螢幕寬度 > 768px) ===== */
+/* ===== 桌機版 Flexbox 特殊佈局 (螢幕寬度 > 769px) - 最終修正版 ===== */
 @media (min-width: 769px) {
-  /* 1. 讓 recommend-wrapper 成為一個固定高度的 Flexbox 容器 */
+  /* 1. 讓 recommend-wrapper 成為一個絕對定位的容器，強制填滿父層空間 */
   .recommend-wrapper {
+    position: absolute;
+    top: 1rem;    /* 對應 .container-fluid 的 padding */
+    bottom: 1rem; /* 對應 .container-fluid 的 padding */
+    left: 1rem;   /* 對應 .container-fluid 的 padding */
+    right: 1rem;  /* 對應 .container-fluid 的 padding */
+    
+    /* 內部使用 Flexbox 分配空間 */
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 120px); /* 和紀念品頁面使用相同的高度計算 */
   }
 
-  /* 2. 頂部控制區 (選擇分類) - 固定不滾動 */
+  /* 2. 頂部控制區 - 固定高度 */
   .recommend-wrapper .recommend-controls {
-    flex: 0 0 auto; /* 不伸縮 */
+    flex-shrink: 0; /* 高度不壓縮 */
     padding: 1rem;
-    background-color: #fffbea; /* 和紀念品頁面主題色一致 */
+    background-color: #fffbea;
   }
 
-  /* 3. 中間表格滾動區 - 佔滿剩餘空間並內部滾動 */
+  /* 3. 中間表格區 - 佔滿剩餘空間並滾動 */
   .recommend-wrapper .table-responsive {
-    flex: 1 1 auto; /* 核心：自動伸展佔滿剩餘空間 */
+    flex-grow: 1; /* 自動伸展，佔滿所有剩餘高度 */
     overflow-y: auto; /* 只需垂直滾動 */
     border: 1px solid #dee2e6;
   }

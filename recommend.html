@@ -1,67 +1,62 @@
-<!-- recommend.html -->
-<h3 class="text-center">🌟 推薦清單</h3>
-<div class="mb-3 d-flex align-items-center gap-2 recommend-controls">
-    <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
-    <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
-        <option value="我全都要（不需證件）">我全都要（不需證件）</option>
-        <option value="高cp推薦">高cp推薦</option>
-        <option value="禮券類">禮券類</option>
-        <option value="小資族">小資族</option>
-        <option value="入門組">入門組</option>
-    </select>
-</div>
-<div class="mt-3 table-responsive">
-    <table class="table table-bordered table-sm" id="recommendTable">
-        <thead class="table-warning"></thead>
-        <tbody></tbody>
-    </table>
-</div>
-<!-- 相關 JavaScript 邏輯將會從 index.html 移到這裡 -->
-<script>
-    // 推薦清單載入邏輯
+<div class="recommend-wrapper">
+
+    <h3 class="text-center">🌟 推薦清單</h3>
+
+    <div class="mb-3 d-flex align-items-center gap-2 recommend-controls">
+        <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
+        <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
+            <option value="我全都要（不需證件）">我全都要（不需證件）</option>
+            <option value="高cp推薦">高cp推薦</option>
+            <option value="禮券類">禮券類</option>
+            <option value="小資族">小資族</option>
+            <option value="入門組">入門組</option>
+        </select>
+    </div>
+
+    <div class="mt-3 table-responsive">
+        <table class="table table-bordered table-sm" id="recommendTable">
+            <thead class="table-warning"></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div> <script>
     function loadRecommend(sheetName) {
+        const tableElement = document.getElementById('recommendTable');
+        if (!tableElement) return;
+        tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">載入中...</td></tr>';
+        
         const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
         fetch(url)
-            .then(res => res.json())
+            .then(res => res.ok ? res.json() : Promise.reject(res.status))
             .then(data => {
-                const tableElement = document.getElementById('recommendTable');
-                if (tableElement) {
-                    tableElement.querySelector('thead').innerHTML = ''; tableElement.querySelector('tbody').innerHTML = '';
-                    if (data && data.length > 0) {
-                        const headers = Object.keys(data[0]);
-                        const thead = headers.map(h => `<th>${h}</th>`).join('');
-                        const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]|| ''}</td>`).join('')}</tr>`).join('');
-                        tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
-                        tableElement.querySelector('tbody').innerHTML = tbody;
-                    } else {
-                        tableElement.querySelector('thead').innerHTML = ''; tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                    }
+                const thead = tableElement.querySelector('thead');
+                const tbody = tableElement.querySelector('tbody');
+                thead.innerHTML = '';
+                tbody.innerHTML = '';
+                if (data && data.length > 0) {
+                    const headers = Object.keys(data[0]);
+                    thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+                    tbody.innerHTML = data.map(row => `<tr>${headers.map(k => `<td>${row[k]|| ''}</td>`).join('')}</tr>`).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
                 }
             })
-            .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
+            .catch(error => {
+                console.error('載入推薦清單資料時發生錯誤:', error);
+                document.getElementById('recommendTable').querySelector('tbody').innerHTML = `<tr><td colspan="100%" class="text-danger">資料載入失敗。</td></tr>`;
+            });
     }
 
-  // ✅ 1. 將您的邏輯包裝到一個啟動函數中
-function initializeRecommendPage() {
-    const recommendSheetSelect = document.getElementById('recommendSheet');
-
-    // 確保元素真的存在
-    if (recommendSheetSelect) {
-        // 綁定下拉選單的變更事件
-        recommendSheetSelect.addEventListener('change', function () {
-            loadRecommend(this.value);
-        });
-
-        // 預設載入第一個項目
-        // 優化：直接讀取選單的當前值，而不是寫死一個值，更有彈性
-        loadRecommend(recommendSheetSelect.value || '我全都要（不需證件）'); 
-    
-    } else {
-        // 如果找不到元素，在主控台印出錯誤，方便除錯
-        console.error("錯誤：在 recommend.html 中找不到 ID 為 recommendSheet 的元素！");
+    function initializeRecommendPage() {
+        const recommendSheetSelect = document.getElementById('recommendSheet');
+        if (recommendSheetSelect) {
+            recommendSheetSelect.addEventListener('change', function () {
+                loadRecommend(this.value);
+            });
+            loadRecommend(recommendSheetSelect.value);
+        }
     }
-}
 
-// ✅ 2. 使用 setTimeout 呼叫這個啟動函數，解決時序問題
-setTimeout(initializeRecommendPage, 0);
+    setTimeout(initializeRecommendPage, 0);
 </script>

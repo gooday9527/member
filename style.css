@@ -55,7 +55,8 @@ body {
 /* ==========================================================================
    組件：紀念品頁面 (Component: Souvenir Page)
    ========================================================================== */
-/* ... (此區塊無變動，省略以節省篇幅) ... */
+
+/* --- 手機版 --- */
 @media (max-width: 768px) {
   .souvenir-wrapper .table-scroll-container {
     max-height: 70vh;
@@ -67,6 +68,8 @@ body {
     min-width: 600px;
   }
 }
+
+/* --- 桌機版 --- */
 @media (min-width: 769px) {
   .souvenir-wrapper {
     display: flex;
@@ -93,23 +96,22 @@ body {
     text-align: center;
   }
 }
-/* --- 位於 style.css 的紀念品頁面專屬樣式區塊 --- */
 
-/* 1. 先讓紀念品表格【所有】的標題預設都不換行 */
+/* --- 通用樣式 (紀念品) --- */
 .souvenir-wrapper thead th {
   position: sticky;
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
-  white-space: nowrap; /* 預設：所有標題都不換行 */
+  white-space: nowrap; /* 預設不換行 */
 }
-
-/* 2. 接著，【只針對第 5, 6, 9 欄】的標題，設定為允許換行 */
+/* 指定第 5, 6, 9 欄的標題可以換行 */
 .souvenir-wrapper thead th:nth-child(5),
 .souvenir-wrapper thead th:nth-child(6),
 .souvenir-wrapper thead th:nth-child(9) {
   white-space: normal; /* 例外：這幾欄可以換行 */
 }
+
 .souvenir-wrapper #souvenirControlsContainer {
   display: flex;
   justify-content: space-between;
@@ -164,7 +166,7 @@ body {
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
-  white-space: nowrap; /* ✅【修正標題換行問題】所有標題都不換行 */
+  white-space: nowrap;
 }
 
 /* --- 手機版微調 --- */
@@ -183,7 +185,7 @@ body {
 
 /* --- 欄寬設定 (推薦清單) --- */
 #recommendTable th:nth-child(1), #recommendTable td:nth-child(1),
-#recommendTable th:nth-child(2), #recommendTable td:n_h-child(2) {
+#recommendTable th:nth-child(2), #recommendTable td:nth-child(2) {
   width: 50px;
 }
 

@@ -125,7 +125,7 @@ body {
 /* --- 手機版佈局 (Mobile Layout) --- */
 @media (max-width: 768px) {
   .recommend-wrapper .table-responsive {
-    max-height: 75vh; /* 手機上用最大高度限制 */
+    max-height: 65vh; /* 手機上用最大高度限制 */
     overflow: auto;   /* 手機上同時允許垂直和水平滾動 */
     -webkit-overflow-scrolling: touch;
     position: relative;

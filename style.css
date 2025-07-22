@@ -231,33 +231,57 @@ th:nth-child(2), td:nth-child(2) {
   border-color: #ff9800; /* 統一邊框顏色 */
 }
 
-/* --- 推薦清單頁面專屬樣式 (已適配新架構) --- */
+/* --- 推薦清單頁面專屬樣式 (完整版) --- */
 
-/* 假設 recommend.html 的最外層有一個 <div class="recommend-wrapper"> */
-/* 這樣可以確保樣式不會污染到其他頁面 */
-
-/* ✅ 推薦分類下拉選單寬度 */
-.recommend-wrapper #recommendSheet {
-  max-width: 300px;
-}
-
-/* 推薦清單表格的滾動容器 */
+/* 基礎佈局與黏性表頭 (對手機和桌機都有效) */
 .recommend-wrapper .table-responsive {
-  max-height: 70vh; /* ✅ 可自行調整高度，vh 單位更具彈性 */
-  overflow-y: auto;
   position: relative;
 }
-
-/* 固定表頭（使用 sticky） */
 .recommend-wrapper thead th {
   position: sticky;
   top: 0;
-  background-color: #fff3cd; /* var(--bs-warning) */
+  background-color: #fff3cd;
   z-index: 2;
 }
 
-/* ===== 推薦清單欄寬調整 ===== */
-/* 注意：#recommendTable 是 ID，本身就是唯一的，所以不需要 .recommend-wrapper 前綴 */
+/* ===== 手機版布局 (螢幕寬度 <= 768px) ===== */
+@media (max-width: 768px) {
+  .recommend-wrapper .table-responsive {
+    max-height: 70vh; /* 在手機上使用最大高度來限制，使其可以滾動 */
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .recommend-wrapper #recommendTable {
+    min-width: 600px;
+  }
+}
+
+/* ===== 桌機版 Flexbox 特殊佈局 (螢幕寬度 > 768px) ===== */
+@media (min-width: 769px) {
+  /* 1. 讓 recommend-wrapper 成為一個固定高度的 Flexbox 容器 */
+  .recommend-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px); /* 和紀念品頁面使用相同的高度計算 */
+  }
+
+  /* 2. 頂部控制區 (選擇分類) - 固定不滾動 */
+  .recommend-wrapper .recommend-controls {
+    flex: 0 0 auto; /* 不伸縮 */
+    padding: 1rem;
+    background-color: #fffbea; /* 和紀念品頁面主題色一致 */
+  }
+
+  /* 3. 中間表格滾動區 - 佔滿剩餘空間並內部滾動 */
+  .recommend-wrapper .table-responsive {
+    flex: 1 1 auto; /* 核心：自動伸展佔滿剩餘空間 */
+    overflow-y: auto; /* 只需垂直滾動 */
+    border: 1px solid #dee2e6;
+  }
+}
+
+/* ===== 欄寬與表格通用樣式 ===== */
 #recommendTable th:nth-child(1),
 #recommendTable td:nth-child(1) {
   width: 50px;  /* 股號欄 */
@@ -269,25 +293,6 @@ th:nth-child(2), td:nth-child(2) {
   width: 50px;  /* 股名欄 */
   white-space: nowrap;
 }
-
-#recommendTable {
-  table-layout: auto;
-  word-break: break-word;
-}
-
-
-/* 推薦清單在小螢幕允許橫向滑動 */
-@media (max-width: 768px) {
-  .recommend-wrapper .table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* iOS 平滑滾動 */
-  }
-
-  .recommend-wrapper #recommendTable {
-    min-width: 600px; /* 避免欄位壓縮過頭，可視需要調整 */
-  }
-}
-
         @media only screen and (max-width: 768px) {
             body { padding: 10px; } 
             h3 { font-size: 1.5rem; margin-bottom: 15px; } 

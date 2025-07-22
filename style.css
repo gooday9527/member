@@ -145,35 +145,3 @@ body {
 }
 .recommend-wrapper .loading-placeholder td {
     text-align: center;
-
-/* ==========================================================================
-   5. 組件：載入中提示 (Component: Loading State)
-   ========================================================================== */
-
-/* 當表格容器處於 'is-loading' 狀態時... */
-.recommend-wrapper .table-responsive.is-loading {
-  /* 用一個偽元素來顯示「載入中」的文字 */
-  position: relative; /* 為了讓偽元素可以定位 */
-}
-
-.recommend-wrapper .table-responsive.is-loading::before {
-  content: '資料載入中...';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #fffbea; /* 用背景色蓋住下方可能存在的內容 */
-  color: #6c757d;
-  font-weight: bold;
-  font-size: 1.2rem;
-  z-index: 5;
-}
-
-/* 同時，將真正的表格隱藏起來，但保留其佔位，防止跳動 */
-.recommend-wrapper .table-responsive.is-loading table {
-  visibility: hidden;
-}

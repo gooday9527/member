@@ -93,12 +93,22 @@ body {
     text-align: center;
   }
 }
+/* --- 位於 style.css 的紀念品頁面專屬樣式區塊 --- */
+
+/* 1. 先讓紀念品表格【所有】的標題預設都不換行 */
 .souvenir-wrapper thead th {
   position: sticky;
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
-  white-space: nowrap; /* 確保紀念品標題也不換行 */
+  white-space: nowrap; /* 預設：所有標題都不換行 */
+}
+
+/* 2. 接著，【只針對第 5, 6, 9 欄】的標題，設定為允許換行 */
+.souvenir-wrapper thead th:nth-child(5),
+.souvenir-wrapper thead th:nth-child(6),
+.souvenir-wrapper thead th:nth-child(9) {
+  white-space: normal; /* 例外：這幾欄可以換行 */
 }
 .souvenir-wrapper #souvenirControlsContainer {
   display: flex;

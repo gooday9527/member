@@ -17,7 +17,6 @@ body {
 /* ==========================================================================
    2. 主要佈局 (Layout: Navbar & Container)
    ========================================================================== */
-
 .navbar {
   background-color: #ffe082;
   padding: 0 1rem;
@@ -43,64 +42,111 @@ body {
 }
 
 /* ==========================================================================
-   3. 頁面組件通用佈局 (Unified Component Layout)
+   3. 組件：紀念品頁面 (Component: Souvenir Page)
    ========================================================================== */
 
-/* ✅ 核心：讓兩個頁面的 wrapper 共用完全相同的 Flexbox 佈局 */
-.souvenir-wrapper,
-.recommend-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 100px); /* 整個區塊的高度 */
+/* --- 桌機版佈局 (Desktop Layout) --- */
+@media (min-width: 769px) {
+  .souvenir-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 100px);
+  }
+  .souvenir-wrapper .table-controls-fixed {
+    flex-shrink: 0;
+    padding: 1rem;
+    background-color: #fffbea;
+  }
+  .souvenir-wrapper .table-scroll-container {
+    flex-grow: 1;
+    overflow-y: auto; /* 桌機主要垂直滾動 */
+    border: 1px solid #dee2e6;
+    position: relative;
+  }
+  .souvenir-wrapper #souvenirPaginationWrapper {
+    flex-shrink: 0;
+    padding: 1rem;
+    background-color: #fffbea;
+    text-align: center;
+  }
 }
 
-/* ✅ 核心：讓兩個頁面的頂部控制區行為一致 */
-.souvenir-wrapper .table-controls-fixed,
-.recommend-wrapper .recommend-controls {
-  flex-shrink: 0; /* 固定部分 */
-  padding: 1rem;
-  background-color: #fffbea;
+/* --- 手機版佈局 (Mobile Layout) --- */
+@media (max-width: 768px) {
+  .souvenir-wrapper .table-scroll-container {
+    max-height: 75vh; /* 手機上用最大高度限制 */
+    overflow: auto;   /* 手機上同時允許垂直和水平滾動 */
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+  .souvenir-wrapper table {
+    min-width: 600px;
+  }
 }
 
-/* ✅ 核心：讓兩個頁面的中間滾動區行為一致 */
-.souvenir-wrapper .table-scroll-container,
-.recommend-wrapper .table-responsive {
-  flex-grow: 1; /* 伸展部分 */
-  overflow: auto; /* 超出範圍時自動產生滾動條 */
-  border: 1px solid #dee2e6;
-  position: relative; /* 為了讓 a thead sticky 生效 */
+/* --- 通用樣式 (紀念品) --- */
+.souvenir-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background-color: #fff3cd;
+  z-index: 2;
+  white-space: nowrap;
+}
+/* 【僅限紀念品】的標題換行例外規則 */
+.souvenir-wrapper thead th:nth-child(5),
+.souvenir-wrapper thead th:nth-child(6),
+.souvenir-wrapper thead th:nth-child(9) {
+  white-space: normal;
 }
 
-/* ✅ 核心：讓兩個頁面的底部換頁區行為一致 (推薦清單若無此區塊則此規則無效，不影響) */
-.souvenir-wrapper #souvenirPaginationWrapper {
-  flex-shrink: 0; /* 固定部分 */
-  padding: 1rem;
-  background-color: #fffbea;
-  text-align: center;
+/* ==========================================================================
+   4. 組件：推薦清單頁面 (Component: Recommend Page)
+   ========================================================================== */
+
+/* --- 桌機版佈局 (Desktop Layout) --- */
+@media (min-width: 769px) {
+  .recommend-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 100px);
+  }
+  .recommend-wrapper .recommend-controls {
+    flex-shrink: 0;
+    padding: 1rem 1rem 0.5rem;
+    background-color: #fffbea;
+  }
+  .recommend-wrapper .table-responsive {
+    flex-grow: 1;
+    overflow-y: auto; /* 桌機主要垂直滾動 */
+    border: 1px solid #dee2e6;
+    position: relative;
+  }
 }
 
-/* ✅ 核心：讓兩個頁面的表格和表頭行為一致 */
-.souvenir-wrapper table,
-.recommend-wrapper table {
-  min-width: 600px; /* 手機上可水平滾動 */
+/* --- 手機版佈局 (Mobile Layout) --- */
+@media (max-width: 768px) {
+  .recommend-wrapper .table-responsive {
+    max-height: 75vh; /* 手機上用最大高度限制 */
+    overflow: auto;   /* 手機上同時允許垂直和水平滾動 */
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+  .recommend-wrapper table {
+    min-width: 600px;
+  }
 }
 
-.souvenir-wrapper thead th,
+/* --- 通用樣式 (推薦清單) --- */
 .recommend-wrapper thead th {
   position: sticky;
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
-  white-space: nowrap; /* 所有標題都不換行 */
+  white-space: nowrap;
 }
-
-/* ==========================================================================
-   4. 各頁面特殊微調 (Component-Specific Tweaks)
-   ========================================================================== */
-
-/* 【僅限紀念品】的標題換行例外規則 */
-.souvenir-wrapper thead th:nth-child(5),
-.souvenir-wrapper thead th:nth-child(6),
-.souvenir-wrapper thead th:nth-child(9) {
-  white-space: normal; /* 只有這幾欄可以換行 */
+.recommend-wrapper .loading-placeholder td {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: #6c757d;
+    font-weight: bold;
 }

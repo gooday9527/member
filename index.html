@@ -44,12 +44,9 @@
         const navMenu = document.getElementById("navMenu");
         const loginStatus = document.getElementById("loginStatus");
 
-        // ✅ 登入成功後，由外部頁面呼叫的函數
         window.updateMainAppLoginState = function(email) {
-            // 這個函數現在只負責觸發 Firebase 的狀態改變
-            // 真正的介面更新將由 onAuthStateChanged 統一處理
-            // 這裡我們不需要做任何事，因為 Firebase 會自動觸發 onAuthStateChanged
-            console.log("Login successful for:", email, "Waiting for auth state to change.");
+            // 這個函數現在只是一個觸發器，真正的更新由 onAuthStateChanged 統一處理
+            console.log("Login state update triggered for:", email);
         };
 
         const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "login", label: "登入" } ];
@@ -113,7 +110,6 @@
         window.showSection = function(id) {
             if (!id || id === "logout") return;
             loadExternalHtmlSection(id);
-            // 更新導覽列 active 狀態的邏輯...
         }
 
         document.body.addEventListener("click", function (e) {
@@ -133,32 +129,29 @@
         // onAuthStateChanged 是唯一管理登入狀態和介面更新的地方
         onAuthStateChanged(auth, (user) => {
             const wasLoggedIn = !!loginEmail;
-            const isLoggedIn = !!user;
-            
             loginEmail = user ? user.email : null;
-            
-            // 只有在登入狀態【真正改變】時，才執行更新介面的動作
-            if (isLoggedIn !== wasLoggedIn) {
-                console.log('Auth state changed. New state:', isLoggedIn ? 'Logged In' : 'Logged Out');
-                renderNavTabs();
-                loadMemberName(loginEmail); // 只有在這裡呼叫！
-                
-                // 如果是從「未登入」變為「已登入」，則跳轉到紀念品頁
-                if (isLoggedIn && !wasLoggedIn) {
-                    window.showSection("souvenir");
-                }
-                // 如果是從「已登入」變為「未登入」，則跳轉回紀念品頁
-                if (!isLoggedIn && wasLoggedIn) {
-                    window.showSection("souvenir");
-                }
-            }
-            
-            // 處理頁面首次載入
+            const isLoggedIn = !!user;
+
+            // 判斷是否為首次載入
             if (typeof window.initialLoad === 'undefined') {
+                console.log('Initial page load. Rendering UI.');
+                // 首次載入時，無論如何都要畫一次介面
+                renderNavTabs();
+                loadMemberName(loginEmail);
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const view = urlParams.get("view");
                 window.showSection(view || "souvenir");
-                window.initialLoad = true;
+                window.initialLoad = true; // 標記為已處理
+            } 
+            // 如果不是首次載入，就只在狀態改變時才更新
+            else if (isLoggedIn !== wasLoggedIn) {
+                console.log('Auth state changed. Re-rendering UI.');
+                renderNavTabs();
+                loadMemberName(loginEmail);
+                
+                // 登入或登出後，統一跳轉回紀念品頁
+                window.showSection("souvenir");
             }
         });
     </script>

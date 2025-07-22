@@ -1,0 +1,54 @@
+<!-- recommend.html -->
+<h3 class="text-center">🌟 推薦清單</h3>
+<div class="mb-3 d-flex align-items-center gap-2">
+    <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
+    <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
+        <option value="我全都要（不需證件）">我全都要（不需證件）</option>
+        <option value="高cp推薦">高cp推薦</option>
+        <option value="禮券類">禮券類</option>
+        <option value="小資族">小資族</option>
+        <option value="入門組">入門組</option>
+    </select>
+</div>
+<div class="mt-3 table-responsive">
+    <table class="table table-bordered table-sm" id="recommendTable">
+        <thead class="table-warning"></thead>
+        <tbody></tbody>
+    </table>
+</div>
+<!-- 相關 JavaScript 邏輯將會從 index.html 移到這裡 -->
+<script>
+    // 推薦清單載入邏輯
+    function loadRecommend(sheetName) {
+        const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const tableElement = document.getElementById('recommendTable');
+                if (tableElement) {
+                    tableElement.querySelector('thead').innerHTML = ''; tableElement.querySelector('tbody').innerHTML = '';
+                    if (data && data.length > 0) {
+                        const headers = Object.keys(data[0]);
+                        const thead = headers.map(h => `<th>${h}</th>`).join('');
+                        const tbody = data.map(row => `<tr>${headers.map(k => `<td>${row[k]|| ''}</td>`).join('')}</tr>`).join('');
+                        tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
+                        tableElement.querySelector('tbody').innerHTML = tbody;
+                    } else {
+                        tableElement.querySelector('thead').innerHTML = ''; tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
+                    }
+                }
+            })
+            .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
+    }
+
+    // 在頁面載入到 DOM 後立即執行
+    document.addEventListener('DOMContentLoaded', () => {
+        const recommendSheetSelect = document.getElementById('recommendSheet');
+        if (recommendSheetSelect) {
+            recommendSheetSelect.addEventListener('change', function () {
+                loadRecommend(this.value);
+            });
+            loadRecommend('我全都要（不需證件）'); // 預設載入
+        }
+    });
+</script>

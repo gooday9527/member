@@ -62,55 +62,57 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
-  <script>
-    // ✅ 初始化 Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
-      authDomain: "goodaymember.firebaseapp.com",
-      projectId: "goodaymember",
-      storageBucket: "goodaymember.appspot.com",
-      messagingSenderId: "730801053598",
-      appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+<script>
+  // ✅ 初始化 Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
+    authDomain: "goodaymember.firebaseapp.com",
+    projectId: "goodaymember",
+    storageBucket: "goodaymember.appspot.com",
+    messagingSenderId: "730801053598",
+    appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    // ✅ 註冊流程
-    document.getElementById("registerForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+  // ✅ 註冊流程
+  document.getElementById("registerForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-      try {
-        // 1️⃣ Firebase 註冊
-        await auth.createUserWithEmailAndPassword(email, password);
-        console.log("✅ Firebase 註冊成功");
+    try {
+      // 1️⃣ Firebase 註冊
+      await auth.createUserWithEmailAndPassword(email, password);
+      console.log("✅ Firebase 註冊成功");
 
-        // 2️⃣ 呼叫 Apps Script 寫入試算表
-        const relayUrl = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec";
-        const response = await fetch(relayUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "register",
-            email,
-            name
-          })
-        });
+      // 2️⃣ 呼叫 Apps Script 寫入試算表
+      const relayUrl = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec";
+      
+      // ✅ 關鍵修改：移除 headers 中的 "Content-Type": "application/json"
+      // 並直接傳送 JSON 字串作為 body
+      const response = await fetch(relayUrl, {
+        method: "POST",
+        body: JSON.stringify({ // 仍然傳送 JSON 格式的字串
+          action: "register",
+          email,
+          name
+        })
+      });
 
-        const result = await response.json();
-        if (result.success) {
-          alert("✅ 註冊成功！");
-          window.location.href = "https://member.gooday9527.com/?view=login";
-        } else {
-          alert("⚠️ Firebase OK，但試算表寫入失敗：" + result.message);
-        }
-
-      } catch (err) {
-        alert("❌ 註冊失敗：" + err.message);
+      const result = await response.json();
+      if (result.success) {
+        alert("✅ 註冊成功！");
+        window.location.href = "https://member.gooday9527.com/?view=login";
+      } else {
+        alert("⚠️ Firebase OK，但試算表寫入失敗：" + result.message);
       }
-    });
-  </script>
+
+    } catch (err) {
+      alert("❌ 註冊失敗：" + err.message);
+    }
+  });
+</script>
 </body>
 </html>

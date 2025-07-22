@@ -110,12 +110,6 @@ body {
   z-index: 2;
   white-space: nowrap; /* 預設不換行 */
 }
-/* 指定第 5, 6, 9 欄的標題可以換行 */
-.souvenir-wrapper thead th:nth-child(5),
-.souvenir-wrapper thead th:nth-child(6),
-.souvenir-wrapper thead th:nth-child(9) {
-  white-space: normal; /* 例外：這幾欄可以換行 */
-}
 
 .souvenir-wrapper #souvenirControlsContainer {
   display: flex;
@@ -144,54 +138,46 @@ body {
   border-color: #ff9800;
 }
 
-
 /* ==========================================================================
-   組件：推薦清單頁面 (Component: Recommend Page)
+   組件：推薦清單頁面 (Component: Recommend Page) - 簡化核心版
    ========================================================================== */
 
-/* --- 基礎佈局 (手機 & 桌機共用) --- */
+/* 1. 讓 recommend-wrapper 成為一個佔滿畫面的容器 */
 .recommend-wrapper {
+  /* 使用絕對定位來脫離文檔流，並佔滿父容器 (.container-fluid) */
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  
+  /* 內部使用 Flexbox 來分配空間 */
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px);
 }
+
+/* 2. 頂部控制區固定高度 */
 .recommend-wrapper .recommend-controls {
-  flex: 0 0 auto;
+  flex-shrink: 0; /* 不壓縮 */
   padding: 1rem;
   background-color: #fffbea;
 }
+
+/* 3. 中間表格區佔滿剩餘空間，並在內部滾動 */
 .recommend-wrapper .table-responsive {
-  flex: 1 1 auto;
-  overflow-y: auto;
+  flex-grow: 1; /* 伸展以佔滿剩餘空間 */
+  overflow: auto; /* 同時開啟垂直和水平滾動 */
+  -webkit-overflow-scrolling: touch; /* iOS 優化 */
   border: 1px solid #dee2e6;
-  position: relative;
 }
+
+/* 4. 黏性表頭，並強制不換行 */
 .recommend-wrapper thead th {
   position: sticky;
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
-  white-space: nowrap; /* 確保所有標題都不換行 */
-}
-
-/* --- 手機版微調 --- */
-@media (max-width: 768px) {
-  .recommend-wrapper {
-    height: calc(100vh - 80px);
-  }
-  .recommend-wrapper .table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .recommend-wrapper #recommendTable {
-    min-width: 600px;
-  }
-}
-
-/* --- 欄寬設定 (推薦清單) --- */
-#recommendTable th:nth-child(1), #recommendTable td:nth-child(1),
-#recommendTable th:nth-child(2), #recommendTable td:nth-child(2) {
-  width: 50px;
+  white-space: nowrap; /* 強制所有標題不換行 */
 }
 
 /* ==========================================================================

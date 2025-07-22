@@ -20,20 +20,59 @@
         </table>
     </div>
 
-</div> <script>
-    function loadRecommend(sheetName) {
+</div> 
+<script>
+    function showSkeletonLoader() {
         const tableElement = document.getElementById('recommendTable');
         if (!tableElement) return;
-        tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">載入中...</td></tr>';
+
+        const thead = tableElement.querySelector('thead');
+        const tbody = tableElement.querySelector('tbody');
+
+        // 骨架屏的表頭 (模擬最終欄位數量)
+        thead.innerHTML = `
+            <tr>
+                <th><div class="skeleton-line"></div></th>
+                <th><div class="skeleton-line"></div></th>
+                <th><div class="skeleton-line"></div></th>
+                <th><div class="skeleton-line"></div></th>
+            </tr>
+        `;
+
+        // 骨架屏的內容 (模擬幾行資料)
+        let skeletonRows = '';
+        for (let i = 0; i < 5; i++) { // 顯示 5 行骨架
+            skeletonRows += `
+                <tr>
+                    <td><div class="skeleton-line"></div></td>
+                    <td><div class="skeleton-line"></div></td>
+                    <td><div class="skeleton-line"></div></td>
+                    <td><div class="skeleton-line"></div></td>
+                </tr>
+            `;
+        }
+        tbody.innerHTML = skeletonRows;
+    }
+
+    function loadRecommend(sheetName) {
+        // ✅ 步驟 1: 立刻顯示骨架屏
+        showSkeletonLoader();
         
         const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
+        
+        // ✅ 步驟 2: 開始非同步載入資料
         fetch(url)
             .then(res => res.ok ? res.json() : Promise.reject(res.status))
             .then(data => {
+                const tableElement = document.getElementById('recommendTable');
+                if (!tableElement) return;
                 const thead = tableElement.querySelector('thead');
                 const tbody = tableElement.querySelector('tbody');
+                
+                // ✅ 步驟 3: 資料回來後，清除骨架屏，填入真實內容
                 thead.innerHTML = '';
-                tbody.innerHTML = '';
+                tbody.innerHTML = ''; 
+
                 if (data && data.length > 0) {
                     const headers = Object.keys(data[0]);
                     thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
@@ -44,7 +83,10 @@
             })
             .catch(error => {
                 console.error('載入推薦清單資料時發生錯誤:', error);
-                document.getElementById('recommendTable').querySelector('tbody').innerHTML = `<tr><td colspan="100%" class="text-danger">資料載入失敗。</td></tr>`;
+                const tbody = document.getElementById('recommendTable')?.querySelector('tbody');
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td colspan="100%" class="text-danger">資料載入失敗，請檢查網路連線或稍後再試。</td></tr>`;
+                }
             });
     }
 

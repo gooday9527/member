@@ -1,124 +1,139 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>註冊會員 | 好管家紀念品代領</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- register.html -->
 
-<style>
-    #dynamic-content-area {
-        background-color: #fff9c4; /* 鵝黃色背景 */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        
-        /* ✅ 關鍵修改：
-           我們不再使用 position: absolute 來蓋住整個畫面。
-           而是計算一個最小高度，讓它剛好填滿導覽列下方的剩餘空間。
-           100vh = 整個視窗的高度
-           56px = 一般導覽列的預估高度 (您可以根據實際情況微調)
-        */
-        min-height: calc(100vh - 56px);
-        
-        padding: 20px;
-        box-sizing: border-box; /* 確保 padding 不會讓高度溢出 */
-    }
-    .card {
-        width: 100%;
-        max-width: 420px;
-        padding: 25px;
-        border-radius: 16px;
-        background-color: #ffffff;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    }
-    .btn-warning {
-        background-color: #ffc107;
-        border: none;
-        font-weight: bold;
-        color: #212529;
-    }
-    .btn-warning:hover {
-        background-color: #e0a800;
-    }
-</style>
-</head>
-
-<body>
-<div class="card">
-    <h4 class="text-center mb-4">註冊會員</h4>
+<!-- ✅ 結構調整：移除了<html>, <head>, <body>，只保留內容區塊 -->
+<!-- ✅ 外觀調整：使用 Bootstrap class 讓排版更一致 -->
+<div class="register-wrapper" style="max-width: 420px; margin: auto;">
+    <h3 class="text-center mb-4">👋 註冊新帳號</h3>
     <form id="registerForm">
         <div class="mb-3">
             <label for="name" class="form-label">姓名</label>
             <input type="text" class="form-control" id="name" required />
         </div>
         <div class="mb-3">
-            <label for="email" class="form-label">Email（登入用）</label>
+            <label for="email" class="form-label">Email (將作為您的登入帳號)</label>
             <input type="email" class="form-control" id="email" required />
         </div>
         <div class="mb-3">
-            <label for="password" class="form-label">密碼</label>
+            <label for="password" class="form-label">密碼 (至少6位數)</label>
             <input type="password" class="form-control" id="password" required minlength="6" />
         </div>
-        <button type="submit" class="btn btn-warning w-100">註冊</button>
-        <div class="text-center mt-3">
-            已有帳號？<a href="#" data-section="login">返回登入</a>
+        <div class="mb-3">
+            <label for="confirmPassword" class="form-label">確認密碼</label>
+            <input type="password" class="form-control" id="confirmPassword" required minlength="6" />
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mb-3">確認註冊</button>
+        <div class="text-center">
+            <!-- ✅ 導航調整：使用 data-section 來觸發動態頁面切換 -->
+            <a href="#" data-section="login">已經有帳號了？返回登入</a>
         </div>
     </form>
 </div>
 
-  <!-- ✅ Firebase CDN 非 module 版 -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-
+<!-- ✅ 腳本調整：改用與 index.html 一致的模組化 SDK -->
 <script type="module">
     import { getApps, initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-    // ... 您原本的 Firebase 初始化和註冊邏輯 ...
-    const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f" };
+    const firebaseConfig = {
+        apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
+        authDomain: "goodaymember.firebaseapp.com",
+        projectId: "goodaymember",
+        storageBucket: "goodaymember.appspot.com",
+        messagingSenderId: "730801053598",
+        appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f"
+    };
+
+    // ✅ 安全地初始化 Firebase，避免重複錯誤
     const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     const auth = getAuth(app);
+
     function initializeRegisterForm() {
         const registerForm = document.getElementById('registerForm');
         if (!registerForm) return;
+
         registerForm.addEventListener('submit', async function (e) {
             e.preventDefault();
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert("錯誤：兩次輸入的密碼不相符！");
+                return;
+            }
+            if (!name) {
+                alert("錯誤：請輸入您的姓名！");
+                return;
+            }
+
             const submitButton = registerForm.querySelector('button[type="submit"]');
             const originalButtonText = submitButton.innerHTML;
             submitButton.disabled = true;
             submitButton.innerHTML = '處理中...';
+
             try {
+                // 步驟 1️⃣: 在 Firebase 中建立使用者帳號
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                console.log("✅ Firebase 註冊成功:", userCredential.user.email);
+
+                // 步驟 2️⃣: 【保留您的核心邏輯】呼叫 Apps Script 將資料寫入試算表
                 const relayUrl = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec";
-                const response = await fetch(relayUrl, { method: "POST", body: JSON.stringify({ action: "register", email, name }) });
+                const response = await fetch(relayUrl, {
+                    method: "POST",
+                    // 您的 Apps Script 似乎是接收純文字，我們發送純文字
+                    // 如果它需要 JSON，請改回 JSON.stringify
+                    body: JSON.stringify({ action: "register", email, name }) 
+                });
+
                 const result = await response.json();
-                if (!result.success) { throw new Error(result.message || "寫入會員資料失敗"); }
+                if (!result.success) {
+                    // 即使寫入試算表失敗，Firebase 帳號也已建立
+                    // 這裡可以選擇是否要刪除 Firebase 帳號，或只是提醒使用者
+                    throw new Error(result.message || "寫入會員資料失敗，但帳號已建立。請聯繫客服。");
+                }
+
+                console.log("✅ Apps Script 寫入成功");
                 alert("✅ 註冊成功！將為您自動登入。");
-                if (window.updateMainAppLoginState) { window.updateMainAppLoginState(userCredential.user.email); } else { window.location.reload(); }
+
+                // 步驟 3️⃣: 【無縫接軌】呼叫主程式的函數來更新登入狀態
+                if (window.updateMainAppLoginState) {
+                    window.updateMainApplinState(userCredential.user.email);
+                } else {
+                    // 備用方案：如果找不到主程式函數，就重整頁面
+                    window.location.reload();
+                }
+
             } catch (error) {
                 console.error("註冊流程失敗:", error);
                 let message = "發生未知錯誤";
+                // 根據 Firebase 或我們自訂的錯誤來顯示提示
                 if (error.code) {
                      switch (error.code) {
-                        case 'auth/email-already-in-use': message = "這個 Email 已經被註冊過了。"; break;
-                        case 'auth/invalid-email': message = "Email 格式不正確。"; break;
-                        case 'auth/weak-password': message = "密碼強度不足，請至少設定6位數。"; break;
-                        default: message = `註冊失敗 (${error.message})`;
+                        case 'auth/email-already-in-use':
+                            message = "這個 Email 已經被註冊過了。";
+                            break;
+                        case 'auth/invalid-email':
+                            message = "Email 格式不正確。";
+                            break;
+                        case 'auth/weak-password':
+                            message = "密碼強度不足，請至少設定6位數。";
+                            break;
+                        default:
+                            message = `註冊失敗 (${error.message})`
                     }
-                } else { message = error.message; }
+                } else {
+                    message = error.message; // 顯示來自 Apps Script 的錯誤
+                }
                 alert(`❌ ${message}`);
             } finally {
+                // 無論成功或失敗，都恢復按鈕狀態
                 submitButton.disabled = false;
                 submitButton.innerHTML = originalButtonText;
             }
         });
     }
+
+    // 使用 setTimeout 確保 DOM 準備就緒
     setTimeout(initializeRegisterForm, 0);
 </script>
-
-</body>
-</html>

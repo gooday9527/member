@@ -3,16 +3,16 @@
 <!-- ✅【核心】採用與登入頁完全一致的置中、簡潔風格 -->
 <div style="max-width: 500px; margin: 2rem auto;">
     <h3 class="text-center">📊 新增帳號／持股</h3>
-    <p class="text-center text-muted small mb-3">登入者: <span id="currentUserName" class="fw-bold">載入中...</span></p>
-
-    <!-- ✅【功能】保留您所有的核心功能 -->
+    
+    <!-- ✅【功能】保留您所有的核心功能，並套用 Bootstrap 樣式 -->
     <div class="mb-3">
         <label for="subAccountSelect" class="form-label">選擇或新增子帳號</label>
         <div class="input-group">
             <select class="form-select" id="subAccountSelect">
-                <option value="">請選擇...</option>
+                <option value="">載入中...</option>
             </select>
-            <button class="btn btn-outline-secondary" type="button" onclick="toggleSubAccountInput(true)">➕ 新增</button>
+            <!-- ✅【修正】確保 onclick 能正確呼叫 -->
+            <button class="btn btn-outline-secondary" type="button" onclick="window.addAccountShares.toggleSubAccountInput(true)">➕ 新增</button>
         </div>
     </div>
     
@@ -20,8 +20,8 @@
         <label for="newSubAccountInput" class="form-label">新子帳號名稱</label>
         <input type="text" class="form-control" id="newSubAccountInput" placeholder="請輸入子帳號名稱">
         <div class="mt-2 d-flex gap-2 justify-content-end">
-            <button class="btn btn-sm btn-secondary" onclick="toggleSubAccountInput(false)">取消</button>
-            <button class="btn btn-sm btn-primary" onclick="saveNewSubAccount()">儲存</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="window.addAccountShares.toggleSubAccountInput(false)">取消</button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="window.addAccountShares.saveNewSubAccount()">儲存</button>
         </div>
     </div>
 
@@ -46,14 +46,15 @@
         </div>
     </div>
 
-    <button class="btn btn-success w-100 mt-3" onclick="executeOperation()">執行操作</button>
+    <button class="btn btn-success w-100 mt-3" onclick="window.addAccountShares.executeOperation()">執行操作</button>
 
     <div id="messageBox" class="mt-3"></div>
 </div>
 
-<!-- ✅【邏輯】整合您原本的 JavaScript，並適配 SPA 架構 -->
+<!-- ✅【邏輯】整合您原本的 JavaScript，並修正所有已知問題 -->
 <script>
-    (function() {
+    // 使用一個命名空間掛載到 window，避免污染全局
+    window.addAccountShares = (function() {
         const APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzk_RKeBgLtWsVJe79WUIYklyOnLL94nVZ41rb_zG_bV-LOSsi9PtSHQX0H0a2hMId0/exec";
         let accountsData = [];
 
@@ -66,7 +67,6 @@
             const fullPayload = { action, userEmail, ...payload };
             const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(fullPayload),
             });
             if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
@@ -78,80 +78,89 @@
         function displayMessage(msg, type) {
             const box = document.getElementById("messageBox");
             if (!box) return;
-            // 使用 Bootstrap 的 Alert 樣式
             box.innerHTML = `<div class="alert alert-${type}" role="alert">${msg}</div>`;
             setTimeout(() => { box.innerHTML = ''; }, 5000);
         }
 
-        window.toggleSubAccountInput = function(show) {
-            const wrapper = document.getElementById("addSubWrapper");
-            if (wrapper) {
-                wrapper.style.display = show ? "block" : "none";
-                if (!show) document.getElementById("newSubAccountInput").value = "";
-            }
-        };
-
-        window.saveNewSubAccount = async function() {
-            const name = document.getElementById("newSubAccountInput").value.trim();
-            if (!name) return displayMessage("請輸入子帳號名稱", "danger");
-            try {
-                const result = await fetchDataFromBackend("addAndSelectSubAccount", { name: name });
-                displayMessage(result.message, result.success ? "success" : "danger");
-                if (result.success) {
-                    toggleSubAccountInput(false);
-                    await loadInitialData(name);
-                }
-            } catch (e) {
-                displayMessage("儲存失敗：" + e.message, "danger");
-            }
-        };
-
-        window.executeOperation = async function() {
-            const subAccount = document.getElementById("subAccountSelect").value;
-            const stocks = document.getElementById("stockInput").value.trim();
-            const operationType = document.querySelector('input[name="operationType"]:checked').value;
-
-            if (!subAccount) return displayMessage("請選擇一個子帳號", "danger");
-            if (!stocks && operationType !== 'overwrite') return displayMessage("請輸入股號", "danger");
-
-            const btn = document.querySelector('.btn-success');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = '處理中...';
-
-            try {
-                const result = await fetchDataFromBackend("executeStockOperation", { subAccount, stocks, operationType });
-                displayMessage(result.message, "success");
-                document.getElementById("stockInput").value = "";
-            } catch (e) {
-                displayMessage("操作失敗：" + e.message, "danger");
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
-        };
-
         async function loadInitialData(accountToSelect = null) {
+            const select = document.getElementById("subAccountSelect");
             try {
                 const data = await fetchDataFromBackend("getAccountData");
-                document.getElementById("currentUserName").textContent = data.currentUserName;
                 accountsData = data.accounts || [];
-                const select = document.getElementById("subAccountSelect");
-                select.innerHTML = '<option value="">請選擇...</option>';
-                accountsData.forEach(name => {
-                    const opt = document.createElement("option");
-                    opt.value = opt.textContent = name;
-                    select.appendChild(opt);
-                });
+                select.innerHTML = '<option value="">請選擇子帳號</option>';
+                if (accountsData.length > 0) {
+                    accountsData.forEach(name => {
+                        const opt = document.createElement("option");
+                        opt.value = opt.textContent = name;
+                        select.appendChild(opt);
+                    });
+                } else {
+                    select.innerHTML = '<option value="">尚無子帳號，請先新增</option>';
+                }
                 if (accountToSelect && accountsData.includes(accountToSelect)) {
                     select.value = accountToSelect;
                 }
             } catch (e) {
+                select.innerHTML = '<option value="">載入失敗</option>';
                 displayMessage("載入帳號資料失敗：" + e.message, "danger");
             }
         }
 
+        // 立即執行初始化
         setTimeout(loadInitialData, 0);
 
+        // 返回需要被 HTML onclick 呼叫的函數
+        return {
+            toggleSubAccountInput: function(show) {
+                const wrapper = document.getElementById("addSubWrapper");
+                if (wrapper) {
+                    wrapper.style.display = show ? "block" : "none";
+                    if (!show) document.getElementById("newSubAccountInput").value = "";
+                }
+            },
+            saveNewSubAccount: async function() {
+                const name = document.getElementById("newSubAccountInput").value.trim();
+                if (!name) return displayMessage("請輸入子帳號名稱", "danger");
+                const btn = document.querySelector('#addSubWrapper .btn-primary');
+                btn.disabled = true;
+                btn.textContent = '儲存中...';
+                try {
+                    const result = await fetchDataFromBackend("addAndSelectSubAccount", { name: name });
+                    displayMessage(result.message, result.success ? "success" : "danger");
+                    if (result.success) {
+                        this.toggleSubAccountInput(false);
+                        await loadInitialData(name);
+                    }
+                } catch (e) {
+                    displayMessage("儲存失敗：" + e.message, "danger");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = '儲存';
+                }
+            },
+            executeOperation: async function() {
+                const subAccount = document.getElementById("subAccountSelect").value;
+                const stocks = document.getElementById("stockInput").value.trim();
+                const operationType = document.querySelector('input[name="operationType"]:checked').value;
+
+                if (!subAccount) return displayMessage("請選擇一個子帳號", "danger");
+                if (!stocks && operationType !== 'overwrite') return displayMessage("請輸入股號", "danger");
+
+                const btn = document.querySelector('.btn-success');
+                const originalText = btn.textContent;
+                btn.disabled = true;
+                btn.textContent = '處理中...';
+                try {
+                    const result = await fetchDataFromBackend("executeStockOperation", { subAccount, stocks, operationType });
+                    displayMessage(result.message, "success");
+                    document.getElementById("stockInput").value = "";
+                } catch (e) {
+                    displayMessage("操作失敗：" + e.message, "danger");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            }
+        };
     })();
 </script>

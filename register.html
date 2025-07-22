@@ -1,6 +1,4 @@
 <!-- register.html -->
-
-<!-- ✅ 採用與登入頁一致的 placeholder 風格 -->
 <h3 class="text-center">👋 註冊新帳號</h3>
 <form id="registerForm" class="text-center mt-3" style="max-width: 400px; margin: auto;">
     <div class="mb-3">
@@ -21,7 +19,6 @@
     </div>
 </form>
 
-<!-- ✅ 您的核心註冊邏輯，包含【已修正】的函數呼叫 -->
 <script type="module">
     import { getApps, initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -49,20 +46,24 @@
             submitButton.innerHTML = '處理中...';
 
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                // 步驟 1: Firebase 註冊
+                await createUserWithEmailAndPassword(auth, email, password);
+                
+                // 步驟 2: 寫入 Google Sheet
                 const relayUrl = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec";
                 const response = await fetch(relayUrl, { method: "POST", body: JSON.stringify({ action: "register", email, name }) });
                 const result = await response.json();
                 if (!result.success) { throw new Error(result.message || "寫入會員資料失敗"); }
                 
-                alert("✅ 註冊成功！將為您自動登入。");
-                
-                // ✅ 【最重要的修正】確保這裡的函數名稱是正確的
-                if (window.updateMainAppLoginState) { 
-                    window.updateMainAppLoginState(userCredential.user.email); 
-                } else { 
-                    window.location.reload(); 
+                // ✅ 【最重要的修改】
+                // 步驟 3: 提示成功，並導向登入頁
+                alert("✅ 註冊成功！請使用您的新帳號登入。");
+                if (window.showSection) {
+                    window.showSection('login'); // 使用主程式的函數來切換頁面
+                } else {
+                    window.location.href = "/?view=login"; // 備用方案
                 }
+
             } catch (error) {
                 let message = "❌ 註冊失敗：";
                 if (error.code) {

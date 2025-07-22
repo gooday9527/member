@@ -1,22 +1,240 @@
-/* ==========================================================================
-   組件：推薦清單頁面 (Component: Recommend Page) - 成功版本還原
-   ========================================================================== */
+/* ===== 全站通用樣式 ===== */
+body {
+    background-color: #fffbea;
+    font-family: 'Noto Sans TC', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+/* 避免桌機版因 DataTable 超寬橫向捲動 */
+@media (min-width: 769px) {
+  body {
+    overflow-x: hidden; /* 避免整頁橫向捲動 */
+  }
+}
 
-/* --- 基礎佈局 (手機 & 桌機共用) --- */
-.recommend-wrapper {
+/* 導覽列樣式 */
+.navbar {
+    background-color: #ffe082;
+}
+
+/* 登入者樣式 */
+.login-user {
+  color: #343a40; /* 深灰色 */
+  font-weight: bold;
+}
+
+/* 確保導覽列的排版 */
+.navbar-collapse {
+    justify-content: flex-start !important; /* 確保內容靠左 */
+}
+
+.navbar-nav {
+    margin-right: auto !important; /* 將 nav items 推向左邊 */
+    margin-left: 0 !important; /* 確保沒有左邊距 */
+}
+
+.nav-link {
+    font-weight: bold;
+}
+
+/* 確保 nav-link 點擊時的 active 狀態有視覺效果 */
+/* 導覽列目前選取的項目：底部顯示藍線 */
+.nav-link.active {
+  border: none;               /* 移除其他邊框 */
+  border-bottom: 4px solid #007bff;  /*  藍色底線，4px */
+   /* color: #007bff !important; 文字顏色也改藍 */
+  font-weight: bold;          /* 粗體字 */
+  background-color: transparent;
+  border-radius: 0;           /* 移除圓角 */
+}
+
+
+/* 讓指定導覽列 tab 保持橘色邊框與粗體 */
+/*.nav-link.always-highlight {*/
+ /* font-weight: bold;*/
+  /* color: #000000 ;*/ /*#ffffff 白色文字 */
+
+
+/* 內容容器樣式 */
+.container-fluid {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    position: relative; /* 關鍵：讓內部絕對定位的區塊相對於此容器定位 */
+    min-height: 600px; /* 範例值，您可以調整以確保頁面內容足夠高，防止塌陷 */
+    padding-top: 3rem; /* 為內容區塊留出一些頂部空間，避免與導覽列重疊 */
+    padding-bottom: 1rem; /* 底部空間 */
+}
+
+/* 區塊 (section) 顯示/隱藏和層疊樣式 */
+.section {
+    display: none; /* 預設隱藏所有區塊 */
+    position: absolute; /* 讓所有區塊疊加在同一個位置 */
+    /* 根據 .container-fluid 的 padding 調整寬度和位置，確保內容在容器內 */
+    width: calc(100% - 2rem); /* 100% 減去左右各 1rem 的 padding */
+    top: 1rem; /* 從 container-fluid 的 padding-top 開始 */
+    left: 1rem; /* 從 container-fluid 的 padding-left 開始 */
+    right: 1rem; /* 從 container-fluid 的 padding-right 開始 */
+    /* background-color: #fffbea; /* 可以考慮添加背景色，以防內容透視 */
+    /* height: auto; /* 高度根據內容自動調整 */
+}
+
+/* 只有帶有 active-section class 的區塊才顯示出來 */
+.section.active-section {
+    display: block; /* 顯示當前活動的區塊 */
+    z-index: 10; /* 確保活動區塊在最上層 */
+}
+
+
+/* ===== 表格樣式 ===== */
+.table-responsive {
+    width: 100%;
+    overflow-x: hidden; /* 禁止橫向滾動 */
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: auto; /* 自動依內容調整欄寬 */
+    word-wrap: break-word;
+}
+
+th {
+    white-space: nowrap; /* ✅ 標題欄不換行 */
+    text-align: left;
+    background-color: #fff3cd;
+    padding: 0.5rem;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+}
+
+td {
+    white-space: normal; /* ✅ 內容欄可換行 */
+    text-align: left;
+    padding: 0.5rem;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+}
+
+/* ✅ 前三欄欄寬固定 */
+th:nth-child(1), td:nth-child(1) {
+    width: 20px;
+}
+th:nth-child(2), td:nth-child(2) {
+    width: 50px;
+}
+
+/* --- 紀念品頁面專屬樣式 (已適配新架構) --- */
+
+/* ===== 手機版布局 (螢幕寬度 <= 768px) ===== */
+@media (max-width: 768px) {
+  /* 直接針對 class，移除 #souvenir */
+  .table-scroll-container {
+    max-height: 65vh;             /* 垂直限制高度，改用 vh 單位更具彈性 */
+    overflow-x: auto;             /* 開啟水平捲動 */
+    overflow-y: auto;             /* 開啟垂直捲動 */
+    -webkit-overflow-scrolling: touch; /* iOS 滾動優化 */
+    position: relative;
+  }
+
+  /* 針對紀念品表格設定最小寬度，避免壓縮 */
+  .souvenir-wrapper table {
+    min-width: 600px;
+  }
+
+  /* 黏性表頭 (手機有效) */
+  .table-scroll-container thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff3cd; 
+    z-index: 2;
+  }  
+
+}
+
+/* ===== 桌機版布局 (螢幕寬度 > 768px) ===== */
+@media (min-width: 769px) {
+  /* 紀念品區塊使用 Flexbox 建立固定高度的佈局 */
+  .souvenir-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* 建議使用 vh 或 calc 替代固定 px，讓版面更自適應 */
+    height: calc(100vh - 120px); /* 範例：整個視窗高度減去導覽列和上下邊距 */
+  }
+
+  /* 頂部控制區 (搜尋、筆數) - 固定不滾動 */
+  .table-controls-fixed {
+    flex: 0 0 auto; /* 不伸縮 */
+    background-color: #fffbea;
+    padding: 10px;
+    z-index: 3;
+  }
+
+  /* 中間表格滾動區 - 佔滿剩餘空間 */
+  .table-scroll-container {
+    flex: 1 1 auto; /* 核心：自動伸展佔滿剩餘空間 */
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+  }
+
+  /* 明確指定桌機版滾動區內的表格標題為黏性定位 */
+  .table-scroll-container thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff3cd; /* 確保背景色能蓋住下方內容 */
+    z-index: 2;
+  }
+
+  /* 底部換頁區 - 固定不滾動 */
+  #souvenirPaginationWrapper {
+    flex: 0 0 auto; /* 不伸縮 */
+    background-color: #fffbea;
+    padding: 10px;
+    z-index: 3;
+    text-align: center;
+  }
+}
+
+/* ===== 通用樣式 (手機與桌機共用) ===== */
+
+/* 紀念品欄位最大寬度限制 (優化選擇器，使其更精確) */
+.souvenir-wrapper table th:nth-child(4),
+.souvenir-wrapper table td:nth-child(4) {
+  max-width: 300px;
+}
+
+/* 頂部控制區內部排版 */
+#souvenirControlsContainer {
   display: flex;
-  flex-direction: column;
-  height: calc(100vh - 100px);
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
-.recommend-wrapper .recommend-controls {
-  flex-shrink: 0;
-  padding: 1rem;
-  background-color: #fffbea;
+
+/* 換頁按鈕樣式 */
+#souvenirPagination button {
+  background: transparent;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  font-size: 0.9rem; /* 微調字體大小 */
+  color: black;
+  margin: 0 4px;
+  border-radius: 6px;
+  padding: 4px 8px;
+  transition: background-color 0.2s, color 0.2s; /* 增加過渡效果 */
 }
+
+/* 當前頁面按鈕的樣式 */
+#souvenirPagination button.btn-primary {
+  background-color: #ff9800;
+  color: white;
+  border-color: #ff9800; /* 統一邊框顏色 */
+}
+
+/* --- 推薦清單頁面專屬樣式 (完整版) --- */
+
+/* 基礎佈局與黏性表頭 (對手機和桌機都有效) */
 .recommend-wrapper .table-responsive {
-  flex-grow: 1;
-  overflow: auto; /* 讓瀏覽器自動判斷滾動條 */
-  border: 1px solid #dee2e6;
   position: relative;
 }
 .recommend-wrapper thead th {
@@ -24,8 +242,199 @@
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
-  white-space: nowrap; /* 所有標題都不換行 */
 }
-.recommend-wrapper table {
-  min-width: 600px; /* 確保手機上可以水平滾動 */
+
+/* ===== 手機版布局 (螢幕寬度 <= 768px) ===== */
+@media (max-width: 768px) {
+  .recommend-wrapper .table-responsive {
+    max-height: 70vh; /* 在手機上使用最大高度來限制，使其可以滾動 */
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .recommend-wrapper #recommendTable {
+    min-width: 600px;
+  }
 }
+
+/* ===== 桌機版 Flexbox 特殊佈局 (螢幕寬度 > 768px) ===== */
+@media (min-width: 769px) {
+  /* 1. 讓 recommend-wrapper 成為一個固定高度的 Flexbox 容器 */
+  .recommend-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px); /* 和紀念品頁面使用相同的高度計算 */
+  }
+
+  /* 2. 頂部控制區 (選擇分類) - 固定不滾動 */
+  .recommend-wrapper .recommend-controls {
+    flex: 0 0 auto; /* 不伸縮 */
+    padding: 1rem;
+    background-color: #fffbea; /* 和紀念品頁面主題色一致 */
+  }
+
+  /* 3. 中間表格滾動區 - 佔滿剩餘空間並內部滾動 */
+  .recommend-wrapper .table-responsive {
+    flex: 1 1 auto; /* 核心：自動伸展佔滿剩餘空間 */
+    overflow-y: auto; /* 只需垂直滾動 */
+    border: 1px solid #dee2e6;
+  }
+}
+
+/* ===== 欄寬與表格通用樣式 ===== */
+#recommendTable th:nth-child(1),
+#recommendTable td:nth-child(1) {
+  width: 50px;  /* 股號欄 */
+  white-space: nowrap;
+}
+
+#recommendTable th:nth-child(2),
+#recommendTable td:nth-child(2) {
+  width: 50px;  /* 股名欄 */
+  white-space: nowrap;
+}
+        @media only screen and (max-width: 768px) {
+            body { padding: 10px; } 
+            h3 { font-size: 1.5rem; margin-bottom: 15px; } 
+            .dataTables_wrapper .dataTables_length, 
+            .dataTables_wrapper .dataTables_filter {
+                margin-bottom: 12px; 
+            }
+            .dataTables_wrapper .dataTables_info, 
+            .dataTables_wrapper .dataTables_paginate {
+                margin-top: 12px; 
+                font-size: 0.9rem; 
+            }
+            .table td { 
+                font-size: 14px; 
+            }
+            .table th, .table td { 
+                padding: 6px 3px; 
+            }
+
+            /* 確保手機版導覽列的漢堡按鈕可見並正常工作 */
+            .navbar-toggler {
+                display: block; 
+                border: 1px solid rgba(0,0,0,.1); 
+            }
+            /* 讓導覽列內容在手機上堆疊 */
+            .navbar-collapse {
+                flex-grow: 1; 
+                flex-basis: 100%; 
+                margin-top: 0.5rem; 
+            }
+        }
+
+ /* 確保紀念品、推薦清單、注意事項、關於我 的標題置中 */
+        #souvenir h3, #recommend h3, #notice h3, #about h3 {
+            text-align: center;
+        }
+
+        /* ----- 從您提供的 style.css 中複製並微調的部分 ----- */
+        body {
+            background-color: #fffbea;
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* 避免整頁橫向捲動 */
+        }
+
+        /* 導覽列樣式 */
+        .navbar {
+            background-color: #ffe082;
+            padding-left: 1rem; 
+            padding-right: 1rem;
+        }
+        /* 確保導覽列的排版 */
+        .navbar-collapse {
+            justify-content: flex-start !important; /* 確保內容靠左 */
+        }
+        .navbar-nav {
+            margin-right: auto !important; /* 將 nav items 推向左邊 */
+            margin-left: 0 !important; /* 確保沒有左邊距 */
+        }
+
+        .nav-link {
+            font-weight: bold;
+        }
+        /* 內容容器樣式 */
+        .container-fluid {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            position: relative; 
+            min-height: 600px; 
+            padding-top: 3rem; 
+            padding-bottom: 3rem; 
+        }
+
+        .section {
+          display: none;
+        }
+        .section.active-section {
+          display: block;
+        }
+
+        /* ===== 表格樣式 ===== */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            word-wrap: break-word;
+        }
+
+        th {
+            white-space: nowrap; 
+            text-align: left;
+            background-color: #fff3cd;
+            padding: 0.5rem;
+            vertical-align: middle;
+            border: 1px solid #dee2e6;
+        }
+
+        td {
+            white-space: normal; 
+            text-align: left;
+            padding: 0.5rem;
+            vertical-align: middle;
+            border: 1px solid #dee2e6;
+        }
+
+        /* DataTables 相關的自訂樣式 (重點調整區域) */
+        .dataTables_wrapper .dataTables_length select {
+            min-width: 80px; 
+            width: auto; 
+            display: inline-block; 
+        }
+        .dataTables_wrapper .dataTables_length, 
+        .dataTables_wrapper .dataTables_filter { 
+            margin-bottom: 18px; 
+        }
+        .dataTables_wrapper .dataTables_info, 
+        .dataTables_wrapper .dataTables_paginate { 
+            margin-top: 16px; 
+            font-size: 1.1rem; 
+        }
+
+        /* 確保 DataTables 生成的表頭和內容容器對齊 */
+        /* 加強這些規則以覆蓋 DataTables 可能會動態設置的寬度 */
+        .dataTables_scrollHeadInner, .dataTables_scrollBody {
+            width: 100% !important; 
+        }
+        .dataTables_scrollHead table, .dataTables_scrollBody table {
+            width: 100% !important; 
+            margin-bottom: 0 !important; 
+            /* 考慮加 table-layout: fixed; 但這需要您在 DataTables options 中明確定義 columns 寬度 */
+            /* table-layout: fixed; */
+        }
+        
+        /* 處理可能由 DataTables 內聯樣式引起的問題 */
+        div.dataTables_wrapper div.dataTables_filter label,
+        div.dataTables_wrapper div.dataTables_length label {
+            display: flex; 
+            align-items: center; 
+            gap: 0.5em; 
+        }
+        div.dataTables_wrapper div.dataTables_filter input {
+            box-sizing: border-box; 
+            max-width: 100%; 
+            width: auto; 
+        }

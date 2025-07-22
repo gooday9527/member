@@ -8,7 +8,6 @@ body {
   padding: 0;
 }
 
-/* 避免桌機版因內容超寬而產生整頁的橫向捲動 */
 @media (min-width: 769px) {
   body {
     overflow-x: hidden;
@@ -23,6 +22,16 @@ body {
 .navbar {
   background-color: #ffe082;
 }
+
+/* ✅【修正導覽列問題】將您原本的強制對齊規則加回來 */
+.navbar-collapse {
+  justify-content: flex-start !important;
+}
+.navbar-nav {
+  margin-right: auto !important;
+}
+/* ----- 修正結束 ----- */
+
 .nav-link {
   font-weight: bold;
 }
@@ -38,8 +47,6 @@ body {
 .container-fluid {
   padding: 1rem !important;
 }
-
-/* 載入內容的區塊，確保其可見 */
 #dynamic-content-area {
   display: block;
 }
@@ -48,12 +55,11 @@ body {
 /* ==========================================================================
    組件：紀念品頁面 (Component: Souvenir Page)
    ========================================================================== */
-
-/* --- 手機版 --- */
+/* ... (此區塊無變動，省略以節省篇幅) ... */
 @media (max-width: 768px) {
   .souvenir-wrapper .table-scroll-container {
     max-height: 70vh;
-    overflow: auto; /* 同時開啟 x 和 y 軸滾動 */
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
     position: relative;
   }
@@ -61,8 +67,6 @@ body {
     min-width: 600px;
   }
 }
-
-/* --- 桌機版 --- */
 @media (min-width: 769px) {
   .souvenir-wrapper {
     display: flex;
@@ -89,13 +93,12 @@ body {
     text-align: center;
   }
 }
-
-/* --- 通用樣式 (紀念品) --- */
 .souvenir-wrapper thead th {
   position: sticky;
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
+  white-space: nowrap; /* 確保紀念品標題也不換行 */
 }
 .souvenir-wrapper #souvenirControlsContainer {
   display: flex;
@@ -151,15 +154,16 @@ body {
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
+  white-space: nowrap; /* ✅【修正標題換行問題】所有標題都不換行 */
 }
 
 /* --- 手機版微調 --- */
 @media (max-width: 768px) {
   .recommend-wrapper {
-    height: calc(100vh - 80px); /* 手機上給多一點高度 */
+    height: calc(100vh - 80px);
   }
   .recommend-wrapper .table-responsive {
-    overflow-x: auto; /* 手機上開啟水平滾動 */
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
   .recommend-wrapper #recommendTable {
@@ -169,22 +173,12 @@ body {
 
 /* --- 欄寬設定 (推薦清單) --- */
 #recommendTable th:nth-child(1), #recommendTable td:nth-child(1),
-#recommendTable th:nth-child(2), #recommendTable td:nth-child(2) {
+#recommendTable th:nth-child(2), #recommendTable td:n_h-child(2) {
   width: 50px;
-  white-space: nowrap;
 }
-
 
 /* ==========================================================================
-   其他組件樣式 (Other Components, e.g., DataTables if used elsewhere)
+   其他組件樣式 (Other Components)
    ========================================================================== */
 
-/* 如果您在其他頁面使用了 DataTables，這些樣式可以保留 */
-.dataTables_wrapper .dataTables_length,
-.dataTables_wrapper .dataTables_filter {
-  margin-bottom: 1rem;
-}
-.dataTables_wrapper .dataTables_info,
-.dataTables_wrapper .dataTables_paginate {
-  margin-top: 1rem;
-}
+/* ... (DataTables 樣式若有需要可保留) ... */

@@ -92,12 +92,6 @@ body {
   z-index: 2;
   white-space: nowrap;
 }
-/* 【僅限紀念品】的標題換行例外規則 */
-.souvenir-wrapper thead th:nth-child(5),
-.souvenir-wrapper thead th:nth-child(6),
-.souvenir-wrapper thead th:nth-child(9) {
-  white-space: normal;
-}
 
 /* ==========================================================================
    4. 組件：推薦清單頁面 (Component: Recommend Page)

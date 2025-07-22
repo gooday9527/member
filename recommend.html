@@ -41,14 +41,28 @@
             .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
     }
 
-    // 在頁面載入到 DOM 後立即執行
-    document.addEventListener('DOMContentLoaded', () => {
-        const recommendSheetSelect = document.getElementById('recommendSheet');
-        if (recommendSheetSelect) {
-            recommendSheetSelect.addEventListener('change', function () {
-                loadRecommend(this.value);
-            });
-            loadRecommend('我全都要（不需證件）'); // 預設載入
-        }
+  // ✅ 1. 將您的邏輯包裝到一個啟動函數中
+function initializeRecommendPage() {
+    const recommendSheetSelect = document.getElementById('recommendSheet');
+
+    // 確保元素真的存在
+    if (recommendSheetSelect) {
+        // 綁定下拉選單的變更事件
+        recommendSheetSelect.addEventListener('change', function () {
+            loadRecommend(this.value);
+        });
+
+        // 預設載入第一個項目
+        // 優化：直接讀取選單的當前值，而不是寫死一個值，更有彈性
+        loadRecommend(recommendSheetSelect.value || '我全都要（不需證件）'); 
+    
+    } else {
+        // 如果找不到元素，在主控台印出錯誤，方便除錯
+        console.error("錯誤：在 recommend.html 中找不到 ID 為 recommendSheet 的元素！");
+    }
+}
+
+// ✅ 2. 使用 setTimeout 呼叫這個啟動函數，解決時序問題
+setTimeout(initializeRecommendPage, 0);
     });
 </script>

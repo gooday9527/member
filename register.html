@@ -6,113 +6,119 @@
   <title>註冊會員 | 好管家紀念品代領</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <style>
-    body {
-      background-color: #fff9c4; /* 鵝黃色背景 */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
+<style>
+    #dynamic-content-area {
+        background-color: #fff9c4; /* 鵝黃色背景 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        /* ✅ 關鍵修改：
+           我們不再使用 position: absolute 來蓋住整個畫面。
+           而是計算一個最小高度，讓它剛好填滿導覽列下方的剩餘空間。
+           100vh = 整個視窗的高度
+           56px = 一般導覽列的預估高度 (您可以根據實際情況微調)
+        */
+        min-height: calc(100vh - 56px);
+        
+        padding: 20px;
+        box-sizing: border-box; /* 確保 padding 不會讓高度溢出 */
     }
     .card {
-      width: 100%;
-      max-width: 420px;
-      padding: 25px;
-      border-radius: 16px;
-      background-color: #ffffff;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 420px;
+        padding: 25px;
+        border-radius: 16px;
+        background-color: #ffffff;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
     .btn-warning {
-      background-color: #ffc107;
-      border: none;
-      font-weight: bold;
-      color: #212529;
+        background-color: #ffc107;
+        border: none;
+        font-weight: bold;
+        color: #212529;
     }
     .btn-warning:hover {
-      background-color: #e0a800;
+        background-color: #e0a800;
     }
-  </style>
+</style>
 </head>
 
 <body>
-  <div class="card">
+<div class="card">
     <h4 class="text-center mb-4">註冊會員</h4>
     <form id="registerForm">
-      <div class="mb-3">
-        <label for="name" class="form-label">姓名</label>
-        <input type="text" class="form-control" id="name" required />
-      </div>
-      <div class="mb-3">
-        <label for="email" class="form-label">Email（登入用）</label>
-        <input type="email" class="form-control" id="email" required />
-      </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">密碼</label>
-        <input type="password" class="form-control" id="password" required minlength="6" />
-      </div>
-      <button type="submit" class="btn btn-warning w-100">註冊</button>
-      <div class="text-center mt-3">
-        已有帳號？<a href="https://member.gooday9527.com/?view=login">返回登入</a>
-      </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">姓名</label>
+            <input type="text" class="form-control" id="name" required />
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email（登入用）</label>
+            <input type="email" class="form-control" id="email" required />
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">密碼</label>
+            <input type="password" class="form-control" id="password" required minlength="6" />
+        </div>
+        <button type="submit" class="btn btn-warning w-100">註冊</button>
+        <div class="text-center mt-3">
+            已有帳號？<a href="#" data-section="login">返回登入</a>
+        </div>
     </form>
-  </div>
+</div>
 
   <!-- ✅ Firebase CDN 非 module 版 -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
-<script>
-  // ✅ 初始化 Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
-    authDomain: "goodaymember.firebaseapp.com",
-    projectId: "goodaymember",
-    storageBucket: "goodaymember.appspot.com",
-    messagingSenderId: "730801053598",
-    appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
+<script type="module">
+    import { getApps, initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-  // ✅ 註冊流程
-  document.getElementById("registerForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    try {
-      // 1️⃣ Firebase 註冊
-      await auth.createUserWithEmailAndPassword(email, password);
-      console.log("✅ Firebase 註冊成功");
-
-      // 2️⃣ 呼叫 Apps Script 寫入試算表
-      const relayUrl = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec";
-      
-      // ✅ 關鍵修改：移除 headers 中的 "Content-Type": "application/json"
-      // 並直接傳送 JSON 字串作為 body
-      const response = await fetch(relayUrl, {
-        method: "POST",
-        body: JSON.stringify({ // 仍然傳送 JSON 格式的字串
-          action: "register",
-          email,
-          name
-        })
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        alert("✅ 註冊成功！");
-        window.location.href = "https://member.gooday9527.com/?view=login";
-      } else {
-        alert("⚠️ Firebase OK，但試算表寫入失敗：" + result.message);
-      }
-
-    } catch (err) {
-      alert("❌ 註冊失敗：" + err.message);
+    // ... 您原本的 Firebase 初始化和註冊邏輯 ...
+    const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f" };
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const auth = getAuth(app);
+    function initializeRegisterForm() {
+        const registerForm = document.getElementById('registerForm');
+        if (!registerForm) return;
+        registerForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const submitButton = registerForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '處理中...';
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const relayUrl = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec";
+                const response = await fetch(relayUrl, { method: "POST", body: JSON.stringify({ action: "register", email, name }) });
+                const result = await response.json();
+                if (!result.success) { throw new Error(result.message || "寫入會員資料失敗"); }
+                alert("✅ 註冊成功！將為您自動登入。");
+                if (window.updateMainAppLoginState) { window.updateMainAppLoginState(userCredential.user.email); } else { window.location.reload(); }
+            } catch (error) {
+                console.error("註冊流程失敗:", error);
+                let message = "發生未知錯誤";
+                if (error.code) {
+                     switch (error.code) {
+                        case 'auth/email-already-in-use': message = "這個 Email 已經被註冊過了。"; break;
+                        case 'auth/invalid-email': message = "Email 格式不正確。"; break;
+                        case 'auth/weak-password': message = "密碼強度不足，請至少設定6位數。"; break;
+                        default: message = `註冊失敗 (${error.message})`;
+                    }
+                } else { message = error.message; }
+                alert(`❌ ${message}`);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            }
+        });
     }
-  });
+    setTimeout(initializeRegisterForm, 0);
 </script>
+
 </body>
 </html>

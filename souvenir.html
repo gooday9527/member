@@ -79,7 +79,7 @@
                     sortKey = key;
                     sortedData.sort((a, b) => {
                         const valA = a[key] || ''; const valB = b[key] || ''; const isNumber = !isNaN(valA) && !isNaN(valB);
-                        return isNumber ? (sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA)) : (sortAsc ? valA.localeCompare(valB, 'zh-Hant') : valB.localeCompare(a, 'zh-Hant'));
+                        return isNumber ? (sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA)) : (sortAsc ? valA.localeCompare(valB, 'zh-Hant') : valB.localeCompare(valA, 'zh-Hant'));
                     });
                     const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
                     filteredData = keyword ? sortedData.filter(row => headers.some(h => (row[h] || '').toLowerCase().includes(keyword))) : [...sortedData];

@@ -1,6 +1,6 @@
 <!-- register.html -->
 
-<!-- ✅【核心】複製登入頁面的 placeholder 風格 -->
+<!-- ✅ 採用與登入頁一致的 placeholder 風格 -->
 <h3 class="text-center">👋 註冊新帳號</h3>
 <form id="registerForm" class="text-center mt-3" style="max-width: 400px; margin: auto;">
     <div class="mb-3">
@@ -21,7 +21,7 @@
     </div>
 </form>
 
-<!-- ✅ 您的核心註冊邏輯完全保留 -->
+<!-- ✅ 您的核心註冊邏輯，包含【已修正】的函數呼叫 -->
 <script type="module">
     import { getApps, initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -54,8 +54,15 @@
                 const response = await fetch(relayUrl, { method: "POST", body: JSON.stringify({ action: "register", email, name }) });
                 const result = await response.json();
                 if (!result.success) { throw new Error(result.message || "寫入會員資料失敗"); }
+                
                 alert("✅ 註冊成功！將為您自動登入。");
-                if (window.updateMainAppLoginState) { window.updateMainAppLoginState(userCredential.user.email); } else { window.location.reload(); }
+                
+                // ✅ 【最重要的修正】確保這裡的函數名稱是正確的
+                if (window.updateMainAppLoginState) { 
+                    window.updateMainAppLoginState(userCredential.user.email); 
+                } else { 
+                    window.location.reload(); 
+                }
             } catch (error) {
                 let message = "❌ 註冊失敗：";
                 if (error.code) {

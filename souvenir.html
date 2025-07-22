@@ -114,8 +114,6 @@
             .catch(error => { console.error('載入紀念品資料錯誤：', error); });
     }
 
-    // 在頁面載入到 DOM 後立即執行
-    document.addEventListener('DOMContentLoaded', () => {
-        loadSouvenirDataWithoutDataTables();
-    });
+// 因為這段 script 是在被動態載入後立即執行，所以直接呼叫主函數即可
+loadSouvenirDataWithoutDataTables();
 </script>

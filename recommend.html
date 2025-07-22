@@ -23,13 +23,16 @@
 </div> 
 <script>
     function loadRecommend(sheetName) {
-        const tableContainer = document.querySelector('.recommend-wrapper .table-responsive');
         const tableElement = document.getElementById('recommendTable');
-        if (!tableContainer || !tableElement) return;
+        if (!tableElement) return;
 
-        // ✅ 步驟 1: 在開始載入時，為表格容器加上 'is-loading' class
-        // 這個 class 會觸發 CSS 來隱藏表格並顯示「載入中」提示
-        tableContainer.classList.add('is-loading');
+        // ✅ 恢復為簡單的「載入中」文字提示
+        const tbody = tableElement.querySelector('tbody');
+        tbody.innerHTML = `
+            <tr class="loading-placeholder">
+                <td colspan="100%">資料載入中...</td>
+            </tr>
+        `;
         
         const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
         
@@ -37,10 +40,9 @@
             .then(res => res.ok ? res.json() : Promise.reject(res.status))
             .then(data => {
                 const thead = tableElement.querySelector('thead');
-                const tbody = tableElement.querySelector('tbody');
                 
                 thead.innerHTML = '';
-                tbody.innerHTML = ''; 
+                tbody.innerHTML = ''; // 清空「載入中」提示
 
                 if (data && data.length > 0) {
                     const headers = Object.keys(data[0]);
@@ -52,15 +54,7 @@
             })
             .catch(error => {
                 console.error('載入推薦清單資料時發生錯誤:', error);
-                const tbody = tableElement.querySelector('tbody');
-                if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="100%" class="text-danger">資料載入失敗，請檢查網路連線或稍後再試。</td></tr>`;
-                }
-            })
-            .finally(() => {
-                // ✅ 步驟 2: 無論成功或失敗，都移除 'is-loading' class
-                // CSS 會自動將表格顯示出來
-                tableContainer.classList.remove('is-loading');
+                tbody.innerHTML = `<tr><td colspan="100%" class="text-danger">資料載入失敗，請檢查網路連線或稍後再試。</td></tr>`;
             });
     }
 

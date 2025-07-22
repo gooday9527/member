@@ -23,6 +23,11 @@ body {
   background-color: #ffe082;
 }
 
+/* 讓品牌名稱離左邊緣遠一點 */
+.navbar-brand {
+  padding-left: 1rem;
+}
+
 /* ✅【修正導覽列問題】將您原本的強制對齊規則加回來 */
 .navbar-collapse {
   justify-content: flex-start !important;
@@ -166,7 +171,7 @@ body {
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
-  white-space: nowrap;
+  white-space: nowrap; /* 確保所有標題都不換行 */
 }
 
 /* --- 手機版微調 --- */

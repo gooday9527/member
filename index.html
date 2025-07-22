@@ -9,44 +9,46 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="colors.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.10/css/jquery.dataTables.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.10/css/dataTables.bootstrap5.min.css"/> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.10/css/dataTables.bootstrap5.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-light"> 
+    <nav class="navbar navbar-expand-md navbar-light">
         <a class="navbar-brand fw-bold" href="#">好管家代領</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu"></ul>
-            
-         <!-- ✅ 新增登入狀態區塊，放在 nav 裡最右側 -->
-        <div class="d-flex align-items-center ms-auto">
-          <div id="loginStatus" class="text-end me-3 small"></div>
-        </div>    
-      </div>
+
+            <!-- 登入狀態區塊 -->
+            <div class="d-flex align-items-center ms-auto">
+                <div id="loginStatus" class="text-end me-3 small text-muted">載入會員資訊...</div>
+            </div>
+        </div>
     </nav>
 
 <div class="container-fluid">
-    <!-- ✅ 只有這個動態內容載入的容器 -->
+    <!-- ✅ 動態內容載入容器：所有外部 HTML 頁面將載入到這裡 -->
     <section id="dynamic-content-area" class="section active-section">
         <!-- 外部 HTML 內容將載入到這裡 -->
     </section>
 </div> <!-- container-fluid 結束 -->
-    
+
+    <!-- jQuery & Bootstrap JS -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" integrity="sha512-J/0uB3zIgK1t5OJAA7Js1qntoZ1aI7V3C2aygtlNt9rSAbRRxvKakIDhMKRcX7gs3PEz+XRTS1G0BqT/91Q56A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" xintegrity="sha512-J/0uB3zIgK1t5OJAA7Js1qntoZ1aI7V3C2aygtlNt9rSAbRRxvKakIDhMKRcX7gs3PEz+XRTS1G0BqT/91Q56A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <!-- Firebase SDK (模組版) -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signOut,
-    signInWithEmailAndPassword  // ✅ 加這個
-  } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+        import {
+            getAuth,
+            onAuthStateChanged,
+            signOut,
+            signInWithEmailAndPassword // 雖然 login.html 處理登入，但這裡仍需要以防萬一或未來擴展
+        } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU",
@@ -60,138 +62,249 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        // 監聽登入按鈕提交
-        // 登入事件處理
-document.getElementById("loginForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log("登入成功", user.email);
-      loginEmail = user.email;
-      loadMemberName(loginEmail); // ✅ 加在這裡，顯示登入者姓名 
-      localStorage.setItem("loginEmail", loginEmail); // ✅ 可選：將 Email 存入 localStorage
-      renderNavTabs();
-      showSection("souvenir");
-  })     
-    .catch((error) => {
-      console.error("登入失敗", error);
-      alert("登入失敗：" + error.message);
-    });
-});
+        // ✅ 全局變數，用於儲存當前登入用戶的 Email
+        // 外部載入的頁面會依賴這個變數來獲取用戶 Email
+        window.currentUserEmail = null;
 
+        // ✅ 全局函數，供動態載入的 login.html 呼叫以更新主應用程式狀態
+        window.updateMainAppLoginState = function(email) {
+            loginEmail = email;
+            window.currentUserEmail = email;
+            localStorage.setItem("loginEmail", loginEmail); // 可選：將 Email 存入 localStorage
+            loadMemberName(loginEmail); // 載入並顯示會員姓名
+            renderNavTabs(); // 重新渲染導覽列以顯示登入後選項
+            showSection("souvenir"); // 導向預設登入後頁面
+            alert("✅ 登入成功！"); // 登入成功提示
+        };
 
         let loginEmail = null;
-const navMenu = document.getElementById("navMenu");
-// allSections 現在只包含 dynamic-content-area
-const allSections = document.querySelectorAll(".section");
+        const navMenu = document.getElementById("navMenu");
+        // allSections 現在只包含 dynamic-content-area，但我們仍用它來控制顯示/隱藏
+        const allSections = document.querySelectorAll(".section");
 
+        // 登入前導覽列項目 (現在這些也都是外部載入的頁面)
+        const tabsBeforeLogin = [
+            { id: "souvenir", label: "紀念品" },
+            { id: "recommend", label: "推薦清單" },
+            { id: "notice", label: "注意事項" },
+            { id: "about", label: "關於我" },
+            { id: "login", label: "登入" } // 登入頁面也獨立了
+        ];
 
-// 登入前導覽列項目 (現在這些也都是外部載入的頁面)
-const tabsBeforeLogin = [
-    { id: "souvenir", label: "紀念品" },
-    { id: "recommend", label: "推薦清單" },
-    { id: "notice", label: "注意事項" },
-    { id: "about", label: "關於我" },
-    { id: "login", label: "登入" } // 登入頁面也獨立了
-];
+        // 登入後導覽列項目 (包含下拉選單)
+        const tabsAfterLogin = [
+            { id: "souvenir", label: "紀念品" },
+            { id: "recommend", label: "推薦清單" },
+            { id: "notice", label: "注意事項" },
+            { id: "about", label: "關於我" },
+            {
+                id: "account-management-dropdown", // 父級 ID，用於下拉選單的控制
+                label: "帳戶管理",
+                isDropdown: true, // 標記為下拉選單
+                children: [
+                    { id: "announcement", label: "📣 公告欄" }, // 對應 announcement.html
+                    { id: "add-account-shares", label: "📊 新增帳號／持股" }, // 對應 add-account-shares.html
+                    { id: "deposit-withdrawal", label: "💵 儲值 / 提款" },    // 對應 deposit-withdrawal.html
+                    { id: "account-query", label: "🔍 帳務查詢" },          // 對應 account-query.html
+                    { id: "delegation-manage", label: "📥 委託管理" },     // 對應 delegation-manage.html
+                    { id: "souvenir-manage", label: "🧾 紀念品管理" }      // 對應 souvenir-manage.html
+                ]
+            },
+            { id: "logout", label: "登出" }
+        ];
 
-// 登入後導覽列項目 (包含下拉選單)
-const tabsAfterLogin = [
-    { id: "souvenir", label: "紀念品" },
-    { id: "recommend", label: "推薦清單" },
-    { id: "notice", label: "注意事項" },
-    { id: "about", label: "關於我" },
-    {
-        id: "account-management-dropdown", // 父級 ID，用於下拉選單的控制
-        label: "帳戶管理",
-        isDropdown: true, // 標記為下拉選單
-        children: [
-            { id: "announcement", label: "📣 公告欄" },
-            { id: "add-account-shares", label: "📊 新增帳號／持股" },
-            { id: "deposit-withdrawal", label: "💵 儲值 / 提款" },
-            { id: "account-query", label: "🔍 帳務查詢" },
-            { id: "delegation-manage", label: "📥 委託管理" },
-            { id: "souvenir-manage", label: "🧾 紀念品管理" }
-        ]
-    },
-    { id: "logout", label: "登出" }
-];
+        // 渲染導覽列選單
         function renderNavTabs() {
-    navMenu.innerHTML = ""; 
-    const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
+            navMenu.innerHTML = "";
+            const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
 
-    const highlightTabs = ["account", "delegation-manage", "announcement", "souvenir-manage", "billing", "logout"];
+            // 只有登出按鈕可能需要特別高亮
+            const highlightTabs = ["logout"];
 
-  tabs.forEach(tab => {
-    const li = document.createElement("li");
-    li.className = "nav-item";
+            tabs.forEach(tab => {
+                const li = document.createElement("li");
+                li.className = "nav-item";
 
-    const isHighlight = highlightTabs.includes(tab.id);
-    const classList = `nav-link${isHighlight ? " always-highlight" : ""}`;
+                if (tab.isDropdown) {
+                    // 生成下拉選單結構
+                    li.className = "nav-item dropdown";
+                    li.innerHTML = `
+                        <a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            ${tab.label}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="${tab.id}Link">
+                            ${tab.children.map(child => `
+                                <li><a class="dropdown-item" href="#" data-section="${child.id}">${child.label}</a></li>
+                            `).join('')}
+                        </ul>
+                    `;
+                } else {
+                    // 生成普通導覽項目
+                    const isHighlight = highlightTabs.includes(tab.id);
+                    const classList = `nav-link${isHighlight ? " always-highlight" : ""}`;
 
-    if (tab.link) {
-      li.innerHTML = `<a class="${classList}" href="${tab.link}">${tab.label}</a>`;
-    } else {
-      li.innerHTML = `<a class="${classList}" href="#" data-section="${tab.id}">${tab.label}</a>`;
-    }
-
-    navMenu.appendChild(li);
-  });
-}
-        function loadMemberName(email) {
-  if (!email) return;
-  fetch(`https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec?view=getMemberInfo&email=${encodeURIComponent(email)}`)
-    .then(res => res.json())
-    .then(info => {
-      const memberName = info.name || "未命名";
-      const loginStatus = document.getElementById("loginStatus");
-      if (loginStatus) {
-        loginStatus.innerText = `會員：${memberName}`;
-        loginStatus.classList.add("text-dark", "fw-bold"); // 深灰字 + 粗體
-      }
-    })
-    .catch(err => {
-      console.error("取得會員資料失敗", err);
-    });
-}
-
-
-        function showSection(id) {
-            allSections.forEach(sec => sec.classList.remove("active-section"));
-            const target = document.getElementById(id);
-            if (target) {
-                target.classList.add("active-section");
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('active');
-                });
-                const activeNavLink = document.querySelector(`.nav-link[data-section="${id}"]`);
-                if (activeNavLink) {
-                    activeNavLink.classList.add('active');
+                    if (tab.link) {
+                        li.innerHTML = `<a class="${classList}" href="${tab.link}">${tab.label}</a>`;
+                    } else {
+                        li.innerHTML = `<a class="${classList}" href="#" data-section="${tab.id}">${tab.label}</a>`;
+                    }
                 }
+                navMenu.appendChild(li);
+            });
+        }
+
+        // 載入會員姓名 (從 Apps Script 獲取)
+        function loadMemberName(email) {
+            const loginStatus = document.getElementById("loginStatus");
+            if (!email) {
+                if (loginStatus) {
+                    loginStatus.innerText = "訪客"; // 未登入狀態
+                    loginStatus.classList.remove("text-dark", "fw-bold", "text-danger");
+                    loginStatus.classList.add("text-muted");
+                }
+                return;
             }
-            // 由於導覽列是單頁應用切換，確保在點擊導覽列連結後收起導覽列
-            const navbarCollapse = document.getElementById('navbarNav');
-            const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
-            if (bsCollapse && navbarCollapse.classList.contains('show')) {
-                 bsCollapse.hide();
+
+            // 立即顯示載入中狀態
+            if (loginStatus) {
+                loginStatus.innerText = "載入中...";
+                loginStatus.classList.remove("text-dark", "fw-bold", "text-danger");
+                loginStatus.classList.add("text-muted");
+            }
+
+            // 這裡呼叫您的 Apps Script 後端來獲取會員名稱
+            // 請替換成您實際的 Apps Script Web App URL (用於獲取會員資訊的那個)
+            const APPS_SCRIPT_MEMBER_INFO_URL = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec"; // 替換為您的 relayUrl
+
+            fetch(`${APPS_SCRIPT_MEMBER_INFO_URL}?view=getMemberInfo&email=${encodeURIComponent(email)}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('網路回應不佳');
+                    return res.json();
+                })
+                .then(info => {
+                    const memberName = info.name || "未命名";
+                    if (loginStatus) {
+                        loginStatus.innerText = `會員：${memberName}`;
+                        loginStatus.classList.remove("text-muted", "text-danger");
+                        loginStatus.classList.add("text-dark", "fw-bold");
+                    }
+                })
+                .catch(err => {
+                    console.error("取得會員資料失敗", err);
+                    if (loginStatus) {
+                        loginStatus.innerText = "會員：載入失敗";
+                        loginStatus.classList.remove("text-dark", "fw-bold", "text-muted");
+                        loginStatus.classList.add("text-danger");
+                    }
+                });
+        }
+
+        // ✅ 新增載入外部 HTML 內容的函數
+        async function loadExternalHtmlSection(sectionId) {
+            const dynamicContentArea = document.getElementById('dynamic-content-area');
+            if (!dynamicContentArea) {
+                console.error('找不到用於載入外部內容的容器 #dynamic-content-area');
+                return;
+            }
+
+            // 顯示載入中的訊息
+            dynamicContentArea.innerHTML = `<h3 class="text-center">載入中...</h3><p class="text-center">請稍候。</p>`;
+            dynamicContentArea.classList.add('active-section'); // 確保容器顯示
+
+            try {
+                // ✅ 修正：使用 `/` 開頭，確保從網站根目錄載入檔案
+                const response = await fetch(`/${sectionId}.html`); // 根據 ID 載入對應的 HTML 檔案
+                if (!response.ok) {
+                    throw new Error(`載入 ${sectionId}.html 失敗：${response.statusText}`);
+                }
+                const htmlContent = await response.text();
+
+                dynamicContentArea.innerHTML = htmlContent;
+
+                // 手動執行載入的 HTML 中的 <script> 標籤
+                // 這是因為當您使用 innerHTML 設置內容時，<script> 標籤不會自動執行
+                const scripts = dynamicContentArea.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    // 移除舊的 script 元素，然後創建一個新的並複製其內容和屬性
+                    // 這是確保腳本在動態載入後能夠被正確執行的方法
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+
+            } catch (error) {
+                console.error('載入外部內容錯誤:', error);
+                dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">載入失敗</h3><p class="text-center">無法載入 ${sectionId} 頁面，請稍後再試。</p>`;
             }
         }
 
+        // 顯示指定 Section 的函數
+        function showSection(id) {
+            // 隱藏所有 section (現在只剩下 dynamic-content-area)
+            const dynamicContentArea = document.getElementById('dynamic-content-area');
+            if (dynamicContentArea) {
+                dynamicContentArea.classList.remove("active-section");
+                dynamicContentArea.innerHTML = ''; // 清空內容
+            }
+
+            // 登出是特殊情況，不載入外部頁面
+            if (id === "logout") {
+                // 登出邏輯在 navMenu.addEventListener 中處理
+                return;
+            }
+
+            // 載入外部 HTML 內容到 dynamic-content-area
+            loadExternalHtmlSection(id);
+
+            // 更新導覽列活躍狀態
+            // ✅ 這裡修正了選擇器，使其也能匹配下拉選單中的項目
+            document.querySelectorAll('.nav-link, .dropdown-item').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const activeNavLink = document.querySelector(`.nav-link[data-section="${id}"], .dropdown-item[data-section="${id}"]`);
+            if (activeNavLink) {
+                activeNavLink.classList.add('active');
+                // 如果點擊的是下拉選單內的項目，確保父級的下拉按鈕也顯示活躍狀態
+                const parentDropdownToggle = activeNavLink.closest('.dropdown')?.querySelector('.dropdown-toggle');
+                if (parentDropdownToggle) {
+                    parentDropdownToggle.classList.add('active');
+                }
+            }
+
+            // 隱藏導覽列 (針對手機版展開後點擊自動收起)
+            const navbarCollapse = document.getElementById('navbarNav');
+            const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+            if (bsCollapse && navbarCollapse.classList.contains('show')) {
+                bsCollapse.hide();
+            }
+        }
+
+        // 登入表單提交事件處理 (已從這裡移除，現在由 login.html 處理)
+        // document.getElementById("loginForm").addEventListener("submit", function (e) { ... });
+
+        // 導覽列點擊事件處理
         navMenu.addEventListener("click", function (e) {
-            const clickedNavLink = e.target.closest(".nav-link[data-section]");
+            // ✅ 這裡修正了選擇器，使其也能匹配下拉選單中的項目
+            const clickedNavLink = e.target.closest(".nav-link[data-section], .dropdown-item[data-section]");
             if (clickedNavLink) {
-                e.preventDefault(); 
-                const id = clickedNavLink.getAttribute("data-section"); 
+                e.preventDefault();
+                const id = clickedNavLink.getAttribute("data-section");
                 if (id === "logout") {
                     signOut(auth).then(() => {
                         console.log("用戶已登出");
                         loginEmail = null;
+                        window.currentUserEmail = null; // ✅ 清除全局變數
                         renderNavTabs();
-                        showSection("souvenir");
+                        showSection("souvenir"); // 登出後回到紀念品頁面
+                        // 登出後，清空動態內容區塊
+                        const dynamicContentArea = document.getElementById('dynamic-content-area');
+                        if (dynamicContentArea) {
+                            dynamicContentArea.innerHTML = '';
+                            dynamicContentArea.classList.remove('active-section');
+                        }
                     }).catch((error) => {
                         console.error("登出失敗:", error);
                     });
@@ -201,268 +314,34 @@ const tabsAfterLogin = [
             }
         });
 
-        let souvenirDataTable = null; 
-
-        // 將 zh-Hant.json 的內容直接放在這裡
-        const dataTablesZhHant = {
-            "decimal": "",
-            "emptyTable": "目前沒有資料",
-            "info": "顯示第 _START_ 到 _END_ 筆資料，共 _TOTAL_ 筆",
-            "infoEmpty": "目前沒有資料",
-            "infoFiltered": "(從 _MAX_ 筆資料中篩選)",
-            "infoPostFix": "",
-            "thousands": ",",
-            "lengthMenu": "顯示 _MENU_ 筆資料",
-            "loadingRecords": "載入中...",
-            "processing": "處理中...",
-            "search": "搜尋:",
-            "zeroRecords": "沒有符合的結果",
-            "paginate": {
-                "first": "首頁",
-                "last": "末頁",
-                "next": "下一頁",
-                "previous": "上一頁"
-            },
-            "aria": {
-                "sortAscending": ": 升冪排列",
-                "sortDescending": ": 降冪排列"
-            }
-        };
-
-
-function loadSouvenirDataWithoutDataTables() {
-    // 先清空控制區避免重複
-  document.getElementById("souvenirControlsContainer").innerHTML = "";
-
-    fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
-        .then(res => res.json())
-        .then(data => {
-            const tableElement = document.getElementById('souvenirTable');
-            const tableHead = tableElement.querySelector('thead');
-            const tableBody = tableElement.querySelector('tbody');
-
-            // 插入搜尋與筆數控制元件（先取得 table 才能插入）
-            const controls = document.createElement('div');
-            controls.className = 'd-flex justify-content-between align-items-center mb-1 flex-wrap';
-            controls.innerHTML = `
-                <div class="mb-1">
-                    <label for="rowsPerPageSelect" class="me-1">筆數：</label>
-                    <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block me-3" style="width: 70px;">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div><div class="mb-1">
-                    <label for="searchInput" class="me-1">搜尋：</label>
-                    <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 100px;" placeholder="輸入關鍵字">
-                </div>   
-            `;
-            const controlsContainer = document.getElementById('souvenirControlsContainer');
-            if (controlsContainer) controlsContainer.appendChild(controls);
-
-            if (!data || data.length === 0) {
-                tableHead.innerHTML = '';
-                tableBody.innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                return;
-            }
-
-            const headers = Object.keys(data[0]);
-            let currentPage = 1;
-            let rowsPerPage = 10;
-            let sortKey = "股號"; // 強制用 股號 排序
-            let sortAsc = true;
-            let sortedData = [...data];
-            let filteredData = [...data];
-
-            // 建立表頭
-            tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} ▲</th>`).join('')}</tr>`;
-
-            // 點擊排序
-            headers.forEach(h => {
-                const th = tableHead.querySelector(`th[data-key="${h}"]`);
-                if (th) {
-                    th.style.cursor = 'pointer';
-                    th.addEventListener('click', () => sortTable(h));
-                }
-            });
-
-            // 搜尋
-            document.getElementById('searchInput').addEventListener('input', (e) => {
-                const keyword = e.target.value.trim().toLowerCase();
-                filteredData = sortedData.filter(row =>
-                    headers.some(h => (row[h] || '').toLowerCase().includes(keyword))
-                );
-                currentPage = 1;
-                renderTable();
-            });
-
-            // 每頁筆數
-            document.getElementById('rowsPerPageSelect').addEventListener('change', (e) => {
-                rowsPerPage = parseInt(e.target.value);
-                currentPage = 1;
-                renderTable();
-            });
-
-            let firstLoad = true;
-            
-            function sortTable(key) {
-                if (firstLoad) {
-                    firstLoad = false;
-                    sortAsc = true; // 初始強制升冪
-                } else {
-                    sortAsc = (sortKey === key) ? !sortAsc : true;
-                }    
-                sortKey = key;
-                sortedData.sort((a, b) => {
-                    const valA = a[key] || '';
-                    const valB = b[key] || '';
-                    const isNumber = !isNaN(valA) && !isNaN(valB);
-                    return isNumber
-                        ? (sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA))
-                        : (sortAsc ? valA.localeCompare(valB, 'zh-Hant') : valB.localeCompare(valA, 'zh-Hant'));
-                });
-                const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-                filteredData = keyword
-                    ? sortedData.filter(row =>
-                        headers.some(h => (row[h] || '').toLowerCase().includes(keyword))
-                    )
-                    : [...sortedData];
-                currentPage = 1;
-                renderTable();
-            }
-
-            function renderTable() {
-                const start = (currentPage - 1) * rowsPerPage;
-                const end = start + rowsPerPage;
-                const pageData = filteredData.slice(start, end);
-                tableBody.innerHTML = pageData.map(row =>
-                    `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`
-                ).join('');
-                renderPagination();
-            }
-
-            function renderPagination() {
-                const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-                const maxVisible = 3; // ⬅️ 就是這一行控制頁碼按鈕數量
-                const pageButtons = [];
-
-                // 上一頁
-                pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上頁</button>`);
-
-                let start = currentPage; // 當前頁面
-                let end = Math.min(totalPages, currentPage + 2); // 只出現目前 + 後2頁
-                if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
-
-                if (start > 1) {
-                    pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
-                    if (start > 2) pageButtons.push(`<span class="me-1">...</span>`);
-                }
-
-                for (let i = start; i <= end; i++) {
-                    pageButtons.push(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>`);
-                }
-
-                if (end < totalPages) {
-                    if (end < totalPages - 1) pageButtons.push(`<span class="me-1">...</span>`);
-                    pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
-                }
-
-
-                // 下一頁
-                pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下頁</button>`);
-
-                const paginationRow = document.createElement('tr');
-                paginationRow.innerHTML = `<td colspan="${headers.length}" class="text-center">${pageButtons.join('')}</td>`;
-                document.getElementById('souvenirPagination').innerHTML = pageButtons.join('');
-            }
-
-            window.changePage = function(offset) {
-                currentPage += offset;
-                renderTable();
-            };
-            window.goToPage = function(page) {
-                currentPage = page;
-                renderTable();
-            };
-
-            sortAsc = true;      // ✅ 加這行，強制預設為升冪排序
-            sortTable(sortKey);  // 再執行排序
-      })
-        .catch(error => {
-            console.error('載入紀念品資料錯誤：', error);
-        });
-}
-
-        let recommendDataTable = null; 
-
-        function loadRecommend(sheetName) {
-             const url = `https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk/${encodeURIComponent(sheetName)}`;
-             fetch(url)
-                 .then(res => res.json())
-                 .then(data => {
-                     const tableElement = document.getElementById('recommendTable');
-                     if (tableElement) {
-                         // 清空原有表格內容
-                         tableElement.querySelector('thead').innerHTML = '';
-                         tableElement.querySelector('tbody').innerHTML = '';
-
-                         if (data && data.length > 0) {
-                             const headers = Object.keys(data[0]);
-                             const thead = headers.map(h => `<th>${h}</th>`).join('');
-                             const tbody = data.map(row =>
-                                 `<tr>${headers.map(k => `<td>${row[k]|| ''}</td>`).join('')}</tr>`
-                             ).join('');
-
-                             tableElement.querySelector('thead').innerHTML = `<tr>${thead}</tr>`;
-                             tableElement.querySelector('tbody').innerHTML = tbody;
-                         } else {
-                             tableElement.querySelector('thead').innerHTML = '';
-                             tableElement.querySelector('tbody').innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-                         }
-                     }
-                 })
-                 .catch(error => console.error('載入推薦清單資料時發生錯誤:', error));
-         }
-        
-        let souvenirLoaded = false;
-        
+        // 頁面首次載入及 Firebase 認證狀態監聽
         document.addEventListener('DOMContentLoaded', () => {
-       onAuthStateChanged(auth, (user) => {
-    loginEmail = user ? user.email : null;
-    console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
-    // 如果需要，可以直接從 localStorage 取出名字（若你也有存）
-    loadMemberName(loginEmail);
-    renderNavTabs(); 
-    showSection("souvenir"); 
+            onAuthStateChanged(auth, (user) => {
+                loginEmail = user ? user.email : null;
+                window.currentUserEmail = loginEmail; // 設定全局變數
+                console.log(loginEmail ? "✅ 已登入：" + loginEmail : "⚠️ 尚未登入");
 
-     if (loginEmail) {
-    loadMemberName(loginEmail); // ✅ 加這一行
-  }
+                loadMemberName(loginEmail); // 載入會員名稱
+                renderNavTabs(); // 渲染導覽列
 
-  loadSouvenirDataWithoutDataTables();
-           
-  const urlParams = new URLSearchParams(window.location.search);
-  const view = urlParams.get("view");
+                // 處理 URL 參數，如果 URL 中有 ?view=xxx 則顯示對應頁面
+                const urlParams = new URLSearchParams(window.location.search);
+                const view = urlParams.get("view");
+                if (view) { // 如果有 view 參數，就載入對應的頁面
+                    showSection(view);
+                } else { // 否則預設顯示紀念品頁面
+                    showSection("souvenir");
+                }
+            });
+        });
 
-  if (view === "login") {
-    showSection("login");
-  }
-           
-
-    const recommendSheetSelect = document.getElementById('recommendSheet');
-    if (recommendSheetSelect) {
-      recommendSheetSelect.addEventListener('change', function () {
-        loadRecommend(this.value);
-      });
-      loadRecommend('我全都要（不需證件）'); 
-    }
-  });
-});
-        // 監聽視窗大小變化，當視窗大小改變時，重新調整 DataTables 列寬
+        // 監聽視窗大小變化，調整 DataTables 列寬 (如果未來使用 DataTables)
+        // 注意：這裡的 DataTables 相關邏輯，如果 `souvenir.html` 和 `recommend.html` 內部有用到 jQuery DataTables，
+        // 則需要確保 DataTables 庫在這些頁面載入時可用。
+        // 由於您在 index.html 載入了 jQuery 和 DataTables CDN，它們是全局可用的。
         $(window).on('resize', function () {
             setTimeout(function() {
-                if ($.fn.dataTable.tables(true).length) { 
+                if ($.fn.dataTable && $.fn.dataTable.tables(true).length) { // 檢查 $.fn.dataTable 是否存在
                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
                 }
             }, 100);

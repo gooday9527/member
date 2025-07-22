@@ -145,6 +145,36 @@ body {
 }
 .recommend-wrapper .loading-placeholder td {
     text-align: center;
+
+/* ==========================================================================
+   5. 組件：骨架屏載入動畫 (Component: Skeleton Loader)
+   ========================================================================== */
+.skeleton-line {
+  width: 90%; /* 不要填滿，留一點空隙更真實 */
+  height: 1.2em; /* 和文字高度差不多 */
+  background-color: #e0e0e0; /* 骨架的灰色 */
+  border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* 表頭的骨架可以短一點 */
+thead .skeleton-line {
+  width: 60%;
+}
+
+/* 骨架屏的呼吸/脈衝動畫 */
+@keyframes pulse {
+  0% {
+    background-color: #e0e0e0;
+  }
+  50% {
+    background-color: #f0f0f0; /* 動畫中間變亮一點 */
+  }
+  100% {
+    background-color: #e0e0e0;
+  }
+}
+   
     padding: 4rem 1rem;
     color: #6c757d;
     font-weight: bold;

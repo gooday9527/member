@@ -1,4 +1,3 @@
-<!-- login.html -->
 <h3 class="text-center">🔐 登入</h3>
 <form id="loginForm" class="text-center mt-3" style="max-width: 400px; margin: auto;">
     <div class="mb-3">
@@ -10,15 +9,13 @@
     <button type="submit" class="btn btn-warning w-100 mb-3">登入</button>
 
     <div class="d-flex justify-content-between gap-2">
-        <a href="reset-password.html" class="btn btn-danger w-100">忘記密碼？</a>
-        <a href="register.html" class="btn btn-primary w-100">註冊新帳號</a>
+        <a href="#" data-section="reset-password" class="btn btn-danger w-100">忘記密碼？</a>
+        <a href="#" data-section="register" class="btn btn-primary w-100">註冊新帳號</a>
     </div>
 </form>
-<!-- 相關 JavaScript 邏輯將會從 index.html 移到這裡 -->
+
 <script type="module">
-    // 這裡需要重新初始化 Firebase，因為這個 HTML 是獨立載入的
-    // 並確保獲取 auth 實例
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getApps, initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
     const firebaseConfig = {
@@ -31,30 +28,70 @@
         measurementId: "G-J3Z7YTHJ9P"
     };
 
-    const app = initializeApp(firebaseConfig);
+    // ✅ 1. 使用更安全的方式初始化 Firebase，避免重複錯誤
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     const auth = getAuth(app);
 
-    document.addEventListener("DOMContentLoaded", function() {
-        // 登入表單提交事件處理
-        document.getElementById("loginForm")?.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const email = document.getElementById("loginEmail").value.trim();
-            const password = document.getElementById("loginPassword").value;
+    // ✅ 2. 將事件綁定邏輯放到一個啟動函數中
+    function initializeLoginForm() {
+        const loginForm = document.getElementById("loginForm");
+        
+        if (loginForm) {
+            loginForm.addEventListener("submit", function (e) {
+                e.preventDefault(); // 防止表單傳統提交
+                const email = document.getElementById("loginEmail").value.trim();
+                const password = document.getElementById("loginPassword").value;
 
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    console.log("登入成功", user.email);
-                    // 呼叫 index.html 中的全局函數來更新主頁面狀態
-                    if (window.updateMainAppLoginState) {
-                        window.updateMainAppLoginState(user.email);
-                    }
-                    alert("✅ 登入成功！");
-                })
-                .catch((error) => {
-                    console.error("登入失敗", error);
-                    alert("登入失敗：" + error.message);
-                });
-        });
-    });
+                // 增加一個簡單的載入中提示
+                const submitButton = loginForm.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.innerHTML;
+                submitButton.disabled = true;
+                submitButton.innerHTML = '登入中...';
+
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        console.log("登入成功", user.email);
+                        
+                        // 呼叫 index.html 中的全局函數來更新主頁面狀態
+                        if (window.updateMainAppLoginState) {
+                            window.updateMainAppLoginState(user.email);
+                        } else {
+                            // 如果找不到全局函數，也提供備用方案
+                            alert("✅ 登入成功！");
+                            window.location.reload(); // 重新整理頁面以更新狀態
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("登入失敗", error);
+                        let message = "發生未知錯誤";
+                        // 根據 Firebase 錯誤碼顯示更友好的中文提示
+                        switch (error.code) {
+                            case 'auth/invalid-email':
+                                message = "Email 格式不正確。";
+                                break;
+                            case 'auth/user-not-found':
+                            case 'auth/wrong-password':
+                            case 'auth/invalid-credential':
+                                message = "Email 或密碼錯誤。";
+                                break;
+                            default:
+                                message = "登入失敗，請稍後再試。";
+                        }
+                        alert(message);
+                    })
+                    .finally(() => {
+                        // 無論成功或失敗，都恢復按鈕狀態
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalButtonText;
+                    });
+            });
+        } else {
+            console.error("錯誤：在 login.html 中找不到 ID 為 loginForm 的元素！");
+        }
+    }
+
+    // ✅ 3. 使用 setTimeout 呼叫啟動函數，移除 DOMContentLoaded
+    setTimeout(initializeLoginForm, 0);
+
 </script>

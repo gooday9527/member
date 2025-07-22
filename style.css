@@ -1,209 +1,21 @@
 /* ==========================================================================
-   1. 全站通用樣式 (Global Styles)
-   ========================================================================== */
-body {
-  background-color: #fffbea;
-  font-family: 'Noto Sans TC', sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-/* 避免桌機版產生整頁的橫向捲動 */
-@media (min-width: 769px) {
-  body {
-    overflow-x: hidden;
-  }
-}
-
-/* ==========================================================================
-   2. 主要佈局 (Layout: Navbar & Container)
+   組件：推薦清單頁面 (Component: Recommend Page) - 成功版本還原
    ========================================================================== */
 
-/* 導覽列 */
-.navbar {
-  background-color: #ffe082;
-  padding: 0 1rem; /* 左右內邊距 */
-}
-/* 【修正】讓品牌名稱離左邊緣遠一點 */
-.navbar-brand {
-  margin-left: 1rem;
-}
-
-/* 導覽列項目對齊 (恢復您原本的強制設定) */
-.navbar-collapse {
-  justify-content: flex-start !important;
-}
-.navbar-nav {
-  margin-right: auto !important;
-}
-.nav-link {
-  font-weight: bold;
-}
-.nav-link.active {
-  border: none;
-  border-bottom: 4px solid #007bff;
-}
-
-/* 內容主容器 */
-.container-fluid {
-  padding: 1rem !important;
-}
-
-
-/* ==========================================================================
-   3. 組件：紀念品頁面 (Component: Souvenir Page)
-   ========================================================================== */
-.souvenir-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 100px); /* 整個區塊的高度 */
-}
-.souvenir-wrapper .table-controls-fixed {
-  flex-shrink: 0; /* 固定部分 */
-  padding: 1rem;
-  background-color: #fffbea;
-}
-.souvenir-wrapper .table-scroll-container {
-  flex-grow: 1; /* 伸展部分 */
-  overflow: auto; /* 超出範圍時自動產生滾動條 */
-  border: 1px solid #dee2e6;
-  position: relative;
-}
-.souvenir-wrapper thead th {
-  position: sticky;
-  top: 0;
-  background-color: #fff3cd;
-  z-index: 2;
-  white-space: nowrap; /* 標題預設不換行 */
-}
-/* 指定第 5, 6, 9 欄的標題可以換行 */
-.souvenir-wrapper thead th:nth-child(5),
-.souvenir-wrapper thead th:nth-child(6),
-.souvenir-wrapper thead th:nth-child(9) {
-  white-space: normal;
-}
-.souvenir-wrapper #souvenirPaginationWrapper {
-  flex-shrink: 0; /* 固定部分 */
-  padding: 1rem;
-  background-color: #fffbea;
-  text-align: center;
-}
-.souvenir-wrapper table {
-  min-width: 600px; /* 手機上可水平滾動 */
-}
-
-
-/* ==========================================================================
-   1. 全站通用樣式 (Global Styles)
-   ========================================================================== */
-body {
-  background-color: #fffbea;
-  font-family: 'Noto Sans TC', sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-/* 避免桌機版產生整頁的橫向捲動 */
-@media (min-width: 769px) {
-  body {
-    overflow-x: hidden;
-  }
-}
-
-/* ==========================================================================
-   2. 主要佈局 (Layout: Navbar & Container)
-   ========================================================================== */
-
-/* 導覽列 */
-.navbar {
-  background-color: #ffe082;
-  padding: 0 1rem; /* 左右內邊距 */
-}
-/* 【修正】讓品牌名稱離左邊緣遠一點 */
-.navbar-brand {
-  margin-left: 1rem;
-}
-
-/* 導覽列項目對齊 (恢復您原本的強制設定) */
-.navbar-collapse {
-  justify-content: flex-start !important;
-}
-.navbar-nav {
-  margin-right: auto !important;
-}
-.nav-link {
-  font-weight: bold;
-}
-.nav-link.active {
-  border: none;
-  border-bottom: 4px solid #007bff;
-}
-
-/* 內容主容器 */
-.container-fluid {
-  padding: 1rem !important;
-}
-
-
-/* ==========================================================================
-   3. 組件：紀念品頁面 (Component: Souvenir Page)
-   ========================================================================== */
-.souvenir-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 100px); /* 整個區塊的高度 */
-}
-.souvenir-wrapper .table-controls-fixed {
-  flex-shrink: 0; /* 固定部分 */
-  padding: 1rem;
-  background-color: #fffbea;
-}
-.souvenir-wrapper .table-scroll-container {
-  flex-grow: 1; /* 伸展部分 */
-  overflow: auto; /* 超出範圍時自動產生滾動條 */
-  border: 1px solid #dee2e6;
-  position: relative;
-}
-.souvenir-wrapper thead th {
-  position: sticky;
-  top: 0;
-  background-color: #fff3cd;
-  z-index: 2;
-  white-space: nowrap; /* 標題預設不換行 */
-}
-/* 指定第 5, 6, 9 欄的標題可以換行 */
-.souvenir-wrapper thead th:nth-child(5),
-.souvenir-wrapper thead th:nth-child(6),
-.souvenir-wrapper thead th:nth-child(9) {
-  white-space: normal;
-}
-.souvenir-wrapper #souvenirPaginationWrapper {
-  flex-shrink: 0; /* 固定部分 */
-  padding: 1rem;
-  background-color: #fffbea;
-  text-align: center;
-}
-.souvenir-wrapper table {
-  min-width: 600px; /* 手機上可水平滾動 */
-}
-
-
-/* ==========================================================================
-   4. 組件：推薦清單頁面 (Component: Recommend Page)
-   ========================================================================== */
+/* --- 基礎佈局 (手機 & 桌機共用) --- */
 .recommend-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 100px); /* 整個區塊的高度 */
+  height: calc(100vh - 100px);
 }
 .recommend-wrapper .recommend-controls {
-  flex-shrink: 0; /* 固定部分 */
+  flex-shrink: 0;
   padding: 1rem;
   background-color: #fffbea;
 }
 .recommend-wrapper .table-responsive {
-  flex-grow: 1; /* 伸展部分 */
-  overflow: auto; /* 超出範圍時自動產生滾動條 */
+  flex-grow: 1;
+  overflow: auto; /* 讓瀏覽器自動判斷滾動條 */
   border: 1px solid #dee2e6;
   position: relative;
 }
@@ -212,8 +24,8 @@ body {
   top: 0;
   background-color: #fff3cd;
   z-index: 2;
-  white-space: nowrap; /* 【修正】所有標題都不換行 */
+  white-space: nowrap; /* 所有標題都不換行 */
 }
 .recommend-wrapper table {
-  min-width: 600px; /* 手機上可水平滾動 */
+  min-width: 600px; /* 確保手機上可以水平滾動 */
 }

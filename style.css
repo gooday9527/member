@@ -147,35 +147,33 @@ body {
     text-align: center;
 
 /* ==========================================================================
-   5. 組件：骨架屏載入動畫 (Component: Skeleton Loader)
+   5. 組件：載入中提示 (Component: Loading State)
    ========================================================================== */
-.skeleton-line {
-  width: 90%; /* 不要填滿，留一點空隙更真實 */
-  height: 1.2em; /* 和文字高度差不多 */
-  background-color: #e0e0e0; /* 骨架的灰色 */
-  border-radius: 4px;
-  animation: pulse 1.5s infinite ease-in-out;
+
+/* 當表格容器處於 'is-loading' 狀態時... */
+.recommend-wrapper .table-responsive.is-loading {
+  /* 用一個偽元素來顯示「載入中」的文字 */
+  position: relative; /* 為了讓偽元素可以定位 */
 }
 
-/* 表頭的骨架可以短一點 */
-thead .skeleton-line {
-  width: 60%;
+.recommend-wrapper .table-responsive.is-loading::before {
+  content: '資料載入中...';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fffbea; /* 用背景色蓋住下方可能存在的內容 */
+  color: #6c757d;
+  font-weight: bold;
+  font-size: 1.2rem;
+  z-index: 5;
 }
 
-/* 骨架屏的呼吸/脈衝動畫 */
-@keyframes pulse {
-  0% {
-    background-color: #e0e0e0;
-  }
-  50% {
-    background-color: #f0f0f0; /* 動畫中間變亮一點 */
-  }
-  100% {
-    background-color: #e0e0e0;
-  }
-}
-   
-    padding: 4rem 1rem;
-    color: #6c757d;
-    font-weight: bold;
+/* 同時，將真正的表格隱藏起來，但保留其佔位，防止跳動 */
+.recommend-wrapper .table-responsive.is-loading table {
+  visibility: hidden;
 }

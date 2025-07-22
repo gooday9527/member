@@ -123,103 +123,103 @@ th:nth-child(2), td:nth-child(2) {
     width: 50px;
 }
 
-/* ===== 手機版紀念品表格：可水平捲動、可垂直捲動，並固定表頭 ===== */
+/* --- 紀念品頁面專屬樣式 (已適配新架構) --- */
+
+/* ===== 手機版布局 (螢幕寬度 <= 768px) ===== */
 @media (max-width: 768px) {
-  #souvenir .table-scroll-container {
-    max-height: 500px;           /* 垂直限制高度 */
-    overflow-x: auto;            /* 開啟水平捲動 */
-    overflow-y: auto;            /* 開啟垂直捲動 */
-    -webkit-overflow-scrolling: touch;
+  /* 直接針對 class，移除 #souvenir */
+  .table-scroll-container {
+    max-height: 65vh;             /* 垂直限制高度，改用 vh 單位更具彈性 */
+    overflow-x: auto;             /* 開啟水平捲動 */
+    overflow-y: auto;             /* 開啟垂直捲動 */
+    -webkit-overflow-scrolling: touch; /* iOS 滾動優化 */
     position: relative;
   }
 
-  #souvenir table {
-    min-width: 600px;            /* 避免欄位壓縮過頭 */
+  /* 針對紀念品表格設定最小寬度，避免壓縮 */
+  .souvenir-wrapper table {
+    min-width: 600px;
   }
 
-  #souvenir thead th {
+  /* 黏性表頭 (通用，手機桌機都有效) */
+  .table-scroll-container thead th {
     position: sticky;
     top: 0;
-    background-color: #fff3cd;
+    background-color: #fff3cd; /* var(--bs-warning) */
     z-index: 2;
   }
 }
 
-
-/* ===== 桌機版：紀念品表格固定搜尋 + 固定表頭 + 垂直捲動 + 固定分頁 ===== */
+/* ===== 桌機版布局 (螢幕寬度 > 768px) ===== */
 @media (min-width: 769px) {
-  #souvenir .souvenir-wrapper {
+  /* 紀念品區塊使用 Flexbox 建立固定高度的佈局 */
+  .souvenir-wrapper {
     display: flex;
     flex-direction: column;
-    height: 600px; /* 可依需求調整整體高度 */
+    /* 建議使用 vh 或 calc 替代固定 px，讓版面更自適應 */
+    height: calc(100vh - 120px); /* 範例：整個視窗高度減去導覽列和上下邊距 */
   }
 
-  #souvenir .table-controls-fixed {
-    flex: 0 0 auto;
+  /* 頂部控制區 (搜尋、筆數) - 固定不滾動 */
+  .table-controls-fixed {
+    flex: 0 0 auto; /* 不伸縮 */
     background-color: #fffbea;
+    padding: 10px;
     z-index: 3;
   }
 
-  #souvenir .table-scroll-container {
-    flex: 1 1 auto;
+  /* 中間表格滾動區 - 佔滿剩餘空間 */
+  .table-scroll-container {
+    flex: 1 1 auto; /* 核心：自動伸展佔滿剩餘空間 */
     overflow-y: auto;
     border: 1px solid #dee2e6;
   }
 
-  #souvenir .table-scroll-container thead th {
-    position: sticky;
-    top: 0;
-    background-color: #fff3cd;
-    z-index: 2;
-  }
-
-  #souvenirControlsContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem; /* ✅ 加這一行，產生左右空隙 */
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-  }
-    
-  #souvenir #souvenirPaginationWrapper {
-    flex: 0 0 auto;
+  /* 底部換頁區 - 固定不滾動 */
+  #souvenirPaginationWrapper {
+    flex: 0 0 auto; /* 不伸縮 */
     background-color: #fffbea;
-    padding-top: 10px;
+    padding: 10px;
     z-index: 3;
+    text-align: center;
   }
 }
 
+/* ===== 通用樣式 (手機與桌機共用) ===== */
 
-
-/* ✅ 紀念品欄限制最大寬度 */
-th:nth-child(4), td:nth-child(4) {
-    max-width: 300px;
+/* 紀念品欄位最大寬度限制 (優化選擇器，使其更精確) */
+.souvenir-wrapper table th:nth-child(4),
+.souvenir-wrapper table td:nth-child(4) {
+  max-width: 300px;
 }
 
+/* 頂部控制區內部排版 */
+#souvenirControlsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* 換頁按鈕樣式 */
 #souvenirPagination button {
   background: transparent;
   border: 1px solid #ccc;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.9rem; /* 微調字體大小 */
   color: black;
   margin: 0 4px;
   border-radius: 6px;
   padding: 4px 8px;
+  transition: background-color 0.2s, color 0.2s; /* 增加過渡效果 */
 }
 
-#souvenirPaginationWrapper {
-  background-color: #fffbea;
-  padding: 10px;
-  border-radius: 6px;
-  margin-top: 10px;
-  text-align: center;
-}
-
+/* 當前頁面按鈕的樣式 */
 #souvenirPagination button.btn-primary {
   background-color: #ff9800;
   color: white;
-  border: none;
+  border-color: #ff9800; /* 統一邊框顏色 */
 }
 
 /* ✅ 推薦分類下拉選單寬度 */

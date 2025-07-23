@@ -159,6 +159,13 @@ body {
     border: 1px solid #dee2e6;
     position: relative;
   }
+
+  /* 新增樣式來控制總結資訊的佈局 */
+   .recommend-summary {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 5px;
+   }
 }
 
 /* --- 手機版佈局 (Mobile Layout) --- */
@@ -172,6 +179,13 @@ body {
   .recommend-wrapper table {
     min-width: 600px;
   }
+
+  .recommend-controls-group {
+      display: flex;
+      flex-wrap: wrap; /* 允許換行在小螢幕上 */
+      align-items: center;
+      gap: 10px; /* 項目間距 */
+   }   
 }
 
 /* --- 通用樣式 (推薦清單) --- */

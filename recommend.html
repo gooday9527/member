@@ -22,77 +22,47 @@
     // ✅ 請再次確認這裡是您「推薦清單後端」的部署網址
     const RECOMMEND_BACKEND_URL = "https://script.google.com/macros/s/AKfycbzdoezSaX2ujsE5ejjac3HbZWWHhDKQbX0nN1rVTIPSZm7opdCtslmwPAIq6zBNvcTp/exec";
 
-// JSONP 核心函數：動態建立 script 標籤來請求資料
-    function jsonpRequest(url, callback) {
-        const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-        window[callbackName] = function(data) {
-            delete window[callbackName];
-            document.body.removeChild(script);
-            callback(null, data);
-        };
+// JSONP 核心函數 (維持不變)
+    function jsonpRequest(url, callback) { /* ... 之前的完整程式碼 ... */ }
 
-        const script = document.createElement('script');
-        script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
-        
-        script.onerror = function() {
-            delete window[callbackName];
-            document.body.removeChild(script);
-            callback(new Error('JSONP request failed. Check browser console for more details.'));
-        };
+    // 函數：載入推薦資料 (維持不變)
+    function loadRecommendData(sheetName) { /* ... 之前的完整程式碼 ... */ }
 
-        document.body.appendChild(script);
-    }
 
-    // 函數：載入推薦資料
-    function loadRecommendData(sheetName) {
-        const tableElement = document.getElementById('recommendTable');
-        if (!tableElement || !sheetName) return;
-        const thead = tableElement.querySelector('thead');
-        const tbody = tableElement.querySelector('tbody');
-        thead.innerHTML = '';
-        tbody.innerHTML = `<tr><td colspan="100%">資料載入中...</td></tr>`;
-
-        const url = `${RECOMMEND_BACKEND_URL}?action=getRecommendations&sheetName=${encodeURIComponent(sheetName)}`;
-        jsonpRequest(url, (error, result) => {
-            if (error) {
-                console.error('載入推薦資料時發生錯誤:', error);
-                tbody.innerHTML = `<tr><td colspan="100%" class="text-danger">資料載入失敗: ${error.message}</td></tr>`;
-                return;
-            }
-            if (result.status === 'error') {
-                tbody.innerHTML = `<tr><td colspan="100%" class="text-danger">後端錯誤: ${result.data.message}</td></tr>`;
-                return;
-            }
-            const data = result.data.data;
-            tbody.innerHTML = ''; 
-            if (data && data.length > 0) {
-                const headers = Object.keys(data[0]);
-                thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-                tbody.innerHTML = data.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('');
-            } else {
-                tbody.innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
-            }
-        });
-    }
-
-    // 函數：初始化頁面
+    // ✅【核心升級】初始化函數，加入了快取邏輯
     function initializeRecommendPage() {
         const selectElement = document.getElementById('recommendSheet');
-        if (!selectElement) return;
+        const tableElement = document.getElementById('recommendTable');
+        if (!selectElement || !tableElement) return;
+
+        // 1. 檢查「小本本」(快取) 上是否已經有紀錄
+        if (window.appCache && window.appCache.recommendationHtml) {
+            console.log("從前端快取載入推薦清單，速度飛快！");
+            // 如果有，直接用快取中的 HTML 恢復頁面，然後結束！
+            selectElement.outerHTML = window.appCache.recommendationSelectHtml;
+            tableElement.outerHTML = window.appCache.recommendationTableHtml;
+            
+            // 重新綁定事件，因為 outerHTML 替換掉了舊元素
+            const newSelect = document.getElementById('recommendSheet');
+            if (newSelect) {
+                newSelect.addEventListener('change', function () { loadRecommendData(this.value); });
+            }
+            return; 
+        }
+
+        // 2. 如果快取中沒有，才執行網路請求
+        console.log("首次載入推薦清單，從後端讀取資料...");
         selectElement.disabled = true;
         selectElement.innerHTML = '<option>分類載入中...</option>';
 
         const url = `${RECOMMEND_BACKEND_URL}?action=getRecommendationCategories`;
         jsonpRequest(url, (error, result) => {
-            if (error) {
-                console.error('載入分類時發生錯誤:', error);
+            if (error || result.status === 'error') {
+                console.error('載入分類時發生錯誤:', error || result.data.message);
                 selectElement.innerHTML = `<option>分類載入失敗</option>`;
                 return;
             }
-            if (result.status === 'error') {
-                selectElement.innerHTML = `<option>後端錯誤</option>`;
-                return;
-            }
+            
             const categories = result.data.categories;
             selectElement.innerHTML = '';
             categories.forEach(category => {
@@ -101,11 +71,29 @@
                 option.textContent = category;
                 selectElement.appendChild(option);
             });
+            
             selectElement.disabled = false;
             selectElement.addEventListener('change', function () { loadRecommendData(this.value); });
-            if (categories.length > 0) { loadRecommendData(categories[0]); }
+
+            if (categories.length > 0) {
+                // 首次載入資料後，將當前頁面狀態存入快取
+                loadRecommendData(categories[0]).then(() => {
+                    setTimeout(() => { // 等待 DOM 更新完成
+                        if(window.appCache) {
+                           window.appCache.recommendationSelectHtml = document.getElementById('recommendSheet').outerHTML;
+                           window.appCache.recommendationTableHtml = document.getElementById('recommendTable').outerHTML;
+                           console.log("推薦清單頁面狀態已存入前端快取。");
+                        }
+                    }, 500); // 延遲 500 毫秒確保表格已渲染
+                });
+            }
         });
     }
+
+    // 重新填充不變的函數，以防複製時遺漏
+    function jsonpRequest(url, callback) {const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());window[callbackName] = function(data) {delete window[callbackName];document.body.removeChild(script);callback(null, data);};const script = document.createElement('script');script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;script.onerror = function() {delete window[callbackName];document.body.removeChild(script);callback(new Error('JSONP request failed.'));};document.body.appendChild(script);}
+    async function loadRecommendData(sheetName) {const tableElement = document.getElementById('recommendTable');if (!tableElement || !sheetName) return;const thead = tableElement.querySelector('thead');const tbody = tableElement.querySelector('tbody');thead.innerHTML = '';tbody.innerHTML = `<tr><td colspan="100%">資料載入中...</td></tr>`;const url = `${RECOMMEND_BACKEND_URL}?action=getRecommendations&sheetName=${encodeURIComponent(sheetName)}`;await new Promise(resolve => jsonpRequest(url, (error, result) => {if (error || result.status === 'error'){console.error('載入推薦資料時發生錯誤:', error || result.data.message);tbody.innerHTML = `<tr><td colspan="100%" class="text-danger">資料載入失敗</td></tr>`;} else {const data = result.data.data;tbody.innerHTML = '';if (data && data.length > 0){const headers = Object.keys(data[0]);thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;tbody.innerHTML = data.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('');} else {tbody.innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';}} resolve(); }));}
+
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeRecommendPage);

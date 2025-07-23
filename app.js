@@ -115,9 +115,8 @@ document.body.addEventListener("click", function (e) {
     if (navbarCollapse.classList.contains('show')) {
         bsCollapse.hide();
     }
-});
 
-window.addEventListener('popstate', function(event) {
+    window.addEventListener('popstate', function(event) {
     if (event.state && event.state.section) {
         navigateTo(event.state.section, true);
     }

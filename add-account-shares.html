@@ -1,8 +1,9 @@
-<!-- add-account-shares.html (偵錯版) -->
+<!-- add-account-shares.html -->
 
-<!-- 您的 HTML 和 CSS 完全不變 -->
+<!-- ✅ 採用與登入頁完全一致的置中、簡潔風格 -->
 <div style="max-width: 500px; margin: 2rem auto;">
     <h3 class="text-center">📊 新增帳號／持股</h3>
+    
     <div class="mb-3">
         <label for="subAccountSelect" class="form-label">選擇或新增子帳號</label>
         <div class="input-group">
@@ -12,18 +13,21 @@
             <button class="btn btn-outline-secondary" type="button" onclick="window.addAccountShares.toggleSubAccountInput(true)">➕ 新增</button>
         </div>
     </div>
+    
     <div id="addSubWrapper" class="mb-3" style="display:none;">
-        <label for="newSubAccountInput" class="form-label">新子帳號名稱</label>
-        <input type="text" class="form-control" id="newSubAccountInput" placeholder="請輸入子帳號名稱">
+        <!-- ✅【修正1】移除 label，將文字提示改為 placeholder -->
+        <input type="text" class="form-control" id="newSubAccountInput" placeholder="新子帳號名稱">
         <div class="mt-2 d-flex gap-2 justify-content-end">
             <button type="button" class="btn btn-sm btn-secondary" onclick="window.addAccountShares.toggleSubAccountInput(false)">取消</button>
             <button type="button" class="btn btn-sm btn-primary" onclick="window.addAccountShares.saveNewSubAccount()">儲存</button>
         </div>
     </div>
+
     <div class="mb-3">
         <label for="stockInput" class="form-label">輸入股號 (用逗號分隔)</label>
         <textarea id="stockInput" class="form-control" rows="4" placeholder="例如：1101, 1102, 2330"></textarea>
     </div>
+
     <div class="mb-3">
         <label class="form-label">選擇操作類型</label>
         <div class="form-check">
@@ -39,60 +43,48 @@
             <label class="form-check-label" for="opDelete">刪除上列持股 (從現有清單移除)</label>
         </div>
     </div>
-    <button class="btn btn-success w-100 mt-3" onclick="window.addAccountShares.executeOperation()">執行操作</button>
+
+    <!-- ✅【修正2】將按鈕 class 從 btn-success 改為 btn-warning -->
+    <button class="btn btn-warning w-100 mt-3" onclick="window.addAccountShares.executeOperation()">執行操作</button>
+
     <div id="messageBox" class="mt-3"></div>
 </div>
 
-<!-- ✅【核心修正】在腳本中加入 console.log 來追蹤問題 -->
+<!-- 您的 JavaScript 邏輯完全不變 -->
 <script>
     window.addAccountShares = (function() {
         const APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzk_RKeBgLtWsVJe79WUIYklyOnLL94nVZ41rb_zG_bV-LOSsi9PtSHQX0H0a2hMId0/exec";
-
+        
         async function fetchDataFromBackend(action, payload = {}) {
             const userEmail = window.currentUserEmail;
-            
-            // ✅ 監視器 1: 檢查我們是用哪個 Email 去要資料的
-            console.log(`[偵錯] 準備發送請求... Action: ${action}, Email: ${userEmail}`);
-
             if (!userEmail) {
                 displayMessage("錯誤：無法獲取登入狀態，請重新登入。", "danger");
                 throw new Error("User not logged in");
             }
-            
             const fullPayload = { action, userEmail, ...payload };
             const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
                 method: 'POST',
                 body: JSON.stringify(fullPayload),
             });
-
-            // ✅ 監視器 2: 看看後端原始回傳的文字是什麼
-            const rawResponseText = await response.text();
-            console.log('[偵錯] 從後端收到的原始回應:', rawResponseText);
-
             if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
-            
-            // ✅ 監視器 3: 看看解析後的 JSON 資料長什麼樣子
-            const result = JSON.parse(rawResponseText);
-            console.log('[偵錯] 解析後的 JSON 資料:', result);
-
+            const result = await response.json();
             if (result.status === "error") throw new Error(result.data.message || "後端處理錯誤");
-            
-            // ✅ 監視器 4: 看看最終要給前端用的資料是什麼
-            console.log('[偵錯] 最終成功取得的資料 (result.data):', result.data);
             return result.data;
         }
 
-        function displayMessage(msg, type) { /* ... 您的 displayMessage 函數 ... */ }
+        function displayMessage(msg, type) {
+            const box = document.getElementById("messageBox");
+            if (!box) return;
+            box.innerHTML = `<div class="alert alert-${type}" role="alert">${msg}</div>`;
+            setTimeout(() => { box.innerHTML = ''; }, 5000);
+        }
 
         async function loadInitialData(accountToSelect = null) {
             const select = document.getElementById("subAccountSelect");
             try {
-                // 呼叫帶有監視器的 fetch 函數
                 const data = await fetchDataFromBackend("getAccountData");
-                
                 const accounts = data.accounts || [];
                 select.innerHTML = '<option value="">請選擇子帳號</option>';
-                
                 if (accounts.length > 0) {
                     accounts.forEach(name => {
                         const opt = document.createElement("option");
@@ -102,25 +94,66 @@
                 } else {
                     select.innerHTML = '<option value="">尚無子帳號，請先新增</option>';
                 }
-                
                 if (accountToSelect && accounts.includes(accountToSelect)) {
                     select.value = accountToSelect;
                 }
             } catch (e) {
-                console.error("[偵錯] loadInitialData 捕捉到錯誤:", e);
-                select.innerHTML = '<option value="">載入失敗，請查看主控台</option>';
+                select.innerHTML = '<option value="">載入失敗</option>';
                 displayMessage("載入帳號資料失敗：" + e.message, "danger");
             }
         }
 
-        // 立即執行初始化
         setTimeout(loadInitialData, 0);
 
-        // 返回需要被 HTML onclick 呼叫的函數
         return {
-            toggleSubAccountInput: function(show) { /* ... 您的 toggle 函數 ... */ },
-            saveNewSubAccount: async function() { /* ... 您的 save 函數 ... */ },
-            executeOperation: async function() { /* ... 您的 execute 函數 ... */ }
+            toggleSubAccountInput: function(show) {
+                const wrapper = document.getElementById("addSubWrapper");
+                if (wrapper) {
+                    wrapper.style.display = show ? "block" : "none";
+                    if (!show) document.getElementById("newSubAccountInput").value = "";
+                }
+            },
+            saveNewSubAccount: async function() {
+                const name = document.getElementById("newSubAccountInput").value.trim();
+                if (!name) return displayMessage("請輸入子帳號名稱", "danger");
+                const btn = document.querySelector('#addSubWrapper .btn-primary');
+                btn.disabled = true;
+                btn.textContent = '儲存中...';
+                try {
+                    const result = await fetchDataFromBackend("addAndSelectSubAccount", { name: name });
+                    displayMessage(result.message, result.success ? "success" : "danger");
+                    if (result.success) {
+                        this.toggleSubAccountInput(false);
+                        await loadInitialData(name);
+                    }
+                } catch (e) {
+                    displayMessage("儲存失敗：" + e.message, "danger");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = '儲存';
+                }
+            },
+            executeOperation: async function() {
+                const subAccount = document.getElementById("subAccountSelect").value;
+                const stocks = document.getElementById("stockInput").value.trim();
+                const operationType = document.querySelector('input[name="operationType"]:checked').value;
+                if (!subAccount) return displayMessage("請選擇一個子帳號", "danger");
+                if (!stocks && operationType !== 'overwrite') return displayMessage("請輸入股號", "danger");
+                const btn = document.querySelector('.btn-warning'); // <-- 注意這裡要改成 .btn-warning
+                const originalText = btn.textContent;
+                btn.disabled = true;
+                btn.textContent = '處理中...';
+                try {
+                    const result = await fetchDataFromBackend("executeStockOperation", { subAccount, stocks, operationType });
+                    displayMessage(result.message, "success");
+                    document.getElementById("stockInput").value = "";
+                } catch (e) {
+                    displayMessage("操作失敗：" + e.message, "danger");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            }
         };
     })();
 </script>

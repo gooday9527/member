@@ -19,13 +19,10 @@
 </div>
 
 <script>
-    // 請將這裡換成您自己的後端 Apps Script 網址
-    const MY_BACKEND_URL = "https://script.google.com/macros/s/AKfycbzdoezSaX2ujsE5ejjac3HbZWWHhDKQbX0nN1rVTIPSZm7opdCtslmwPAIq6zBNvcTp/exec";
+    // ✅ 請再次確認這裡是您「推薦清單後端」的部署網址
+    const RECOMMEND_BACKEND_URL = "https://script.google.com/macros/s/AKfycbzdoezSaX2ujsE5ejjac3HbZWWHhDKQbX0nN1rVTIPSZm7opdCtslmwPAIq6zBNvcTp/exec";
 
-    /**
-     * 函數：根據傳入的工作表名稱，載入對應的資料並呈現在表格中
-     * @param {string} sheetName - 要載入的工作表名稱
-     */
+    // 函數：根據傳入的工作表名稱，載入對應的資料
     async function loadRecommendData(sheetName) {
         const tableElement = document.getElementById('recommendTable');
         if (!tableElement || !sheetName) return;
@@ -37,61 +34,49 @@
         tbody.innerHTML = `<tr><td colspan="100%">資料載入中...</td></tr>`;
 
         try {
-            const response = await fetch(MY_BACKEND_URL, {
-                method: 'POST',
-                // body 使用 text 以免 CORS preflight 問題，後端用 JSON.parse 解析
-                body: JSON.stringify({ action: 'getRecommendations', sheetName: sheetName })
-            });
-            
+            // ✅ 改成 GET 請求，並將參數放在網址上
+            const url = `${RECOMMEND_BACKEND_URL}?action=getRecommendations&sheetName=${encodeURIComponent(sheetName)}`;
+            const response = await fetch(url);
+
             if (!response.ok) throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
-
             const result = await response.json();
-            
-            if (result.status === 'error') throw new Error(result.data.message || '後端回報錯誤');
-            
-            const data = result.data.data; // 資料在 result.data.data 中
+            if (result.status === 'error') throw new Error(result.data.message);
 
+            const data = result.data.data;
             tbody.innerHTML = ''; 
 
             if (data && data.length > 0) {
                 const headers = Object.keys(data[0]);
                 thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-                tbody.innerHTML = data.map(row => 
-                    `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`
-                ).join('');
+                tbody.innerHTML = data.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('');
             } else {
-                thead.innerHTML = '';
-                tbody.innerHTML = '<tr><td colspan="100%">這個分類目前沒有資料</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
             }
         } catch (error) {
             console.error('載入推薦資料時發生錯誤:', error);
-            thead.innerHTML = '';
             tbody.innerHTML = `<tr><td colspan="100%" class="text-danger">資料載入失敗: ${error.message}</td></tr>`;
         }
     }
 
-    /**
-     * 函數：初始化頁面，先取得分類選單，再載入預設資料
-     */
+    // 函數：初始化頁面，先取得分類選單，再載入預設資料
     async function initializeRecommendPage() {
         const selectElement = document.getElementById('recommendSheet');
         if (!selectElement) return;
         
         selectElement.disabled = true;
+        selectElement.innerHTML = '<option>分類載入中...</option>';
 
         try {
-            // 1. 從後端獲取分類清單
-            const response = await fetch(MY_BACKEND_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'getRecommendationCategories' })
-            });
+            // ✅ 改成 GET 請求
+            const url = `${RECOMMEND_BACKEND_URL}?action=getRecommendationCategories`;
+            const response = await fetch(url);
+            
+            if (!response.ok) throw new Error(`HTTP 錯誤! 狀態: ${response.status}`);
             const result = await response.json();
             if (result.status === 'error') throw new Error(result.data.message);
             
             const categories = result.data.categories;
-            
-            // 2. 動態產生下拉選單選項
-            selectElement.innerHTML = ''; // 清空「載入中」
+            selectElement.innerHTML = '';
             categories.forEach(category => {
                 const option = document.createElement('option');
                 option.value = category;
@@ -100,26 +85,16 @@
             });
             
             selectElement.disabled = false;
+            selectElement.addEventListener('change', function () { loadRecommendData(this.value); });
 
-            // 3. 加上「變更時自動載入資料」的事件監聽
-            selectElement.addEventListener('change', function () {
-                loadRecommendData(this.value);
-            });
-
-            // 4. 自動載入第一個分類的資料
-            if (categories.length > 0) {
-                loadRecommendData(categories[0]);
-            }
+            if (categories.length > 0) { loadRecommendData(categories[0]); }
 
         } catch (error) {
             console.error('載入分類時發生錯誤:', error);
             selectElement.innerHTML = `<option>分類載入失敗</option>`;
-            const tbody = document.querySelector('#recommendTable tbody');
-            if(tbody) tbody.innerHTML = `<tr><td colspan="100%" class="text-danger">無法載入分類選單: ${error.message}</td></tr>`;
         }
     }
 
-    // 確保頁面元素都載入後再執行初始化
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeRecommendPage);
     } else {

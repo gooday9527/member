@@ -33,6 +33,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
 
     <script type="module">
+        // ✅ 在這裡新增一個全域的快取物件，用來存放載過的資料
+        window.appCache = {};
+        
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 

@@ -15,45 +15,6 @@ body {
 }
 
 /* ==========================================================================
-   手機版專屬調整 (Mobile-specific Adjustments)
-   這些樣式只在螢幕寬度小於或等於 767.98px 時生效
-   ========================================================================== */
-@media (max-width: 767.98px) {
-    /* 1. 確保登入/登出連結是藍色的 (navMenu 由 JS 動態生成) */
-    /* 這個 class 應由 JS 加到登入/登出連結的 a 標籤上 */
-    .auth-link-blue {
-        color: blue !important; /* 強制為藍色 */
-        font-weight: bold;      /* 加粗 */
-    }
-
-    /* 2. 訪客/登入者狀態顯示在「好管家代領」旁 */
-    /* 調整 .navbar-brand 及其旁邊狀態的佈局 */
-    .navbar-brand-with-status {
-        display: flex; /* 使用 Flexbox 佈局 */
-        flex-direction: column; /* 手機版堆疊顯示 */
-        align-items: flex-start; /* 內容左對齊 */
-        margin-left: 1rem; /* 保持原有的左側邊距 */
-        padding-top: 5px; /* 可選：為上方留一些空間 */
-        padding-bottom: 5px; /* 可選：為下方留一些空間 */
-    }
-
-    /* 調整好管家代領 (navbar-brand) 在這個新容器內的樣式 */
-    .navbar-brand-with-status .navbar-brand {
-        margin-left: 0; /* 移除原本在 navbar-brand 上的左邊距，由父容器控制 */
-        margin-bottom: 5px; /* 好管家代領與狀態文字間的間距 */
-        margin-right: 0; /* 確保沒有多餘的右邊距 */
-    }
-
-    /* 調整會員狀態文字的樣式 */
-    .user-status-inline {
-        font-size: 0.9em; /* 稍小字體 */
-        color: #6c757d;   /* 灰色 */
-        white-space: nowrap; /* 防止狀態文字換行 */
-        margin-left: 0 !important; /* 確保沒有額外的左邊距 */
-    }
-}
-
-/* ==========================================================================
    2. 主要佈局 (Layout: Navbar & Container)
    ========================================================================== */
 .navbar {
@@ -159,13 +120,6 @@ body {
     border: 1px solid #dee2e6;
     position: relative;
   }
-
-  /* 新增樣式來控制總結資訊的佈局 */
-   .recommend-summary {
-      font-size: 0.9rem;
-      color: #555;
-      margin-top: 5px;
-   }
 }
 
 /* --- 手機版佈局 (Mobile Layout) --- */
@@ -179,13 +133,6 @@ body {
   .recommend-wrapper table {
     min-width: 600px;
   }
-
-  .recommend-controls-group {
-      display: flex;
-      flex-wrap: wrap; /* 允許換行在小螢幕上 */
-      align-items: center;
-      gap: 10px; /* 項目間距 */
-   }   
 }
 
 /* --- 通用樣式 (推薦清單) --- */

@@ -22,6 +22,8 @@ const loginStatus = document.getElementById("loginStatus");
 const dynamicContentArea = document.getElementById('dynamic-content-area');
 const recommendPage = document.getElementById('page-recommend');
 const pages = document.querySelectorAll('.page-container');
+const navbarCollapse = document.getElementById('navbarNav');
+const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
 
 // --- 函數定義區 ---
 const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "login", label: "登入" } ];
@@ -108,6 +110,10 @@ document.body.addEventListener("click", function (e) {
         } else {
             navigateTo(id);
         }
+
+        // ✅ 只需在這裡新增這段判斷即可
+    if (navbarCollapse.classList.contains('show')) {
+        bsCollapse.hide();
     }
 });
 

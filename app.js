@@ -1,5 +1,5 @@
 // =================================================================
-//                 app.js (最終修正版)
+//                 app.js (修正漢堡選單版)
 // =================================================================
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -22,79 +22,19 @@ const loginStatus = document.getElementById("loginStatus");
 const dynamicContentArea = document.getElementById('dynamic-content-area');
 const recommendPage = document.getElementById('page-recommend');
 const pages = document.querySelectorAll('.page-container');
+// ✅ 新增：取得漢堡選單的 Bootstrap 實體
+const navbarCollapse = document.getElementById('navbarNav');
+const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
 
-// --- 函數定義區 ---
+
+// --- 函數定義 ---
 const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "login", label: "登入" } ];
 const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage", label: "📥 委託管理" }, { id: "souvenir-manage", label: "🧾 紀念品管理" }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] }, { id: "logout", label: "登出" } ];
 
-// ✅ 修正：確保所有函數只被定義一次
-function renderNavTabs() {
-    navMenu.innerHTML = "";
-    const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
-    tabs.forEach(tab => {
-        const li = document.createElement("li");
-        li.className = "nav-item";
-        if (tab.isDropdown) {
-            li.className = "nav-item dropdown";
-            li.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">${tab.label}</a><ul class="dropdown-menu" aria-labelledby="${tab.id}Link">${tab.children.map(child => `<li><a class="dropdown-item" href="#" data-section="${child.id}">${child.label}</a></li>`).join('')}</ul>`;
-        } else {
-            li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
-        }
-        navMenu.appendChild(li);
-    });
-}
-
-async function loadMemberName(email) {
-    if (!email) {
-        loginStatus.innerText = "訪客";
-        return;
-    }
-    loginStatus.innerText = "載入中...";
-    try {
-        const response = await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const info = await response.json();
-        loginStatus.innerText = `會員：${info.name || "未命名"}`;
-    } catch (error) {
-        console.error("取得會員資料失敗", error);
-        loginStatus.innerText = "會員：載入失敗";
-    }
-}
-
-async function loadExternalHtmlSection(sectionId) {
-    if (!sectionId) return;
-    dynamicContentArea.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"></div></div>`;
-    try {
-        const response = await fetch(`/${sectionId}.html`);
-        if (!response.ok) throw new Error(`載入 ${sectionId}.html 失敗`);
-        dynamicContentArea.innerHTML = await response.text();
-        dynamicContentArea.querySelectorAll('script').forEach(oldScript => {
-            const newScript = document.createElement('script');
-            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-            oldScript.parentNode.replaceChild(newScript, oldScript);
-        });
-    } catch (error) {
-        console.error('載入外部內容錯誤:', error);
-        dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">頁面載入失敗</h3>`;
-    }
-}
-
-function navigateTo(id, fromHistory = false) {
-    pages.forEach(p => p.style.display = 'none');
-    if (id === 'recommend') {
-        recommendPage.style.display = 'block';
-        initializeRecommendPage();
-    } else {
-        dynamicContentArea.style.display = 'block';
-        loadExternalHtmlSection(id);
-    }
-    if (!fromHistory && id && id !== "logout") {
-        const url = new URL(window.location);
-        url.searchParams.set('view', id);
-        window.history.pushState({ section: id }, '', url);
-    }
-}
+function renderNavTabs() { /* ... 內容不變 ... */ }
+async function loadMemberName(email) { /* ... 內容不變 ... */ }
+async function loadExternalHtmlSection(sectionId) { /* ... 內容不變 ... */ }
+function navigateTo(id, fromHistory = false) { /* ... 內容不變 ... */ }
 window.navigateTo = navigateTo;
 
 // --- 事件監聽與啟動邏輯 ---
@@ -108,32 +48,22 @@ document.body.addEventListener("click", function (e) {
         } else {
             navigateTo(id);
         }
+        // ✅ 新增：無論點擊什麼，只要是漢堡選單內的有效連結，就關閉選單
+        // 我們檢查選單目前是否為展開狀態 ('show')
+        if (navbarCollapse.classList.contains('show')) {
+            bsCollapse.hide();
+        }
     }
 });
 
-window.addEventListener('popstate', function(event) {
-    if (event.state && event.state.section) {
-        navigateTo(event.state.section, true);
-    }
-});
+window.addEventListener('popstate', function(event) { /* ... 內容不變 ... */ });
+onAuthStateChanged(auth, (user) => { /* ... 內容不變 ... */ });
 
-onAuthStateChanged(auth, (user) => {
-    const wasLoggedIn = !!loginEmail;
-    loginEmail = user ? user.email : null;
-    window.currentUserEmail = loginEmail;
-    const isLoggedIn = !!user;
 
-    if (typeof window.initialLoad === 'undefined') {
-        window.initialLoad = true;
-        renderNavTabs();
-        loadMemberName(loginEmail);
-        const urlParams = new URLSearchParams(window.location.search);
-        const view = urlParams.get("view");
-        let defaultPage = isLoggedIn ? "souvenir" : "login";
-        navigateTo(view || defaultPage);
-    } else if (isLoggedIn !== wasLoggedIn) {
-        renderNavTabs();
-        loadMemberName(loginEmail);
-        navigateTo(isLoggedIn ? "souvenir" : "login");
-    }
-});
+// 補上不變的函數內容
+function renderNavTabs(){navMenu.innerHTML="";const tabs=loginEmail?tabsAfterLogin:tabsBeforeLogin;tabs.forEach(tab=>{const li=document.createElement("li");li.className="nav-item";if(tab.isDropdown){li.className="nav-item dropdown";li.innerHTML=`<a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">${tab.label}</a><ul class="dropdown-menu" aria-labelledby="${tab.id}Link">${tab.children.map(child=>`<li><a class="dropdown-item" href="#" data-section="${child.id}">${child.label}</a></li>`).join('')}</ul>`}else{li.innerHTML=`<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`}navMenu.appendChild(li)})}
+async function loadMemberName(email){if(!email){loginStatus.innerText="訪客";return}loginStatus.innerText="載入中...";try{const response=await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);if(!response.ok)throw new Error('Network response was not ok');const info=await response.json();loginStatus.innerText=`會員：${info.name||"未命名"}`}catch(error){console.error("取得會員資料失敗",error);loginStatus.innerText="會員：載入失敗"}}
+async function loadExternalHtmlSection(sectionId){if(!sectionId)return;dynamicContentArea.innerHTML=`<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"></div></div>`;try{const response=await fetch(`/${sectionId}.html`);if(!response.ok)throw new Error(`載入 ${sectionId}.html 失敗`);dynamicContentArea.innerHTML=await response.text();dynamicContentArea.querySelectorAll('script').forEach(oldScript=>{const newScript=document.createElement('script');Array.from(oldScript.attributes).forEach(attr=>newScript.setAttribute(attr.name,attr.value));newScript.appendChild(document.createTextNode(oldScript.innerHTML));oldScript.parentNode.replaceChild(newScript,oldScript)})}catch(error){console.error('載入外部內容錯誤:',error);dynamicContentArea.innerHTML=`<h3 class="text-center text-danger">頁面載入失敗</h3>`}}
+function navigateTo(id,fromHistory=!1){pages.forEach(p=>p.style.display="none");"recommend"===id?(recommendPage.style.display="block",initializeRecommendPage()):(dynamicContentArea.style.display="block",loadExternalHtmlSection(id));!fromHistory&&id&&"logout"!==id&&(url=new URL(window.location),url.searchParams.set("view",id),window.history.pushState({section:id},"",url))}
+window.addEventListener('popstate',function(event){if(event.state&&event.state.section){navigateTo(event.state.section,!0)}});
+onAuthStateChanged(auth,(user)=>{const wasLoggedIn=!!loginEmail;loginEmail=user?user.email:null;window.currentUserEmail=loginEmail;const isLoggedIn=!!user;if(typeof window.initialLoad==='undefined'){window.initialLoad=!0;renderNavTabs();loadMemberName(loginEmail);const urlParams=new URLSearchParams(window.location.search);const view=urlParams.get("view");let defaultPage=isLoggedIn?"souvenir":"login";navigateTo(view||defaultPage)}else if(isLoggedIn!==wasLoggedIn){renderNavTabs();loadMemberName(loginEmail);navigateTo(isLoggedIn?"souvenir":"login")}})

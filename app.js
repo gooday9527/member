@@ -1,5 +1,5 @@
 // =================================================================
-//                 app.js (最終修正版)
+//                 app.js (最終結構修正版)
 // =================================================================
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -29,7 +29,6 @@ const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
 const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "login", label: "登入" } ];
 const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage", label: "📥 委託管理" }, { id: "souvenir-manage", label: "🧾 紀念品管理" }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] }, { id: "logout", label: "登出" } ];
 
-// ✅ 修正：確保所有函數只被定義一次
 function renderNavTabs() {
     navMenu.innerHTML = "";
     const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
@@ -47,10 +46,7 @@ function renderNavTabs() {
 }
 
 async function loadMemberName(email) {
-    if (!email) {
-        loginStatus.innerText = "訪客";
-        return;
-    }
+    if (!email) { loginStatus.innerText = "訪客"; return; }
     loginStatus.innerText = "載入中...";
     try {
         const response = await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
@@ -100,6 +96,9 @@ function navigateTo(id, fromHistory = false) {
 window.navigateTo = navigateTo;
 
 // --- 事件監聽與啟動邏輯 ---
+// ✅ 修正：將三個核心監聽器，放在同一個層級，互不干擾
+
+// 監聽器一：監聽整個頁面的點擊事件
 document.body.addEventListener("click", function (e) {
     const clickedLink = e.target.closest("a[data-section]");
     if (clickedLink) {
@@ -110,35 +109,42 @@ document.body.addEventListener("click", function (e) {
         } else {
             navigateTo(id);
         }
-
-        // ✅ 只需在這裡新增這段判斷即可
-    if (navbarCollapse.classList.contains('show')) {
-        bsCollapse.hide();
+        if (navbarCollapse.classList.contains('show')) {
+            bsCollapse.hide();
+        }
     }
+});
 
-    window.addEventListener('popstate', function(event) {
+// 監聽器二：監聽瀏覽器的上一頁/下一頁
+window.addEventListener('popstate', function(event) {
     if (event.state && event.state.section) {
         navigateTo(event.state.section, true);
     }
 });
 
+// 監聽器三：監聽 Firebase 登入狀態，這是整個 App 的啟動點
 onAuthStateChanged(auth, (user) => {
     const wasLoggedIn = !!loginEmail;
     loginEmail = user ? user.email : null;
     window.currentUserEmail = loginEmail;
     const isLoggedIn = !!user;
 
-    if (typeof window.initialLoad === 'undefined') {
+    // 只有在登入狀態改變，或這是頁面第一次載入時，才做事
+    if (typeof window.initialLoad === 'undefined' || isLoggedIn !== wasLoggedIn) {
         window.initialLoad = true;
         renderNavTabs();
         loadMemberName(loginEmail);
+
+        // 決定要顯示哪個頁面
         const urlParams = new URLSearchParams(window.location.search);
         const view = urlParams.get("view");
-        let defaultPage = isLoggedIn ? "souvenir" : "login";
-        navigateTo(view || defaultPage);
-    } else if (isLoggedIn !== wasLoggedIn) {
-        renderNavTabs();
-        loadMemberName(loginEmail);
-        navigateTo(isLoggedIn ? "souvenir" : "login");
+        
+        // 如果是首次載入且網址有指定頁面，則顯示該頁面
+        if (view && !wasLoggedIn && !isLoggedIn) {
+             navigateTo(view);
+        } else {
+             // 否則，根據登入狀態跳轉到預設頁面
+             navigateTo(isLoggedIn ? "souvenir" : "login");
+        }
     }
 });

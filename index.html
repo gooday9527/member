@@ -9,11 +9,15 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="colors.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        .page-container { display: none; }
+        .page-container.active { display: block; }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-light">
         <a class="navbar-brand fw-bold" href="#">好管家代領</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -25,151 +29,28 @@
     </nav>
 
     <div class="container-fluid">
-        <section id="dynamic-content-area"></section>
+        <section id="page-recommend" class="page-container">
+            <div class="recommend-wrapper">
+                <h3 class="text-center">🌟 推薦清單</h3>
+                <div class="d-flex align-items-center gap-2 recommend-controls mb-3">
+                    <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
+                    <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;"><option>分類載入中...</option></select>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm" id="recommendTable">
+                        <thead class="table-warning"></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <section id="dynamic-content-area" class="page-container"></section>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
 
-    <script type="module">
-        // ✅ 在這裡新增一個全域的快取物件，用來存放載過的資料
-        window.appCache = {};
-        
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-
-        const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f", measurementId: "G-J3Z7YTHJ9P" };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        let loginEmail = null;
-        const navMenu = document.getElementById("navMenu");
-        const loginStatus = document.getElementById("loginStatus");
-
-        window.currentUserEmail = null;
-        window.updateMainAppLoginState = function(email) {
-            console.log("Login state update triggered for:", email);
-        };
-
-        const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "login", label: "登入" } ];
-        const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage", label: "📥 委託管理" }, { id: "souvenir-manage", label: "🧾 紀念品管理" }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] }, { id: "logout", label: "登出" } ];
-
-        function renderNavTabs() {
-            navMenu.innerHTML = "";
-            const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
-            tabs.forEach(tab => {
-                const li = document.createElement("li");
-                li.className = "nav-item";
-                if (tab.isDropdown) {
-                    li.className = "nav-item dropdown";
-                    li.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">${tab.label}</a><ul class="dropdown-menu" aria-labelledby="${tab.id}Link">${tab.children.map(child => `<li><a class="dropdown-item" href="#" data-section="${child.id}">${child.label}</a></li>`).join('')}</ul>`;
-                } else {
-                    li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
-                }
-                navMenu.appendChild(li);
-            });
-        }
-
-        async function loadMemberName(email) {
-            if (!email) {
-                loginStatus.innerText = "訪客";
-                return;
-            }
-            loginStatus.innerText = "載入中...";
-            try {
-                const APPS_SCRIPT_MEMBER_INFO_URL = "https://script.google.com/macros/s/AKfycbzfj7nkQe1QnKiRedfYKeMBAAKVKAi17b0rEirrgzNd2AcTmgQcVvneIg5IlqQDtWaF/exec";
-                const response = await fetch(`${APPS_SCRIPT_MEMBER_INFO_URL}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
-                if (!response.ok) throw new Error('Network response was not ok');
-                const info = await response.json();
-                loginStatus.innerText = `會員：${info.name || "未命名"}`;
-            } catch (error) {
-                console.error("取得會員資料失敗", error);
-                loginStatus.innerText = "會員：載入失敗";
-            }
-        }
-
-        async function loadExternalHtmlSection(sectionId) {
-            const dynamicContentArea = document.getElementById('dynamic-content-area');
-            dynamicContentArea.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"></div></div>`;
-            try {
-                const response = await fetch(`/${sectionId}.html`);
-                if (!response.ok) throw new Error(`載入 ${sectionId}.html 失敗`);
-                const htmlContent = await response.text();
-                dynamicContentArea.innerHTML = htmlContent;
-                const scripts = dynamicContentArea.querySelectorAll('script');
-                scripts.forEach(oldScript => {
-                    const newScript = document.createElement('script');
-                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                });
-            } catch (error) {
-                console.error('載入外部內容錯誤:', error);
-                dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">頁面載入失敗</h3>`;
-            }
-        }
-
-        window.showSection = function(id, fromHistory = false) {
-            if (!id || id === "logout") return;
-            loadExternalHtmlSection(id);
-            if (!fromHistory) {
-                const url = new URL(window.location);
-                url.searchParams.set('view', id);
-                window.history.pushState({ section: id }, '', url);
-            }
-        }
-
-        document.body.addEventListener("click", function (e) {
-            const clickedLink = e.target.closest("a[data-section]");
-            if (clickedLink) {
-                e.preventDefault();
-                const id = clickedLink.dataset.section;
-                if (id === "logout") {
-                    signOut(auth).catch((error) => console.error("登出失敗:", error));
-                } else {
-                    window.showSection(id);
-                }
-            }
-        });
-
-        window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.section) {
-                showSection(event.state.section, true);
-            }
-        });
-
-        // ✅ 【最終修正】確保啟動邏輯的絕對正確性
-        onAuthStateChanged(auth, (user) => {
-            const wasLoggedIn = !!loginEmail;
-            loginEmail = user ? user.email : null;
-            window.currentUserEmail = loginEmail;
-            const isLoggedIn = !!user;
-
-            // 判斷是否為頁面首次載入
-            if (typeof window.initialLoad === 'undefined') {
-                window.initialLoad = true; // 標記為已處理
-                
-                // 首次載入時，無論如何都要先畫一次介面
-                renderNavTabs();
-                loadMemberName(loginEmail);
-
-                // 從網址讀取應顯示的頁面
-                const urlParams = new URLSearchParams(window.location.search);
-                const view = urlParams.get("view");
-                
-                // 決定預設頁面
-                let defaultPage = isLoggedIn ? "souvenir" : "login";
-                // 如果網址有指定頁面，則優先顯示
-                window.showSection(view || defaultPage);
-            } 
-            // 如果不是首次載入，就只在登入狀態改變時才更新
-            else if (isLoggedIn !== wasLoggedIn) {
-                renderNavTabs();
-                loadMemberName(loginEmail);
-                window.showSection(isLoggedIn ? "souvenir" : "login");
-            }
-        });
-    </script>
+    <script src="app.js" type="module"></script>
 </body>
 </html>

@@ -1,15 +1,17 @@
 // =================================================================
-//                 app.js (修正版)
+//                 app.js (最終修正版)
 // =================================================================
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { initializeRecommendPage } from './recommend.js';
+// 移除 recommend.js 的 import，因為它不在這個頁面
+// import { initializeRecommendPage } from './recommend.js'; 
 
 // --- 全域設定 ---
 const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f", measurementId: "G-J3Z7YTHJ9P" };
+
 // ✅ 請確保這裡的 main URL 是您最新部署的、統一後的後端網址
 export const APP_URLS = {
-    main: "https://script.google.com/macros/s/AKfycbzk_RKeBgLtWsVJe79WUIYklyOnLL94nVZ41rb_zG_bV-LOSsi9PtSHQX0H0a2hMId0/exec",
+    main: "https://script.google.com/macros/s/AKfycbw7BQrq9T7l-BMxUIQqPbwK6RwUad09JRmP5BmkmD0T1jkV1lwA7FxJ1DTBledjz6S-mw/exec",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -23,7 +25,8 @@ const loginStatus = document.getElementById("loginStatus");
 const mobileUserName = document.getElementById("mobileUserName");
 const desktopUserName = document.getElementById("desktopUserName");
 const dynamicContentArea = document.getElementById('dynamic-content-area');
-const recommendPage = document.getElementById('page-recommend');
+// 移除 recommendPage 的變數，因為它不在這個頁面
+// const recommendPage = document.getElementById('page-recommend'); 
 const pages = document.querySelectorAll('.page-container');
 const navbarCollapse = document.getElementById('navbarNav');
 const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
@@ -31,7 +34,7 @@ const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
 // --- 函數定義區 ---
 
 const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }];
-const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage-dropdown", label: "委託管理", isDropdown: true, children: [ { id: "delegable-list", label: "可委託代領清單" }, { id: "delegated-query", label: "已委託代領查詢" } ] }, { id: "souvenir-manage-dropdown", label: "紀念品管理", isDropdown: true, children: [ { id: "souvenir-inventory", label: "紀念品總庫存" }, { id: "souvenir-transaction-query", label: "紀念品進出查詢" }, { id: "souvenir-withdrawal-query", label: "領出申請查詢" }, { id: "souvenir-album", label: "專屬紀念品相冊" } ] }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] } ];
+const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage-dropdown", label: "📥 委託管理", isDropdown: true, children: [ { id: "delegable-list", label: "可委託代領清單" }, { id: "delegated-query", label: "已委託代領查詢" } ] }, { id: "souvenir-manage-dropdown", label: "🧾 紀念品管理", isDropdown: true, children: [ { id: "souvenir-inventory", label: "紀念品總庫存" }, { id: "souvenir-transaction-query", label: "紀念品進出查詢" }, { id: "souvenir-withdrawal-query", label: "領出申請查詢" }, { id: "souvenir-album", label: "專屬紀念品相冊" } ] }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] } ];
 
 function renderNavTabs() {
     navMenu.innerHTML = "";
@@ -64,18 +67,17 @@ async function loadMemberName(email) {
   document.getElementById("desktopUserName").innerText = "載入中...";
 
   try {
+    // ✅【修正】這裡只會呼叫後端 API，不會包含任何後端變數
     const response = await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
     if (!response.ok) throw new Error('網路回應錯誤');
 
     const result = await response.json();
 
-    // ✅【修正】檢查後端回傳的 success 狀態，並從 result.data 中讀取會員資料
     if (result.success && result.data && result.data.name && result.data.name !== "未知會員") {
         const memberText = `會員：${result.data.name}`;
         document.getElementById("mobileUserName").innerText = memberText;
         document.getElementById("desktopUserName").innerText = memberText;
     } else {
-        // 如果後端回傳 success: false 或找不到 name，則顯示預設文字
         throw new Error(result.message || "找不到會員名稱");
     }
 
@@ -117,13 +119,11 @@ async function loadExternalHtmlSection(sectionId) {
 
 function navigateTo(id, fromHistory = false) {
     pages.forEach(p => p.style.display = 'none');
-    if (id === 'recommend') {
-        recommendPage.style.display = 'block';
-        initializeRecommendPage();
-    } else {
-        dynamicContentArea.style.display = 'block';
-        loadExternalHtmlSection(id);
-    }
+    // 移除 recommendPage 的相關邏輯
+    // if (id === 'recommend') { ... } 
+    dynamicContentArea.style.display = 'block';
+    loadExternalHtmlSection(id);
+    
     if (!fromHistory && id && id !== "logout") {
         const url = new URL(window.location);
         url.searchParams.set('view', id);
@@ -161,7 +161,6 @@ onAuthStateChanged(auth, (user) => {
     window.currentUserEmail = loginEmail;
     const isLoggedIn = !!user;
 
-    // 只有在登入狀態改變時才執行，避免不必要的重繪
     if (isLoggedIn !== wasLoggedIn) {
         renderNavTabs();
         updateLoginStatusLink(isLoggedIn);
@@ -169,20 +168,16 @@ onAuthStateChanged(auth, (user) => {
         if (isLoggedIn) {
             loadMemberName(loginEmail);
         } else {
-            // 登出時清空會員名稱
             document.getElementById("mobileUserName").innerText = "";
             document.getElementById("desktopUserName").innerText = "";
-            // 登出後預設跳回紀念品頁面
             navigateTo("souvenir");
         }
     }
     
-    // 首次載入時的邏輯
     if (typeof window.initialLoad === 'undefined') {
-        window.initialLoad = false; // 標記為已首次載入
+        window.initialLoad = false;
         document.getElementById("initialLoading")?.remove();
         
-        // 如果已登入，則執行一次初始載入
         if (isLoggedIn) {
             renderNavTabs();
             updateLoginStatusLink(true);

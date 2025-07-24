@@ -14,25 +14,38 @@ body {
   }
 }
 
-/* 僅在手機版上生效：修正漢堡選單順序 */
+/* ==================================================================
+   手機版專用樣式 (螢幕寬度小於 768px 時生效)
+   ================================================================== */
 @media (max-width: 767.98px) {
-  /* 讓漢堡選單內的項目可以使用 flex order 排列 */
+
+  /* --- 漢堡選單內部項目的順序調整 --- */
+
+  /* 步驟一：先讓選單容器變成可以排序的 Flexbox 佈局 */
   #navMenu {
-    display: flex;
-    flex-direction: column;
+    display: flex;         /* 啟用 Flexbox */
+    flex-direction: column;/* 讓項目垂直排列 */
   }
 
-  /* 將登入/登出項目的順序提到最前面 */
+  /* 步驟二：用 order 屬性，將「登入/登出」在視覺上提到最前面 */
   .login-logout-nav-item {
-    order: -1; 
+    order: -1; /* order 的值越小，排序越前面 */
+  }
+
+  /* --- 導覽列頂部的美化與修正 --- */
+
+  /* (這是解決您上個問題的) 強制頂部項目不准換行 */
+  .navbar > .container-fluid {
+    flex-wrap: nowrap;
+  }
+
+  /* ⭐⭐⭐【這是新增的】讓 Logo 更靠左 ⭐⭐⭐ */
+  /* Bootstrap 導覽列容器預設左右有內距(padding)，這裡我們把它縮小來讓 Logo 更貼近邊緣 */
+  .navbar > .container-fluid {
+    padding-left: 0.5rem;  /* 預設值大約是 1rem (16px)，您可以改成 0.5rem (8px) 或更小試試看 */
+    padding-right: 0.5rem; /* 同時也縮小右邊，讓漢堡按鈕也靠外一點，看起來比較對稱 */
   }
 }
-
-/* 修正手機版導覽列頂部項目會自動換行的問題 */
-.navbar > .container-fluid {
-  flex-wrap: nowrap;
-}
-
 
 /* ==========================================================================
    2. 主要佈局 (Layout: Navbar & Container)

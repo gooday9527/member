@@ -63,7 +63,7 @@ html, body {
   border-bottom: 4px solid #007bff;  /* 在 active（當前）選單項下方加一條藍色底線 */
 }
 .container-fluid {
-  padding: 1rem !important; /* 將整個導覽列的內距（padding）上下左右都設為 1rem（強制） */
+  padding: 0.5rem !important; /* 將整個導覽列的內距（padding）上下左右都設為 1rem（強制） */
 }
 
 /* ==========================================================================

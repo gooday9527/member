@@ -55,13 +55,15 @@
                 const result = await response.json();
                 if (!result.success) { throw new Error(result.message || "寫入會員資料失敗"); }
                 
-                // ✅ 【最重要的修改】
-                // 步驟 3: 提示成功，並導向登入頁
+                // ✅ 步驟 3: 強制登出 Firebase，避免導覽列誤判
+                await auth.signOut();
+                
+                // ✅ 步驟 4: 提示成功並跳轉登入
                 alert("✅ 註冊成功！請使用您的新帳號登入。");
                 if (window.showSection) {
-                    window.showSection('login'); // 使用主程式的函數來切換頁面
+                  window.showSection('login'); // SPA 模式
                 } else {
-                    window.location.href = "/?view=login"; // 備用方案
+                 window.location.href = "/?view=login"; // 非 SPA 模式
                 }
 
             } catch (error) {

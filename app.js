@@ -79,7 +79,7 @@ function updateLoginStatusLink(isLoggedIn) {
     if (isLoggedIn) {
         // 如果已登入，顯示登出連結
         // 注意 data-section="logout" 屬性，讓原本的點擊事件可以捕捉到
-        loginStatus.innerHTML = `<a class="nav-link ms-2 text-red" href="#" data-section="logout">登出</a>`;
+        loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="logout">登出</a>`;
     } else {
         // 如果未登入，顯示登入連結
         loginStatus.innerHTML = `<a class="nav-link text-red" href="#" data-section="login">登入</a>`;

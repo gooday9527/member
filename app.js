@@ -19,6 +19,7 @@ let loginEmail = null;
 window.currentUserEmail = null;
 const navMenu = document.getElementById("navMenu");
 const loginStatus = document.getElementById("loginStatus");
+const desktopUserName = document.getElementById("desktopUserName");
 const dynamicContentArea = document.getElementById('dynamic-content-area');
 const recommendPage = document.getElementById('page-recommend');
 const pages = document.querySelectorAll('.page-container');
@@ -26,8 +27,8 @@ const navbarCollapse = document.getElementById('navbarNav');
 const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
 
 // --- 函數定義區 ---
-const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "login", label: "登入" } ];
-const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage", label: "📥 委託管理" }, { id: "souvenir-manage", label: "🧾 紀念品管理" }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] }, { id: "logout", label: "登出" } ];
+const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }];
+const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage", label: "📥 委託管理" }, { id: "souvenir-manage", label: "🧾 紀念品管理" }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] } ];
 
 function renderNavTabs() {
     navMenu.innerHTML = "";
@@ -46,16 +47,33 @@ function renderNavTabs() {
 }
 
 async function loadMemberName(email) {
-    if (!email) { loginStatus.innerText = "訪客"; return; }
-    loginStatus.innerText = "載入中...";
+    // 如果沒有登入，就清空使用者名稱，並直接結束
+    if (!email) {
+        desktopUserName.innerText = "";
+        return;
+    }
+
+    desktopUserName.innerText = "載入中..."; // 提示正在載入
     try {
         const response = await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
         if (!response.ok) throw new Error('Network response was not ok');
         const info = await response.json();
-        loginStatus.innerText = `會員：${info.name || "未命名"}`;
+        // 將結果顯示在桌機版專用的元素上
+        desktopUserName.innerText = `會員：${info.name || "未命名"}`;
     } catch (error) {
         console.error("取得會員資料失敗", error);
-        loginStatus.innerText = "會員：載入失敗";
+        desktopUserName.innerText = "會員：載入失敗";
+    }
+}
+
+function updateLoginStatusLink(isLoggedIn) {
+    if (isLoggedIn) {
+        // 如果已登入，顯示登出連結
+        // 注意 data-section="logout" 屬性，讓原本的點擊事件可以捕捉到
+        loginStatus.innerHTML = `<a class="nav-link" href="#" data-section="logout">登出</a>`;
+    } else {
+        // 如果未登入，顯示登入連結
+        loginStatus.innerHTML = `<a class="nav-link" href="#" data-section="login">登入</a>`;
     }
 }
 
@@ -134,6 +152,7 @@ onAuthStateChanged(auth, (user) => {
         window.initialLoad = true;
         renderNavTabs();
         loadMemberName(loginEmail);
+        updateLoginStatusLink(isLoggedIn);
 
         // 決定要顯示哪個頁面
         const urlParams = new URLSearchParams(window.location.search);

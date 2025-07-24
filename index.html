@@ -16,23 +16,33 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-light">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#">好管家代領</a>
-        <div id="desktopUserName" class="ms-2 small text-muted d-none d-md-block"></div>
+  <div class="container-fluid">
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <div class="navbar-nav ms-auto d-flex flex-column flex-md-row align-items-md-center">
-                <ul class="navbar-nav" id="navMenu"></ul>
-                
-                <div id="loginStatus" class="small text-muted"></div>
-            </div>
-        </div>
+    <!-- 品牌 + 使用者名稱：靠左 -->
+    <div class="d-flex align-items-center">
+      <a class="navbar-brand fw-bold d-flex align-items-center mb-0" href="#">
+        <img src="favicon.png" alt="好管家Logo" style="height: 30px; margin-right: 8px;">
+        好管家代領
+      </a>
+      <div id="userNameDisplay" class="ms-2 small text-muted"></div>
     </div>
+
+    <!-- 漢堡選單：手機用 -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- 導覽選單 + 登入狀態：靠右 -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="d-flex flex-column flex-md-row align-items-md-center ms-auto">
+        <ul class="navbar-nav" id="navMenu"></ul>
+        <div id="loginStatus" class="small text-muted"></div>
+      </div>
+    </div>
+
+  </div>
 </nav>
+
 
     <div class="container-fluid">
         <section id="page-recommend" class="page-container">

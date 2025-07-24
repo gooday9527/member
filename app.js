@@ -65,9 +65,8 @@ async function loadMemberName(email) {
         const info = await response.json();
         const memberText = `會員：${info.name || "未命名"}`;
 
-        // ✅ 同時更新手機版和桌機版的會員名稱
-        mobileUserName.innerText = memberText;
-        desktopUserName.innerText = memberText;
+    // 👉 寫入品牌右邊的名稱欄位
+    document.getElementById("userNameDisplay").innerText = memberText;
 
     } catch (error) {
         console.error("取得會員資料失敗", error);

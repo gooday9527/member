@@ -1,0 +1,189 @@
+<!-- delegable-list.html (DataTables 功能版) -->
+
+<!-- 引入 DataTables 和 Bootstrap 5 的 CSS 樣式表 -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
+
+<div class="container-fluid mt-4">
+    <h2 class="mb-3">📥 可委託代領清單</h2>
+    <p class="text-muted">這裡會列出所有您可以委託我們代領的股東會紀念品。您可以利用下方的搜尋功能快速找到目標公司。</p>
+    
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <!-- 這是 DataTables 的主要 HTML 結構 -->
+                <table id="delegableTable" class="table table-striped table-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>股號</th>
+                            <th>股名</th>
+                            <th>電投開始日</th>
+                            <th>委託截止日</th>
+                            <th>委託條件</th>
+                            <th class="text-center">持有帳號數</th>
+                            <th class="text-center">已委託數</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- DataTables 會透過 JavaScript 自動填入表格內容 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 Modal (彈出式視窗)，預設為隱藏 -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel">持有帳號明細</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>公司：</strong><span id="modalCompanyName" class="fw-bold"></span></p>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>姓名</th>
+                        <th>證件狀態</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="modalTableBody">
+                    <!-- JavaScript 會動態填入這裡的明細 -->
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 引入頁面所需的 JavaScript 函式庫 -->
+<!-- 1. jQuery (DataTables 的必要依賴) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- 2. DataTables 核心函式庫 -->
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<!-- 3. DataTables 與 Bootstrap 5 的整合函式庫 -->
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+
+<!-- 我們自己的頁面邏輯 -->
+<script type="module">
+    // 從主程式 app.js 匯入後端 API 的網址
+    import { APP_URLS } from './app.js';
+
+    // 當頁面的 HTML 結構都載入完成後，再執行我們的 JavaScript
+    document.addEventListener('DOMContentLoaded', function () {
+        
+        // 從全域變數取得目前登入者的 Email
+        const email = window.currentUserEmail;
+        if (!email) {
+            // 如果未登入，顯示提示訊息並停止執行
+            $('#delegableTable').html('<tr><td colspan="7" class="text-center alert alert-danger">請先登入才能查看您的委託清單。</td></tr>');
+            return;
+        }
+
+        // 初始化 DataTable
+        const table = new DataTable('#delegableTable', {
+            // 透過 Ajax 從我們的後端 API 載入資料
+            ajax: {
+                // 使用從 app.js 匯入的網址，並帶上 action 和 email 參數
+                url: APP_URLS.main,
+                type: 'POST', // 使用 POST 方法
+                contentType: 'application/json',
+                data: function(d) {
+                    // 將請求包裝成後端需要的 JSON 格式
+                    return JSON.stringify({
+                        action: 'getDelegableList',
+                        email: email
+                    });
+                },
+                // 指定資料在後端回傳的 JSON 中的 'data' 屬性
+                // 這是為了匹配我們後端 { success: true, data: [...] } 的格式
+                dataSrc: 'data' 
+            },
+            // 定義表格的每一欄 (column) 對應到資料的哪個屬性
+            columns: [
+                { data: 'stockCode' },
+                { data: 'stockName' },
+                { data: 'eVotingStartDate' },
+                { data: 'delegationDeadline' },
+                { data: 'delegationConditions' },
+                { 
+                    data: 'totalHoldingAccounts',
+                    className: 'text-center',
+                    // 自訂這一欄的顯示內容
+                    render: function (data, type, row) {
+                        // 如果持有帳號數 > 0，就顯示一個可以點擊的按鈕
+                        if (data > 0) {
+                            // 將該行的詳細資料 (holdingsDetail) 轉成 JSON 字串後，存在按鈕的 data-details 屬性中，方便後續讀取
+                            return `<button class="btn btn-sm btn-outline-primary view-details-btn" 
+                                            data-details='${JSON.stringify(row.holdingsDetail)}'
+                                            data-company="${row.stockName} (${row.stockCode})"
+                                            data-conditions="${row.delegationConditions}">
+                                        ${data}
+                                    </button>`;
+                        }
+                        return data; // 如果是 0，就只顯示數字 0
+                    }
+                },
+                { data: 'delegatedAccounts', className: 'text-center' }
+            ],
+            // DataTables 的其他實用設定
+            language: {
+                // 從 CDN 載入 DataTables 的繁體中文翻譯檔
+                url: 'https://cdn.datatables.net/plug-ins/2.0.8/i18n/zh-HANT.json'
+            },
+            responsive: true, // 啟用響應式設計
+            order: [[ 3, 'asc' ]] // 預設使用第 4 欄 (委託截止日) 進行升冪排序
+        });
+
+        // 建立 Bootstrap Modal 的 JavaScript 物件，方便我們用程式控制它
+        const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+
+        // 使用事件委派 (Event Delegation) 的方式來監聽按鈕點擊
+        $('#delegableTable tbody').on('click', '.view-details-btn', function () {
+            // 從被點擊按鈕的 data-* 屬性中，讀取我們預先儲存的資料
+            const details = JSON.parse($(this).attr('data-details'));
+            const companyName = $(this).attr('data-company');
+            const conditions = $(this).attr('data-conditions');
+            
+            // 填入 Modal 彈出視窗的標題和內容
+            $('#modalCompanyName').text(companyName);
+            const modalBody = $('#modalTableBody');
+            modalBody.empty(); // 先清空舊的明細內容
+
+            details.forEach(account => {
+                let actionHtml = '';
+                // 簡化判斷：如果委託條件包含"身分證"，且該帳號的證件類型也是"身分證"，則視為符合條件
+                const meetsCondition = conditions.includes("身分證") && account.documentType === "身分證"; 
+                const requiresMail = conditions.includes("寄開會通知書給我");
+
+                if (account.isDelegated) {
+                    actionHtml = '<span class="badge bg-success">已委託</span>';
+                } else if (conditions.includes("身分證") && !meetsCondition) { 
+                    actionHtml = '<span class="badge bg-danger" title="此帳號的證件不符合委託條件">X</span>';
+                } else {
+                    let buttonText = '委託';
+                    if (requiresMail) {
+                        buttonText = '<span class="text-warning me-1">⚠️</span>需寄單';
+                    }
+                    actionHtml = `<button class="btn btn-primary btn-sm">${buttonText}</button>`;
+                }
+                
+                const rowHtml = `<tr>
+                                <td>${account.accountName}</td>
+                                <td>${account.documentType || '未提供'}</td>
+                                <td class="text-center">${actionHtml}</td>
+                            </tr>`;
+                modalBody.append(rowHtml);
+            });
+
+            // 用程式顯示 Modal 彈出視窗
+            detailsModal.show();
+        });
+    });
+</script>

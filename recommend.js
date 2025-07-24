@@ -1,23 +1,17 @@
-// =================================================================
-//                 recommend.js (最簡穩定版)
-// =================================================================
-
-// ✅ 我們不再使用自己的後端，回到最原始的公開 API
 const OPENSHEET_URL = "https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk";
 
 let isRecommendInitialized = false;
-let categoriesList = []; // 用來存放分類
+let categoriesList = ["我全都要（不需證件）", "高cp推薦", "禮券類", "小資族", "入門組"];
+let recommendDataCache = {}; // ⏱️ 全部分類快取
 
 export function initializeRecommendPage() {
     if (isRecommendInitialized) return; 
     isRecommendInitialized = true;
-    
+
     const selectElement = document.getElementById('recommendSheet');
     if (!selectElement) return;
 
-    // 直接在這裡定義分類，不再從遠端讀取
-    categoriesList = ["我全都要（不需證件）", "高cp推薦", "禮券類", "小資族", "入門組"];
-    
+    // 填入下拉選單
     selectElement.innerHTML = '';
     categoriesList.forEach(category => {
         const option = document.createElement('option');
@@ -25,53 +19,66 @@ export function initializeRecommendPage() {
         option.textContent = category;
         selectElement.appendChild(option);
     });
-    
     selectElement.disabled = false;
-    selectElement.addEventListener('change', () => loadRecommendData(selectElement.value));
-    
-    if (categoriesList.length > 0) {
-        loadRecommendData(categoriesList[0]);
-    }
+
+    selectElement.addEventListener('change', () => {
+        const selected = selectElement.value;
+        if (recommendDataCache[selected]) {
+            renderRecommendTable(recommendDataCache[selected]);
+        } else {
+            loadAndCacheRecommendData(selected);
+        }
+    });
+
+    // 🔄 初始化時一次載入全部分類
+    Promise.all(categoriesList.map(loadAndCacheRecommendData)).then(() => {
+        if (categoriesList[0]) {
+            renderRecommendTable(recommendDataCache[categoriesList[0]]);
+            selectElement.value = categoriesList[0];
+        }
+    });
 }
 
-async function loadRecommendData(sheetName) {
-    const tableElement = document.getElementById('recommendTable');
-    if (!tableElement || !sheetName) return;
-    const thead = tableElement.querySelector('thead');
-    const tbody = tableElement.querySelector('tbody');
-    thead.innerHTML = '';
-    tbody.innerHTML = `<tr><td colspan="100%" class="text-center p-4">資料載入中...</td></tr>`;
-
+async function loadAndCacheRecommendData(sheetName) {
+    if (!sheetName || recommendDataCache[sheetName]) return;
     try {
         const url = `${OPENSHEET_URL}/${encodeURIComponent(sheetName)}`;
         const response = await fetch(url);
-        if (!response.ok) throw new Error('無法從 opensheet.elk.sh 取得資料');
-        
+        if (!response.ok) throw new Error(`取得 ${sheetName} 資料失敗`);
         const data = await response.json();
-        
-        tbody.innerHTML = ''; 
-        if (data && data.length > 0) {
-            const headers = Object.keys(data[0]);
-            thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-            
-            // 使用最高效的渲染方式
-            const fragment = document.createDocumentFragment();
-            data.forEach(rowData => {
-                const tr = document.createElement('tr');
-                headers.forEach(header => {
-                    const td = document.createElement('td');
-                    td.textContent = rowData[header] || '';
-                    tr.appendChild(td);
-                });
-                fragment.appendChild(tr);
-            });
-            tbody.appendChild(fragment);
-
-        } else {
-            tbody.innerHTML = '<tr><td colspan="100%" class="text-center p-4">這個分類目前沒有資料</td></tr>';
-        }
+        recommendDataCache[sheetName] = data;
     } catch (error) {
-        console.error('載入推薦資料時發生錯誤:', error);
-        tbody.innerHTML = `<tr><td colspan="100%" class="text-danger text-center p-4">資料載入失敗，請確認試算表權限</td></tr>`;
+        console.error(`載入 ${sheetName} 推薦資料失敗：`, error);
+        recommendDataCache[sheetName] = []; // 空值避免再 fetch
     }
+}
+
+function renderRecommendTable(data) {
+    const tableElement = document.getElementById('recommendTable');
+    if (!tableElement) return;
+
+    const thead = tableElement.querySelector('thead');
+    const tbody = tableElement.querySelector('tbody');
+    thead.innerHTML = '';
+    tbody.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="100%" class="text-center p-4">這個分類目前沒有資料</td></tr>';
+        return;
+    }
+
+    const headers = Object.keys(data[0]);
+    thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+
+    const fragment = document.createDocumentFragment();
+    data.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(h => {
+            const td = document.createElement('td');
+            td.textContent = row[h] || '';
+            tr.appendChild(td);
+        });
+        fragment.appendChild(tr);
+    });
+    tbody.appendChild(fragment);
 }

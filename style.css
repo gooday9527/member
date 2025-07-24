@@ -36,27 +36,27 @@ body {
    2. 主要佈局 (Layout: Navbar & Container)
    ========================================================================== */
 .navbar {
-  background-color: #ffe082;
-  padding: 0 1rem;
+  background-color: #ffe082; /* 導覽列背景顏色為淡黃色（鵝黃色） */
+  padding: 0 0.5rem; /* 導覽列上下 padding 為 0，左右 padding 為 1rem（左右內距） */
 }
 .navbar-brand {
-  margin-left: 1rem;
+  margin-left: 0.5rem; /* 品牌名稱左邊留 1rem 的外距（讓它不貼邊） */
 }
 .navbar-collapse {
-  justify-content: flex-start !important;
+  justify-content: flex-start !important;  /* 導覽列展開區塊內容靠左對齊（強制） */
 }
 .navbar-nav {
-  margin-right: auto !important;
+  margin-right: auto !important;  /* 將選單推到最左邊，後面的東西（如登入狀態）會靠右 */
 }
 .nav-link {
-  font-weight: bold;
+  font-weight: bold;      /* 所有導覽列的連結文字加粗 */
 }
 .nav-link.active {
-  border: none;
-  border-bottom: 4px solid #007bff;
+  border: none;               /* 移除預設邊框 */
+  border-bottom: 4px solid #007bff;  /* 在 active（當前）選單項下方加一條藍色底線 */
 }
 .container-fluid {
-  padding: 1rem !important;
+  padding: 0.5rem !important; /* 將整個導覽列的內距（padding）上下左右都設為 1rem（強制） */
 }
 
 /* ==========================================================================

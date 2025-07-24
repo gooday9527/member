@@ -15,14 +15,21 @@ html, body {
   overflow: hidden; /* 不要外部捲軸 */
 }
 
-@media (min-width: 769px) {
-  body {
-    overflow-x: hidden;
+@media (min-width: 768px) {
+  .page-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 56px); /* 假設 navbar 高度為 56px */
+  }
+
+  .page-container .scrollable-area {
+    flex-grow: 1;
+    overflow-y: auto;
   }
 }
 
 /* 手機版導覽列樣式調整 */
-@media (max-width: 767.98px) {
+@media (max-width: 767px) {
   /* 透過 order 屬性，將 loginStatus 的顯示順序提到最前面 */
   #loginStatus {
     order: -1; 
@@ -71,7 +78,7 @@ html, body {
    ========================================================================== */
 
 /* --- 桌機版佈局 (Desktop Layout) --- */
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .souvenir-wrapper {
     display: flex;
     flex-direction: column;
@@ -128,7 +135,7 @@ html, body {
    ========================================================================== */
 
 /* --- 桌機版佈局 (Desktop Layout) --- */
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .recommend-wrapper {
     display: flex;
     flex-direction: column;

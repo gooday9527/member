@@ -82,7 +82,7 @@ function updateLoginStatusLink(isLoggedIn) {
         loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="logout">登出</a>`;
     } else {
         // 如果未登入，顯示登入連結
-        loginStatus.innerHTML = `<a class="nav-link text-red" href="#" data-section="login">登入</a>`;
+        loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="login">登入</a>`;
     }
 }
 

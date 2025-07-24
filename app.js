@@ -48,14 +48,14 @@ function renderNavTabs() {
 }
 
 async function loadMemberName(email) {
-  const displayEl = document.getElementById("userNameDisplay");
-
   if (!email) {
-    if (displayEl) displayEl.innerText = "";
+    document.getElementById("mobileUserName").innerText = "";
+    document.getElementById("desktopUserName").innerText = "";
     return;
   }
 
-  if (displayEl) displayEl.innerText = "載入中...";
+  document.getElementById("mobileUserName").innerText = "載入中...";
+  document.getElementById("desktopUserName").innerText = "載入中...";
 
   try {
     const response = await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
@@ -63,14 +63,17 @@ async function loadMemberName(email) {
 
     const info = await response.json();
     const memberText = `會員：${info.name || "未命名"}`;
-    if (displayEl) displayEl.innerText = memberText;
+
+    document.getElementById("mobileUserName").innerText = memberText;
+    document.getElementById("desktopUserName").innerText = memberText;
 
   } catch (error) {
     console.error("取得會員資料失敗", error);
-    if (displayEl) displayEl.innerText = "會員：載入失敗";
+    const errorText = "會員：載入失敗";
+    document.getElementById("mobileUserName").innerText = errorText;
+    document.getElementById("desktopUserName").innerText = errorText;
   }
 }
-
 
 function updateLoginStatusLink(isLoggedIn) {
     if (isLoggedIn) {

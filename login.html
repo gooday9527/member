@@ -57,7 +57,7 @@
                         if (window.updateMainAppLoginState) {
                             window.updateMainAppLoginState(user.email);
                         } else {
-                            window.location.reload(); // 重新整理頁面以更新狀態
+                            window.location.href = "index.html?view=souvenir";
                         }
                     })
                     .catch((error) => {

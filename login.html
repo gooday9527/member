@@ -57,8 +57,6 @@
                         if (window.updateMainAppLoginState) {
                             window.updateMainAppLoginState(user.email);
                         } else {
-                            // 如果找不到全局函數，也提供備用方案
-                            alert("✅ 登入成功！");
                             window.location.reload(); // 重新整理頁面以更新狀態
                         }
                     })

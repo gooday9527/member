@@ -1,5 +1,5 @@
 // =================================================================
-//                 app.js (最終結構修正版)
+//                 app.js (修正版)
 // =================================================================
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -7,6 +7,7 @@ import { initializeRecommendPage } from './recommend.js';
 
 // --- 全域設定 ---
 const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f", measurementId: "G-J3Z7YTHJ9P" };
+// ✅ 請確保這裡的 main URL 是您最新部署的、統一後的後端網址
 export const APP_URLS = {
     main: "https://script.google.com/macros/s/AKfycbzk_RKeBgLtWsVJe79WUIYklyOnLL94nVZ41rb_zG_bV-LOSsi9PtSHQX0H0a2hMId0/exec",
 };
@@ -29,52 +30,8 @@ const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
 
 // --- 函數定義區 ---
 
-// 登入前的導覽列項目
-const tabsBeforeLogin = [
-    { id: "souvenir", label: "紀念品" },
-    { id: "recommend", label: "推薦清單" },
-    { id: "notice", label: "注意事項" },
-    { id: "about", label: "關於我" }
-];
-
-// 登入後的導覽列項目 (已根據您的要求更新)
-const tabsAfterLogin = [
-    { id: "souvenir", label: "紀念品" },
-    { id: "recommend", label: "推薦清單" },
-    { id: "notice", label: "注意事項" },
-    { id: "about", label: "關於我" },
-    { id: "announcement", label: "📣 公告欄" },
-    {
-        id: "delegation-manage-dropdown",
-        label: "委託管理",
-        isDropdown: true,
-        children: [
-            { id: "delegable-list", label: "可委託代領清單" },
-            { id: "delegated-query", label: "已委託代領查詢" }
-        ]
-    },
-    {
-        id: "souvenir-manage-dropdown",
-        label: "紀念品管理",
-        isDropdown: true,
-        children: [
-            { id: "souvenir-inventory", label: "紀念品總庫存" },
-            { id: "souvenir-transaction-query", label: "紀念品進出查詢" },
-            { id: "souvenir-withdrawal-query", label: "領出申請查詢" },
-            { id: "souvenir-album", label: "專屬紀念品相冊" }
-        ]
-    },
-    {
-        id: "account-management-dropdown",
-        label: "帳戶管理",
-        isDropdown: true,
-        children: [
-            { id: "add-account-shares", label: "新增帳號／持股" },
-            { id: "deposit-withdrawal", label: "儲值 / 提款" },
-            { id: "account-query", label: "帳務查詢" }
-        ]
-    }
-];
+const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }];
+const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage-dropdown", label: "📥 委託管理", isDropdown: true, children: [ { id: "delegable-list", label: "可委託代領清單" }, { id: "delegated-query", label: "已委託代領查詢" } ] }, { id: "souvenir-manage-dropdown", label: "🧾 紀念品管理", isDropdown: true, children: [ { id: "souvenir-inventory", label: "紀念品總庫存" }, { id: "souvenir-transaction-query", label: "紀念品進出查詢" }, { id: "souvenir-withdrawal-query", label: "領出申請查詢" }, { id: "souvenir-album", label: "專屬紀念品相冊" } ] }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] } ];
 
 function renderNavTabs() {
     navMenu.innerHTML = "";
@@ -92,6 +49,10 @@ function renderNavTabs() {
     });
 }
 
+/**
+ * 【已修正】讀取會員姓名並更新 UI
+ * @param {string} email - 登入者的 Email
+ */
 async function loadMemberName(email) {
   if (!email) {
     document.getElementById("mobileUserName").innerText = "";
@@ -104,29 +65,33 @@ async function loadMemberName(email) {
 
   try {
     const response = await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
-    if (!response.ok) throw new Error('Network response was not ok');
+    if (!response.ok) throw new Error('網路回應錯誤');
 
-    const info = await response.json();
-    const memberText = `會員：${info.name || "未命名"}`;
+    const result = await response.json();
 
-    document.getElementById("mobileUserName").innerText = memberText;
-    document.getElementById("desktopUserName").innerText = memberText;
+    // ✅【修正】檢查後端回傳的 success 狀態，並從 result.data 中讀取會員資料
+    if (result.success && result.data && result.data.name && result.data.name !== "未知會員") {
+        const memberText = `會員：${result.data.name}`;
+        document.getElementById("mobileUserName").innerText = memberText;
+        document.getElementById("desktopUserName").innerText = memberText;
+    } else {
+        // 如果後端回傳 success: false 或找不到 name，則顯示預設文字
+        throw new Error(result.message || "找不到會員名稱");
+    }
 
   } catch (error) {
-    console.error("取得會員資料失敗", error);
+    console.error("取得會員資料失敗:", error);
     const errorText = "會員：載入失敗";
     document.getElementById("mobileUserName").innerText = errorText;
     document.getElementById("desktopUserName").innerText = errorText;
   }
 }
 
+
 function updateLoginStatusLink(isLoggedIn) {
     if (isLoggedIn) {
-        // 如果已登入，顯示登出連結
-        // 注意 data-section="logout" 屬性，讓原本的點擊事件可以捕捉到
         loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="logout">登出</a>`;
     } else {
-        // 如果未登入，顯示登入連結
         loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="login">登入</a>`;
     }
 }
@@ -168,9 +133,6 @@ function navigateTo(id, fromHistory = false) {
 window.navigateTo = navigateTo;
 
 // --- 事件監聽與啟動邏輯 ---
-// ✅ 修正：將三個核心監聽器，放在同一個層級，互不干擾
-
-// 監聽器一：監聽整個頁面的點擊事件
 document.body.addEventListener("click", function (e) {
     const clickedLink = e.target.closest("a[data-section]");
     if (clickedLink) {
@@ -187,36 +149,48 @@ document.body.addEventListener("click", function (e) {
     }
 });
 
-// 監聽器二：監聽瀏覽器的上一頁/下一頁
 window.addEventListener('popstate', function(event) {
     if (event.state && event.state.section) {
         navigateTo(event.state.section, true);
     }
 });
 
-// 監聽器三：監聽 Firebase 登入狀態，這是整個 App 的啟動點
 onAuthStateChanged(auth, (user) => {
-  const wasLoggedIn = !!loginEmail;
-  loginEmail = user ? user.email : null;
-  window.currentUserEmail = loginEmail;
-  const isLoggedIn = !!user;
+    const wasLoggedIn = !!loginEmail;
+    loginEmail = user ? user.email : null;
+    window.currentUserEmail = loginEmail;
+    const isLoggedIn = !!user;
 
-  if (typeof window.initialLoad === 'undefined' || isLoggedIn !== wasLoggedIn) {
-    window.initialLoad = true;
+    // 只有在登入狀態改變時才執行，避免不必要的重繪
+    if (isLoggedIn !== wasLoggedIn) {
+        renderNavTabs();
+        updateLoginStatusLink(isLoggedIn);
+        
+        if (isLoggedIn) {
+            loadMemberName(loginEmail);
+        } else {
+            // 登出時清空會員名稱
+            document.getElementById("mobileUserName").innerText = "";
+            document.getElementById("desktopUserName").innerText = "";
+            // 登出後預設跳回紀念品頁面
+            navigateTo("souvenir");
+        }
+    }
+    
+    // 首次載入時的邏輯
+    if (typeof window.initialLoad === 'undefined') {
+        window.initialLoad = false; // 標記為已首次載入
+        document.getElementById("initialLoading")?.remove();
+        
+        // 如果已登入，則執行一次初始載入
+        if (isLoggedIn) {
+            renderNavTabs();
+            updateLoginStatusLink(true);
+            loadMemberName(loginEmail);
+        }
 
-    // ✅ 移除初始 loading 畫面（避免閃爍）
-    document.getElementById("initialLoading")?.remove();
-
-    renderNavTabs();
-    loadMemberName(loginEmail);
-    updateLoginStatusLink(isLoggedIn);
-
-    // ✅ 取得網址參數中的 view 頁面
-    const urlParams = new URLSearchParams(window.location.search);
-    const view = urlParams.get("view") || "souvenir";
-
-    // ✅ 執行頁面跳轉（避免閃爍，但仍保證載入）
-    navigateTo(view);
-  }
+        const urlParams = new URLSearchParams(window.location.search);
+        const view = urlParams.get("view") || "souvenir";
+        navigateTo(view);
+    }
 });
-

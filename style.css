@@ -8,6 +8,11 @@ body {
   padding: 0;
 }
 
+/* 強制修正手機版導覽列頂部項目會自動換行的問題 */
+.navbar > .container-fluid {
+  flex-wrap: nowrap;
+}
+
 @media (min-width: 769px) {
   body {
     overflow-x: hidden;

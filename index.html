@@ -15,18 +15,24 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-light">
+<nav class="navbar navbar-expand-md navbar-light">
+    <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="#">好管家代領</a>
+        <div id="desktopUserName" class="ms-2 small text-muted d-none d-md-block"></div>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navMenu"></ul>
-            <div class="d-flex align-items-center ms-auto">
-                <div id="loginStatus" class="text-end me-3 small text-muted"></div>
+            <div class="navbar-nav ms-auto d-flex flex-column flex-md-row align-items-md-center">
+                <ul class="navbar-nav" id="navMenu"></ul>
+                
+                <div id="loginStatus" class="small text-muted"></div>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <div class="container-fluid">
         <section id="page-recommend" class="page-container">

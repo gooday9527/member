@@ -28,17 +28,24 @@ const navbarCollapse = document.getElementById('navbarNav');
 const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
 
 // --- 函數定義區 ---
-const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }];
-const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage", label: "📥 委託管理" }, { id: "souvenir-manage", label: "🧾 紀念品管理" }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] } ];
+const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, label: "登入" } ];
+const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage", label: "📥 委託管理" }, { id: "souvenir-manage", label: "🧾 紀念品管理" }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ]} , { id: "logout", label: "登出" } ];
 
+// --- 函式定義 ---
 function renderNavTabs() {
     navMenu.innerHTML = "";
     const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
     tabs.forEach(tab => {
         const li = document.createElement("li");
         li.className = "nav-item";
+        
+        // 為登入或登出項目加上特別的 class
+        if (tab.id === 'login' || tab.id === 'logout') {
+            li.classList.add('login-logout-nav-item');
+        }
+
         if (tab.isDropdown) {
-            li.className = "nav-item dropdown";
+            li.classList.add("dropdown");
             li.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">${tab.label}</a><ul class="dropdown-menu" aria-labelledby="${tab.id}Link">${tab.children.map(child => `<li><a class="dropdown-item" href="#" data-section="${child.id}">${child.label}</a></li>`).join('')}</ul>`;
         } else {
             li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
@@ -48,27 +55,20 @@ function renderNavTabs() {
 }
 
 async function loadMemberName(email) {
-    // 如果沒有登入，就清空兩個位置的文字
     if (!email) {
         mobileUserName.innerText = "";
         desktopUserName.innerText = "";
         return;
     }
-
-    // 提示正在載入
     mobileUserName.innerText = "載入中...";
     desktopUserName.innerText = "載入中...";
-    
     try {
         const response = await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
         if (!response.ok) throw new Error('Network response was not ok');
         const info = await response.json();
         const memberText = `會員：${info.name || "未命名"}`;
-
-        // ✅ 同時更新手機版和桌機版的會員名稱
         mobileUserName.innerText = memberText;
         desktopUserName.innerText = memberText;
-
     } catch (error) {
         console.error("取得會員資料失敗", error);
         const errorText = "會員：載入失敗";

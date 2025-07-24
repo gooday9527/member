@@ -161,6 +161,7 @@ onAuthStateChanged(auth, (user) => {
         window.initialLoad = true;
      // ✅ 移除初始 loading 畫面（避免閃爍）
        document.getElementById("initialLoading")?.remove();
+        
         renderNavTabs();
         loadMemberName(loginEmail);
         updateLoginStatusLink(isLoggedIn);

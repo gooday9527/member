@@ -28,8 +28,53 @@ const navbarCollapse = document.getElementById('navbarNav');
 const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
 
 // --- 函數定義區 ---
-const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }];
-const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage", label: "📥 委託管理" }, { id: "souvenir-manage", label: "🧾 紀念品管理" }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "📊 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] } ];
+
+// 登入前的導覽列項目
+const tabsBeforeLogin = [
+    { id: "souvenir", label: "紀念品" },
+    { id: "recommend", label: "推薦清單" },
+    { id: "notice", label: "注意事項" },
+    { id: "about", label: "關於我" }
+];
+
+// 登入後的導覽列項目 (已根據您的要求更新)
+const tabsAfterLogin = [
+    { id: "souvenir", label: "紀念品" },
+    { id: "recommend", label: "推薦清單" },
+    { id: "notice", label: "注意事項" },
+    { id: "about", label: "關於我" },
+    { id: "announcement", label: "📣 公告欄" },
+    {
+        id: "delegation-manage-dropdown",
+        label: "委託管理",
+        isDropdown: true,
+        children: [
+            { id: "delegable-list", label: "可委託代領清單" },
+            { id: "delegated-query", label: "已委託代領查詢" }
+        ]
+    },
+    {
+        id: "souvenir-manage-dropdown",
+        label: "紀念品管理",
+        isDropdown: true,
+        children: [
+            { id: "souvenir-inventory", label: "紀念品總庫存" },
+            { id: "souvenir-transaction-query", label: "紀念品進出查詢" },
+            { id: "souvenir-withdrawal-query", label: "領出申請查詢" },
+            { id: "souvenir-album", label: "專屬紀念品相冊" }
+        ]
+    },
+    {
+        id: "account-management-dropdown",
+        label: "帳戶管理",
+        isDropdown: true,
+        children: [
+            { id: "add-account-shares", label: "新增帳號／持股" },
+            { id: "deposit-withdrawal", label: "儲值 / 提款" },
+            { id: "account-query", label: "帳務查詢" }
+        ]
+    }
+];
 
 function renderNavTabs() {
     navMenu.innerHTML = "";

@@ -8,6 +8,13 @@ body {
   padding: 0;
 }
 
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* 不要外部捲軸 */
+}
+
 @media (min-width: 769px) {
   body {
     overflow-x: hidden;

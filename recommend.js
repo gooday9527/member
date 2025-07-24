@@ -1,8 +1,7 @@
-const OPENSHEET_URL = "https://opensheet.elk.sh/1WNSOI3l4AVk2h1kY0qj7xu4-9YdU_2fEj8xUf7lUSZk";
+const STATIC_JSON_URL = "https://member.gooday9527.com/data/recommendations.json";
 
 let isRecommendInitialized = false;
-let categoriesList = ["我全都要（不需證件）", "高cp推薦", "禮券類", "小資族", "入門組"];
-let recommendDataCache = {}; // ⏱️ 全部分類快取
+let recommendDataCache = {}; // 格式：{ 分類名稱: [...] }
 
 export function initializeRecommendPage() {
     if (isRecommendInitialized) return; 
@@ -11,47 +10,41 @@ export function initializeRecommendPage() {
     const selectElement = document.getElementById('recommendSheet');
     if (!selectElement) return;
 
-    // 填入下拉選單
-    selectElement.innerHTML = '';
-    categoriesList.forEach(category => {
-        const option = document.createElement('option');
-        option.value = category;
-        option.textContent = category;
-        selectElement.appendChild(option);
-    });
-    selectElement.disabled = false;
+    // 🔄 一次性載入整份 JSON 資料
+    fetch(STATIC_JSON_URL)
+        .then(res => res.json())
+        .then(json => {
+            recommendDataCache = json;
+            const categories = Object.keys(json);
 
-    selectElement.addEventListener('change', () => {
-        const selected = selectElement.value;
-        if (recommendDataCache[selected]) {
-            renderRecommendTable(recommendDataCache[selected]);
-        } else {
-            loadAndCacheRecommendData(selected);
-        }
-    });
+            // 填入下拉選單
+            selectElement.innerHTML = '';
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                selectElement.appendChild(option);
+            });
+            selectElement.disabled = false;
 
-    // 🔄 初始化時一次載入全部分類
-    Promise.all(categoriesList.map(loadAndCacheRecommendData)).then(() => {
-        if (categoriesList[0]) {
-            renderRecommendTable(recommendDataCache[categoriesList[0]]);
-            selectElement.value = categoriesList[0];
-        }
-    });
+            // 初始顯示第一組
+            if (categories[0]) {
+                selectElement.value = categories[0];
+                renderRecommendTable(json[categories[0]]);
+            }
+
+            // 下拉選單切換時
+            selectElement.addEventListener('change', () => {
+                const selected = selectElement.value;
+                renderRecommendTable(recommendDataCache[selected] || []);
+            });
+        })
+        .catch(err => {
+            console.error("推薦清單載入失敗", err);
+            selectElement.disabled = true;
+        });
 }
 
-async function loadAndCacheRecommendData(sheetName) {
-    if (!sheetName || recommendDataCache[sheetName]) return;
-    try {
-        const url = `${OPENSHEET_URL}/${encodeURIComponent(sheetName)}`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`取得 ${sheetName} 資料失敗`);
-        const data = await response.json();
-        recommendDataCache[sheetName] = data;
-    } catch (error) {
-        console.error(`載入 ${sheetName} 推薦資料失敗：`, error);
-        recommendDataCache[sheetName] = []; // 空值避免再 fetch
-    }
-}
 
 function renderRecommendTable(data) {
     const tableElement = document.getElementById('recommendTable');

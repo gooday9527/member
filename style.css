@@ -118,6 +118,7 @@ html, body {
   /* ✅【修正】增加表格和頁碼之間的間距 */
   .souvenir-wrapper #souvenirPaginationWrapper {
     margin-top: 1rem; /* 增加 1rem 的上邊距，讓它們分開一點 */
+    margin-bottom: 2rem; /* 或 2rem，看你想多遠 */
   }
 }
 

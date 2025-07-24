@@ -14,44 +14,21 @@ body {
   }
 }
 
-/* ==========================================================================
-   3. 手機版專用樣式 (Media Query for Mobile)
-   ========================================================================== */
+/* 手機版導覽列樣式調整 */
 @media (max-width: 767.98px) {
-  /* 讓漢堡選單內的項目可以使用 flex order 排列 */
-  #navMenu {
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* 將登入/登出項目的順序提到最前面 */
-  .login-logout-nav-item {
+  /* 透過 order 屬性，將 loginStatus 的顯示順序提到最前面 */
+  #loginStatus {
     order: -1; 
   }
 
-  /* 修正導覽列頂部項目換行問題，並調整左右間距 */
-  .navbar > .container-fluid {
-    flex-wrap: nowrap;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+  /* 確保主要導覽選單在 loginStatus 之後 */
+  #navMenu {
+    order: 0;
   }
   
-  /* --- 手機版表格佈局 --- */
-  .souvenir-wrapper .table-scroll-container,
-  .recommend-wrapper .table-responsive {
-    max-height: 65vh;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    position: relative;
-  }
-
-  .souvenir-wrapper table,
-  .recommend-wrapper table {
-    min-width: 600px;
-  }
-  
-  .souvenir-wrapper #souvenirPaginationWrapper {
-    margin-top: 1rem;
+  /* 讓手機版的登入/登出連結樣式與其他項目一致 */
+  #loginStatus .nav-link {
+    padding-left: 0.5rem !important;
   }
 }
 
@@ -186,3 +163,4 @@ body {
 }
 .recommend-wrapper .loading-placeholder td {
     text-align: center;
+   

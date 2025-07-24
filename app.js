@@ -151,33 +151,27 @@ window.addEventListener('popstate', function(event) {
 
 // 監聽器三：監聽 Firebase 登入狀態，這是整個 App 的啟動點
 onAuthStateChanged(auth, (user) => {
-    const wasLoggedIn = !!loginEmail;
-    loginEmail = user ? user.email : null;
-    window.currentUserEmail = loginEmail;
-    const isLoggedIn = !!user;
+  const wasLoggedIn = !!loginEmail;
+  loginEmail = user ? user.email : null;
+  window.currentUserEmail = loginEmail;
+  const isLoggedIn = !!user;
 
-    // 只有在登入狀態改變，或這是頁面第一次載入時，才做事
-    if (typeof window.initialLoad === 'undefined' || isLoggedIn !== wasLoggedIn) {
-        window.initialLoad = true;
-     // ✅ 移除初始 loading 畫面（避免閃爍）
-       document.getElementById("initialLoading")?.remove();
-        
-        renderNavTabs();
-        loadMemberName(loginEmail);
-        updateLoginStatusLink(isLoggedIn);
+  if (typeof window.initialLoad === 'undefined' || isLoggedIn !== wasLoggedIn) {
+    window.initialLoad = true;
 
-        // 決定要顯示哪個頁面
-        const urlParams = new URLSearchParams(window.location.search);
-        const view = urlParams.get("view");
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const view = urlParams.get("view");
+    // ✅ 移除初始 loading 畫面（避免閃爍）
+    document.getElementById("initialLoading")?.remove();
 
-        const currentPageId = document.querySelector(".page-container.active")?.id;
-         const targetPageId = view || "souvenir";
-        if (currentPageId !== `page-${targetPageId}`) {
-          navigateTo(targetPageId);
-}
+    renderNavTabs();
+    loadMemberName(loginEmail);
+    updateLoginStatusLink(isLoggedIn);
 
-    }
+    // ✅ 取得網址參數中的 view 頁面
+    const urlParams = new URLSearchParams(window.location.search);
+    const view = urlParams.get("view") || "souvenir";
+
+    // ✅ 執行頁面跳轉（避免閃爍，但仍保證載入）
+    navigateTo(view);
+  }
 });
+

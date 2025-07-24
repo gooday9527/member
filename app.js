@@ -161,20 +161,35 @@ onAuthStateChanged(auth, (user) => {
     // 只有在登入狀態改變，或這是頁面第一次載入時，才做事
     if (typeof window.initialLoad === 'undefined' || isLoggedIn !== wasLoggedIn) {
         window.initialLoad = true;
+        
+        // 1. 先更新所有 UI 介面 (導覽列、會員名稱等)
         renderNavTabs();
         loadMemberName(loginEmail);
         updateLoginStatusLink(isLoggedIn);
 
-        // 決定要顯示哪個頁面
+        // 2. 處理頁面跳轉邏輯
+        const justLoggedIn = !wasLoggedIn && isLoggedIn;
+        const justLoggedOut = wasLoggedIn && !isLoggedIn;
         const urlParams = new URLSearchParams(window.location.search);
-        const view = urlParams.get("view");
-        
-        // 如果是首次載入且網址有指定頁面，則顯示該頁面
-        if (view && !wasLoggedIn && !isLoggedIn) {
-             navigateTo(view);
+        const currentView = urlParams.get("view");
+
+        if (justLoggedOut) {
+            // 如果是「剛剛登出」，一律跳轉到登入頁
+            navigateTo("login");
+        } else if (justLoggedIn) {
+            // 如果是「剛剛登入」
+            if (currentView === "login" || !currentView) {
+                // 如果是從登入頁登入的，或網址上沒有指定頁面，跳轉到預設的紀念品頁
+                navigateTo("souvenir");
+            } else {
+                // 如果是從其他頁面登入的，則留在原地，不進行跳轉
+                // 因為上方的 UI 更新函式已經執行，使用者會看到介面變為登入狀態
+                console.log("登入成功，停留在當前頁面:", currentView);
+            }
         } else {
-             // 否則，根據登入狀態跳轉到預設頁面
-             navigateTo(isLoggedIn ? "souvenir" : "login");
+            // 如果是「初次載入頁面」，根據網址決定顯示哪個頁面
+            // 如果網址沒指定，則根據登入狀態決定預設頁
+            navigateTo(currentView || (isLoggedIn ? "souvenir" : "login"));
         }
     }
 });

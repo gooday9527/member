@@ -8,34 +8,31 @@ body {
   padding: 0;
 }
 
-/* 強制修正手機版導覽列頂部項目會自動換行的問題 */
-.navbar > .container-fluid {
-  flex-wrap: nowrap;
-}
-
 @media (min-width: 769px) {
   body {
     overflow-x: hidden;
   }
 }
 
-/* 手機版導覽列樣式調整 */
+/* 僅在手機版上生效：修正漢堡選單順序 */
 @media (max-width: 767.98px) {
-  /* 透過 order 屬性，將 loginStatus 的顯示順序提到最前面 */
-  #loginStatus {
-    order: -1; 
+  /* 讓漢堡選單內的項目可以使用 flex order 排列 */
+  #navMenu {
+    display: flex;
+    flex-direction: column;
   }
 
-  /* 確保主要導覽選單在 loginStatus 之後 */
-  #navMenu {
-    order: 0;
-  }
-  
-  /* 讓手機版的登入/登出連結樣式與其他項目一致 */
-  #loginStatus .nav-link {
-    padding-left: 0.5rem !important;
+  /* 將登入/登出項目的順序提到最前面 */
+  .login-logout-nav-item {
+    order: -1; 
   }
 }
+
+/* 修正手機版導覽列頂部項目會自動換行的問題 */
+.navbar > .container-fluid {
+  flex-wrap: nowrap;
+}
+
 
 /* ==========================================================================
    2. 主要佈局 (Layout: Navbar & Container)

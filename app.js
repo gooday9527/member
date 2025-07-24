@@ -48,33 +48,29 @@ function renderNavTabs() {
 }
 
 async function loadMemberName(email) {
-    // 如果沒有登入，就清空兩個位置的文字
-    if (!email) {
-        mobileUserName.innerText = "";
-        desktopUserName.innerText = "";
-        return;
-    }
+  const displayEl = document.getElementById("userNameDisplay");
 
-    // 提示正在載入
-    mobileUserName.innerText = "載入中...";
-    desktopUserName.innerText = "載入中...";
-    
-    try {
-        const response = await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const info = await response.json();
-        const memberText = `會員：${info.name || "未命名"}`;
+  if (!email) {
+    if (displayEl) displayEl.innerText = "";
+    return;
+  }
 
-    // 👉 寫入品牌右邊的名稱欄位
-    document.getElementById("userNameDisplay").innerText = memberText;
+  if (displayEl) displayEl.innerText = "載入中...";
 
-    } catch (error) {
-        console.error("取得會員資料失敗", error);
-        const errorText = "會員：載入失敗";
-        mobileUserName.innerText = errorText;
-        desktopUserName.innerText = errorText;
-    }
+  try {
+    const response = await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
+    if (!response.ok) throw new Error('Network response was not ok');
+
+    const info = await response.json();
+    const memberText = `會員：${info.name || "未命名"}`;
+    if (displayEl) displayEl.innerText = memberText;
+
+  } catch (error) {
+    console.error("取得會員資料失敗", error);
+    if (displayEl) displayEl.innerText = "會員：載入失敗";
+  }
 }
+
 
 function updateLoginStatusLink(isLoggedIn) {
     if (isLoggedIn) {

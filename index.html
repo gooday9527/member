@@ -18,21 +18,24 @@
 <nav class="navbar navbar-expand-md navbar-light">
   <div class="container-fluid">
 
-    <!-- 品牌與登入者區塊 -->
+    <!-- ✅ 品牌與桌機版使用者名稱（左側） -->
     <div class="d-flex align-items-center">
       <a class="navbar-brand fw-bold d-flex align-items-center mb-0" href="#">
         <img src="favicon.png" alt="好管家Logo" style="height: 30px; margin-right: 8px;">
         好管家代領
       </a>
-      <div id="userNameDisplay" class="ms-2 small text-muted"></div>
+      <div id="desktopUserName" class="ms-2 small text-muted d-none d-md-block"></div>
     </div>
 
-    <!-- 漢堡選單：手機用 -->
+    <!-- ✅ 手機版使用者名稱：放在這裡（navbar-toggler 之前） -->
+    <div id="mobileUserName" class="ms-1 small text-muted d-block d-md-none"></div>
+
+    <!-- 📱 漢堡選單按鈕（小螢幕時展開選單） -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- 導覽選單 + 登入狀態：靠右 -->
+    <!-- 導覽選單與登入狀態（右側） -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <div class="d-flex flex-column flex-md-row align-items-md-center ms-auto">
         <ul class="navbar-nav" id="navMenu"></ul>
@@ -42,6 +45,7 @@
 
   </div>
 </nav>
+
 
 
     <div class="container-fluid">

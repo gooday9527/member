@@ -170,12 +170,14 @@ onAuthStateChanged(auth, (user) => {
         const urlParams = new URLSearchParams(window.location.search);
         const view = urlParams.get("view");
         
-        // 如果是首次載入且網址有指定頁面，則顯示該頁面
-        if (view && !wasLoggedIn && !isLoggedIn) {
-             navigateTo(view);
-        } else {
-             // 否則，根據登入狀態跳轉到預設頁面
-             navigateTo(isLoggedIn ? "souvenir" : "souvenir");
-        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const view = urlParams.get("view");
+
+        const currentPageId = document.querySelector(".page-container.active")?.id;
+         const targetPageId = view || "souvenir";
+        if (currentPageId !== `page-${targetPageId}`) {
+          navigateTo(targetPageId);
+}
+
     }
 });

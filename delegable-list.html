@@ -72,9 +72,6 @@
 
 <!-- 我們自己的頁面邏輯 -->
 <script type="module">
-    // 從主程式 app.js 匯入後端 API 的網址
-    import { APP_URLS } from './app.js';
-
     // 當頁面的 HTML 結構都載入完成後，再執行我們的 JavaScript
     document.addEventListener('DOMContentLoaded', function () {
         
@@ -91,7 +88,7 @@
             // 透過 Ajax 從我們的後端 API 載入資料
             ajax: {
                 // 使用從 app.js 匯入的網址，並帶上 action 和 email 參數
-                url: APP_URLS.main,
+                url: window.APP_URLS.main,
                 type: 'POST', // 使用 POST 方法
                 contentType: 'application/json',
                 data: function(d) {

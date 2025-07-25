@@ -197,9 +197,8 @@ html, body {
   background-color: #f8f9fa; /* Bootstrap 的淺灰背景 */
 }
 
-/* 1. 下拉選單（所有 .form‑select / 特定 #recommendSheet）的文字改藍 */
+/* 只改「推薦清單」分類下拉選單文字顏色 */
 #recommendSheet,
-#recommendSheet option,
-.form-select {
+#recommendSheet option {
   color: #007bff;
-}   
+}

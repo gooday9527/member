@@ -1,5 +1,5 @@
 // =================================================================
-//                 recommend.js (靜態 JSON 版)
+//                 recommend.js (靜態 JSON 表格版)
 // =================================================================
 
 // ✅ 指向您手動產生的靜態 JSON 檔案路徑
@@ -43,7 +43,7 @@ async function loadStaticData(container) {
         
         const categories = Object.keys(allRecommendationsData);
         if (categories.length > 0) {
-            renderCategories(container, categories);
+            renderCategoriesAndTable(container, categories);
         } else {
             throw new Error("JSON 檔案中沒有任何分類資料。");
         }
@@ -54,17 +54,34 @@ async function loadStaticData(container) {
 }
 
 /**
- * 步驟二：將分類渲染成按鈕
+ * 步驟二：將分類渲染成按鈕，並建立表格骨架
  * @param {HTMLElement} container - 頁面容器
  * @param {Array<string>} categories - 分類名稱陣列
  */
-function renderCategories(container, categories) {
+function renderCategoriesAndTable(container, categories) {
+    // ✅【修改】建立包含表格結構的 HTML
     container.innerHTML = `
         <h2 class="mb-4 text-center">推薦清單</h2>
         <div id="recommend-categories" class="text-center mb-4">
             ${categories.map(cat => `<button class="btn btn-outline-primary m-1" data-category="${cat}">${cat}</button>`).join('')}
         </div>
-        <div id="recommend-content" class="row g-4"></div>
+        <div id="recommend-content" class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>圖片</th>
+                        <th>股號</th>
+                        <th>股名</th>
+                        <th>品名</th>
+                        <th>最後買進日</th>
+                        <th>股東會</th>
+                    </tr>
+                </thead>
+                <tbody id="recommend-table-body">
+                    <!-- 表格內容將會動態插入這裡 -->
+                </tbody>
+            </table>
+        </div>
     `;
 
     const categoryButtons = container.querySelectorAll('#recommend-categories button');
@@ -74,9 +91,9 @@ function renderCategories(container, categories) {
             button.classList.add('active');
             
             const categoryName = button.dataset.category;
-            // 直接從已載入的資料中取得項目並渲染，不再發送網路請求
+            // 直接從已載入的資料中取得項目並渲染
             const items = allRecommendationsData[categoryName] || [];
-            renderRecommendations(document.getElementById('recommend-content'), items);
+            renderTableRows(document.getElementById('recommend-table-body'), items);
         });
     });
 
@@ -87,32 +104,29 @@ function renderCategories(container, categories) {
 }
 
 /**
- * 步驟三：將指定分類的項目渲染成卡片
- * @param {HTMLElement} contentArea - 內容顯示區
+ * 步驟三：將指定分類的項目渲染成表格的列 (rows)
+ * @param {HTMLElement} tableBody - 表格的 tbody 元素
  * @param {Array<Object>} items - 項目資料陣列
  */
-function renderRecommendations(contentArea, items) {
-    if (!contentArea) return;
+function renderTableRows(tableBody, items) {
+    if (!tableBody) return;
 
     if (!items || items.length === 0) {
-        contentArea.innerHTML = `<div class="col-12"><div class="alert alert-info">這個分類目前沒有推薦項目。</div></div>`;
+        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">這個分類目前沒有推薦項目。</td></tr>`;
         return;
     }
 
-    // 注意：下面的 item['圖片'], item['股名'] 等，是您試算表中的「欄位標題」，如果您的標題不同，請修改這裡
-    contentArea.innerHTML = items.map(item => `
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm">
-                <img src="${item['圖片'] || 'https://placehold.co/600x400/EFEFEF/AAAAAA?text=No+Image'}" class="card-img-top" alt="${item['股名']}" style="aspect-ratio: 16/10; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title">${item['股名'] || ''} (${item['股號'] || ''})</h5>
-                    <p class="card-text">${item['品名'] || '詳情未定'}</p>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><strong>最後買進:</strong> ${item['最後買進日'] || 'N/A'}</li>
-                    <li class="list-group-item"><strong>股東會:</strong> ${item['股東會'] || 'N/A'}</li>
-                </ul>
-            </div>
-        </div>
+    // ✅【修改】將資料轉換成表格的 <tr> 結構
+    tableBody.innerHTML = items.map(item => `
+        <tr>
+            <td>
+                <img src="${item['圖片'] || 'https://placehold.co/120x80/EFEFEF/AAAAAA?text=No+Image'}" class="img-fluid rounded" alt="${item['股名']}" style="max-width: 120px; object-fit: cover;">
+            </td>
+            <td>${item['股號'] || ''}</td>
+            <td><strong>${item['股名'] || ''}</strong></td>
+            <td>${item['品名'] || '詳情未定'}</td>
+            <td>${item['最後買進日'] || 'N/A'}</td>
+            <td>${item['股東會'] || 'N/A'}</td>
+        </tr>
     `).join('');
 }

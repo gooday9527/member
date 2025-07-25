@@ -26,6 +26,10 @@ html, body {
     flex-grow: 1;
     overflow-y: auto;
   }
+   #loginStatus .nav-link {
+    padding-left: 0.5rem !important;
+    color: #007bff !important;
+  }
 }
 
 /* 手機版導覽列樣式調整 */

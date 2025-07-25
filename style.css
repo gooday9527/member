@@ -140,7 +140,7 @@ html, body {
   .recommend-wrapper {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 60px);
   }
   .recommend-wrapper .recommend-controls {
     flex-shrink: 0;

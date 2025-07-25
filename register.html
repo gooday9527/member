@@ -51,7 +51,7 @@
                 await signOut(auth);  // ✅ 註冊後立即登出，避免導覽列誤判登入
                 
                 // 步驟 2: 寫入 Google Sheet
-                const relayUrl = "https://script.google.com/macros/s/AKfycbzk_RKeBgLtWsVJe79WUIYklyOnLL94nVZ41rb_zG_bV-LOSsi9PtSHQX0H0a2hMId0/exec";
+                const relayUrl = "https://script.google.com/macros/s/AKfycbwFSVsZNUeuQXiJ9cU-KSBCg1ZZLVRs-urxiwdQVHt3n_9DJBBvWLZ1Mez0pExtM04Q/exec";
                 const response = await fetch(relayUrl, { method: "POST", body: JSON.stringify({ action: "register", email, name }) });
                 const result = await response.json();
                 if (!result.success) { throw new Error(result.message || "寫入會員資料失敗"); }

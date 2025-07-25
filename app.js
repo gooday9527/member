@@ -61,11 +61,23 @@ async function loadMemberName(email) {
   document.getElementById("mobileUserName").innerText = "載入中...";
   document.getElementById("desktopUserName").innerText = "載入中...";
   try {
-    const response = await fetch(APP_URLS.main, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'getMemberInfo', email: email })
+    // 1. 建立 URL 參數物件
+    const params = new URLSearchParams({
+        view: 'getMemberInfo', // 參數從 action 改為 view
+        email: email
     });
+
+    // 2. 將參數附加到 URL 後方
+    const urlWithParams = `${APP_URLS.main}?${params.toString()}`;
+
+    // 3. 發送 GET 請求，不再需要 method, headers, body
+    const response = await fetch(urlWithParams);
+
+    // ... 後續處理 response 的程式碼不變 ...
+
+} catch (error) {
+    // ... 錯誤處理不變 ...
+}
     if (!response.ok) throw new Error('網路回應錯誤');
     const result = await response.json();
     if (result.success && result.data && result.data.name && result.data.name !== "未知會員") {

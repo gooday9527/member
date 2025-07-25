@@ -102,7 +102,6 @@ html, body {
     text-align: center;
     margin-bottom: 4rem; /* ✅ 向上推離螢幕底部的距離 */
     overflow-x: auto;          /* ✅ 超出寬度時允許橫向捲動 */
-    white-space: nowrap;       /* ✅ 不要自動換行，讓所有頁碼在一列中顯示 */
     max-width: 100%;           /* ✅ 最大寬度限制在容器內，不超出畫面 */
     text-align: center;        /* ✅ 置中顯示頁碼 */
     padding: 0.5rem;           /* ✅ 上下內距，讓區塊不會太擠 */

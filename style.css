@@ -176,5 +176,10 @@ html, body {
   z-index: 2;
   white-space: nowrap;
 }
+
+/* 表格斑馬紋：每隔一列為淺灰色 */
+.recommend-wrapper tbody tr:nth-child(even) {
+  background-color: #f8f9fa; /* Bootstrap 的淺灰背景 */
+}
 .recommend-wrapper .loading-placeholder td {
     text-align: center;

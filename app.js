@@ -137,17 +137,35 @@ async function loadExternalHtmlSection(sectionId) {
 }
 
 function navigateTo(id, fromHistory = false) {
-    pages.forEach(p => p.style.display = 'none');
-    dynamicContentArea.style.display = 'block';
-    loadExternalHtmlSection(id);
+    // 為了穩定，我們在函式內部重新獲取元素
+    const recommendPage = document.getElementById('page-recommend');
+    const dynamicContentArea = document.getElementById('dynamic-content-area');
+
+    // 先隱藏所有區塊
+    if (recommendPage) recommendPage.style.display = 'none';
+    if (dynamicContentArea) dynamicContentArea.style.display = 'none';
+
+    if (id === 'recommend') {
+        // 如果點擊的是推薦清單，就顯示專用區塊
+        if (recommendPage) {
+            recommendPage.style.display = 'block';
+            initializeRecommendPage(); // 並且呼叫它的初始化函數來填入資料
+        }
+    } else {
+        // 其他頁面，才使用動態載入
+        if (dynamicContentArea) {
+            dynamicContentArea.style.display = 'block';
+            loadExternalHtmlSection(id);
+        }
+    }
     
+    // 更新網址列的邏輯保持不變
     if (!fromHistory && id && id !== "logout") {
         const url = new URL(window.location);
         url.searchParams.set('view', id);
         window.history.pushState({ section: id }, '', url);
     }
 }
-window.navigateTo = navigateTo;
 
 // --- 事件監聽與啟動邏輯 ---
 document.body.addEventListener("click", function (e) {

@@ -1,56 +1,51 @@
 <!-- souvenir.html -->
-<section id="page-souvenir" class="page-container">
-  <div class="souvenir-wrapper mt-2">
-    <!-- 控制列：左側標題，右側搜尋＋筆數 -->
-    <div
-      class="align-items-center flex-wrap gap-2 table-controls-fixed d-flex justify-content-between "
-      id="souvenirControlsContainer"
-    >
-      <h3 class="mb-0">🎁 紀念品</h3>
-      <!-- 這裡會由 JS 動態插入搜尋和筆數控制 -->
+<h3 class="text-center">🎁 紀念品</h3>
+<div class="souvenir-wrapper mt-2">
+    <div class="table-controls-fixed d-flex flex-wrap align-items-center gap-2" id="souvenirControlsContainer"></div>
+    <div class="table-scroll-container table-responsive">
+        <table class="table table-bordered table-sm" id="souvenirTable">
+            <thead class="table-warning"></thead>
+            <tbody></tbody>
+        </table>
     </div>
-
-<!-- 資料表區 -->
-<div class="table-scroll-container table-responsive">
-  <table class="table table-bordered table-sm" id="souvenirTable">
-    <thead class="table-warning"></thead>
-    <tbody></tbody>
-  </table>
+    <div id="souvenirPaginationWrapper">
+        <div id="souvenirPagination" class="d-flex justify-content-center flex-wrap"></div>
+    </div>
 </div>
-
-<!-- 分頁按鈕 -->
-<div id="souvenirPaginationWrapper" class="mt-2">
-  <div id="souvenirPagination" class="d-flex justify-content-center flex-wrap"></div>
-</div>
-  </div>
-</section>
-
+<!-- 相關 JavaScript 邏輯將會從 index.html 移到這裡 -->
 <script>
-  function loadSouvenirDataWithoutDataTables() {
-    const container = document.getElementById("souvenirControlsContainer");
-    // 移除舊的 control-group
-    container.querySelectorAll(".control-group").forEach(el => el.remove());
+    // 這些函數原本在 index.html 的 <script type="module"> 裡面
+    // 現在它們將在這個頁面載入時執行
 
-    fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
-      .then(res => res.json())
-      .then(data => {
-        // *** 新增搜尋＋筆數的容器 ***
-        const controls = document.createElement('div');
-        controls.className = 'd-flex justify-content-between align-items-center mb-1 flex-wrap control-group';  /* ← 修改：新增 class control-group */
-        controls.innerHTML = `
-          <div class="mb-0">
-            <label for="rowsPerPageSelect" class="me-1">筆數：</label>
-            <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block me-3" style="width: 70px;">
-              <option value="10">10</option><option value="25">25</option>
-              <option value="50">50</option><option value="100">100</option>
-            </select>
-          </div>
-          <div class="mb-0">
-            <label for="searchInput" class="me-1">搜尋：</label>
-            <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 100px;" placeholder="輸入關鍵字">
-          </div>
-        `;
-        container.appendChild(controls);  /* ← 修改：在控制列插入 */
+    // 確保這些函數是全局可訪問的，或者在這個腳本內被正確調用
+    // 由於它們會被動態載入，直接寫在這裡即可，它們會在載入時被解析和執行
+    
+    // 紀念品表格載入邏輯
+    function loadSouvenirDataWithoutDataTables() {
+        // 先清空控制區避免重複
+        document.getElementById("souvenirControlsContainer").innerHTML = "";
+
+        fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
+            .then(res => res.json())
+            .then(data => {
+                const tableElement = document.getElementById('souvenirTable');
+                const tableHead = tableElement.querySelector('thead');
+                const tableBody = tableElement.querySelector('tbody');
+
+                // 插入搜尋與筆數控制元件
+                const controls = document.createElement('div');
+                controls.className = 'd-flex justify-content-between align-items-center mb-1 flex-wrap';
+                controls.innerHTML = `
+                    <div class="mb-0">
+                        <label for="rowsPerPageSelect" class="me-1">筆數：</label>
+                        <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block me-3" style="width: 70px;">
+                            <option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option>
+                        </select>
+                    </div><div class="mb-0">
+                        <label for="searchInput" class="me-1">搜尋：</label>
+                        <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 100px;" placeholder="輸入關鍵字">
+                    </div>
+                `;
                 const controlsContainer = document.getElementById('souvenirControlsContainer');
                 if (controlsContainer) controlsContainer.appendChild(controls);
 

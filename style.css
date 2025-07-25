@@ -157,6 +157,12 @@ html, body {
    .recommend-wrapper tbody tr:nth-child(even) {
     background-color: #f8f9fa; /* 淺灰 */
    } 
+
+   .recommend-controls label {
+    flex-basis: content; /* 讓它根據內容決定寬度 */
+    /* 或者 */
+    width: auto;
+   }
 }
 
 /* --- 手機版佈局 (Mobile Layout) --- */

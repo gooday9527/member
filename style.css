@@ -178,22 +178,27 @@ html, body {
 }
 
 @media (max-width: 576px) {
-  /* 讓 controls + 標題這一列可以換行 */
-  .recommend-wrapper .d-flex.align-items-center.position-relative.mb-2 {
-    flex-wrap: wrap !important;
+ /* 取消整列的絕對定位，改成一般流式 */
+  .recommend-wrapper .d-flex.position-relative.mb-2 {
+    flex-direction: column !important;    /* 由橫改直 */
+    align-items: flex-start !important;   /* 左對齊 */
+    position: static !important;          /* 取消 position:absolute 影響 */
+    height: auto !important;              /* 自動高度 */
   }
 
   /* controls 佔整行 */
   .recommend-wrapper .recommend-controls {
-    flex: 1 0 100% !important;
+    width: 100% !important;
+    margin-bottom: 0.5rem !important;
   }
 
   /* 標題撥到下一行，並置中 */
   .recommend-wrapper h3 {
     position: static !important;
+    transform: none !important;
     width: 100% !important;
-    text-align: center !important;
-    margin: 0.5rem 0 !important;
+    text-align: left !important;         /* 或置中都行 */
+    margin: 0.5rem 0 !important;         /* 上下間距 */
   }
 }
 

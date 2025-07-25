@@ -1,15 +1,12 @@
 // =================================================================
-//                 app.js (最終修正版)
+//                 app.js (改用 POST 請求)
 // =================================================================
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-// 移除 recommend.js 的 import，因為它不在這個頁面
-// import { initializeRecommendPage } from './recommend.js'; 
 
 // --- 全域設定 ---
 const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f", measurementId: "G-J3Z7YTHJ9P" };
 
-// ✅ 請確保這裡的 main URL 是您最新部署的、統一後的後端網址
 export const APP_URLS = {
     main: "https://script.google.com/macros/s/AKfycbw7BQrq9T7l-BMxUIQqPbwK6RwUad09JRmP5BmkmD0T1jkV1lwA7FxJ1DTBledjz6S-mw/exec",
 };
@@ -25,8 +22,6 @@ const loginStatus = document.getElementById("loginStatus");
 const mobileUserName = document.getElementById("mobileUserName");
 const desktopUserName = document.getElementById("desktopUserName");
 const dynamicContentArea = document.getElementById('dynamic-content-area');
-// 移除 recommendPage 的變數，因為它不在這個頁面
-// const recommendPage = document.getElementById('page-recommend'); 
 const pages = document.querySelectorAll('.page-container');
 const navbarCollapse = document.getElementById('navbarNav');
 const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
@@ -53,7 +48,7 @@ function renderNavTabs() {
 }
 
 /**
- * 【已修正】讀取會員姓名並更新 UI
+ * 【已修正】改用 POST 方法讀取會員姓名
  * @param {string} email - 登入者的 Email
  */
 async function loadMemberName(email) {
@@ -67,8 +62,16 @@ async function loadMemberName(email) {
   document.getElementById("desktopUserName").innerText = "載入中...";
 
   try {
-    // ✅【修正】這裡只會呼叫後端 API，不會包含任何後端變數
-    const response = await fetch(`${APP_URLS.main}?view=getMemberInfo&email=${encodeURIComponent(email)}`);
+    // ✅【重大修改】改用 POST 方法發送請求
+    const response = await fetch(APP_URLS.main, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' }, // 使用 text/plain 避免 CORS 預檢
+        body: JSON.stringify({
+            action: 'getMemberInfo', // 新增一個 action 給 doPost 辨識
+            email: email
+        })
+    });
+
     if (!response.ok) throw new Error('網路回應錯誤');
 
     const result = await response.json();
@@ -87,48 +90,6 @@ async function loadMemberName(email) {
     document.getElementById("mobileUserName").innerText = errorText;
     document.getElementById("desktopUserName").innerText = errorText;
   }
-}
-
-
-function updateLoginStatusLink(isLoggedIn) {
-    if (isLoggedIn) {
-        loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="logout">登出</a>`;
-    } else {
-        loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="login">登入</a>`;
-    }
-}
-
-async function loadExternalHtmlSection(sectionId) {
-    if (!sectionId) return;
-    dynamicContentArea.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"></div></div>`;
-    try {
-        const response = await fetch(`/${sectionId}.html`);
-        if (!response.ok) throw new Error(`載入 ${sectionId}.html 失敗`);
-        dynamicContentArea.innerHTML = await response.text();
-        dynamicContentArea.querySelectorAll('script').forEach(oldScript => {
-            const newScript = document.createElement('script');
-            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-            oldScript.parentNode.replaceChild(newScript, oldScript);
-        });
-    } catch (error) {
-        console.error('載入外部內容錯誤:', error);
-        dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">頁面載入失敗</h3>`;
-    }
-}
-
-function navigateTo(id, fromHistory = false) {
-    pages.forEach(p => p.style.display = 'none');
-    // 移除 recommendPage 的相關邏輯
-    // if (id === 'recommend') { ... } 
-    dynamicContentArea.style.display = 'block';
-    loadExternalHtmlSection(id);
-    
-    if (!fromHistory && id && id !== "logout") {
-        const url = new URL(window.location);
-        url.searchParams.set('view', id);
-        window.history.pushState({ section: id }, '', url);
-    }
 }
 window.navigateTo = navigateTo;
 

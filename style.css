@@ -221,3 +221,25 @@ html, body {
 #recommendSheet option {
   color: #007bff;
 }
+
+/* ==========================================================================
+   5. 組件：下拉選單頁面
+   ========================================================================== */
+
+/* 設置下拉選單容器的背景顏色為鵝黃色 */
+.dropdown-menu {
+    background-color: #ffe082; /* 鵝黃色，與您的導覽列顏色一致 */
+    border: none; /* 移除預設的邊框，讓它看起來更協調 */
+}
+
+/* 確保下拉選單中的每個項目在懸停或被選中時也有合適的背景色和文字顏色 */
+.dropdown-menu .dropdown-item {
+    color: #343a40; /* 預設文字顏色，或您選擇的顏色 */
+}
+
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus,
+.dropdown-menu .dropdown-item.active {
+    background-color: #ffd766; /* 懸停時稍深一點的黃色，或您希望的顏色 */
+    color: #212529; /* 懸停時的文字顏色 */
+}

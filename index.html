@@ -1,88 +1,68 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>好管家股東紀念品代領</title>
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好管家代領</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="colors.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <style>
-        .page-container { display: none; }
-        .page-container.active { display: block; }
-    </style>
+    <!-- 您自己的 CSS -->
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
-    <!-- ✅ 初始載入遮罩：Firebase 還沒確認登入狀態前顯示 -->
-<div id="initialLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-  <div class="spinner-border text-warning" role="status" style="width: 3rem; height: 3rem;">
-    <span class="visually-hidden">載入中...</span>
-  </div>
-</div>
-    
-<nav class="navbar navbar-expand-md navbar-light">
-  <div class="container-fluid">
-
-    <!-- ✅ 品牌與桌機版使用者名稱（左側） -->
-    <div class="d-flex align-items-center">
-      <a class="navbar-brand fw-bold d-flex align-items-center mb-0" href="#">
-        <img src="favicon.png" alt="好管家Logo" style="height: 30px; margin-right: 8px;">
-        好管家代領
-      </a>
-      <div id="desktopUserName" class="ms-2 small text-muted d-none d-md-block"></div>
-    </div>
-
-    <!-- ✅ 手機版使用者名稱：放在這裡（navbar-toggler 之前） -->
-    <div id="mobileUserName" class="ms-0.1 small text-muted d-block d-md-none"></div>
-
-    <!-- 📱 漢堡選單按鈕（小螢幕時展開選單） -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- 導覽選單與登入狀態（右側） -->
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <div class="d-flex flex-column flex-md-row align-items-md-center ms-auto">
-        <ul class="navbar-nav" id="navMenu"></ul>
-        <div id="loginStatus" class="small text-muted"></div>
-      </div>
-    </div>
-
-  </div>
-</nav>
-
-    <div class="container-fluid">
-        <section id="page-recommend" class="page-container">
-            <div class="recommend-wrapper">
-                <h3 class="text-center">🌟 推薦清單</h3>
-                <div class="d-flex align-items-center gap-2 recommend-controls mb-3">
-                    <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
-                    <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;"><option>分類載入中...</option></select>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-sm" id="recommendTable">
-                        <thead class="table-warning"></thead>
-                        <tbody></tbody>
-                    </table>
+    <!-- 導覽列 (Navbar) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">🦊 好管家代領</a>
+            <span id="mobileUserName" class="navbar-text d-lg-none ms-auto me-3"></span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul id="navMenu" class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- JavaScript 會動態填入這裡 -->
+                </ul>
+                <span id="desktopUserName" class="navbar-text d-none d-lg-block me-3"></span>
+                <div id="loginStatus">
+                    <!-- JavaScript 會動態填入登入/登出連結 -->
                 </div>
             </div>
-        </section>
-        <section id="dynamic-content-area" class="page-container"></section>
+        </div>
+    </nav>
+
+    <!-- 初始載入動畫 -->
+    <div id="initialLoading" class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <!-- 主內容區域 -->
+    <main id="main-content" class="container py-4">
+        <!-- 頁面容器 (預設隱藏) -->
+        <div id="page-recommend" class="page-container" style="display: none;">
+            <!-- 推薦清單的內容會在這裡 -->
+        </div>
+        <!-- 動態載入的內容會放在這裡 -->
+        <div id="dynamic-content-area"></div>
+    </main>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ✅【重大修改】快取破壞 (Cache Busting) -->
+    <!-- 我們在 app.js 的路徑後面，加上一個每次都會改變的數字 (時間戳) -->
+    <!-- 這會強制瀏覽器每次都下載最新的 app.js，而不是使用舊的快取 -->
+    <script id="app-loader"></script>
     <script>
-        const cacheBuster = new Date().getTime();
+        const loader = document.getElementById('app-loader');
         const script = document.createElement('script');
         script.type = 'module';
-        script.src = `app.js?v=${cacheBuster}`;
-        document.body.appendChild(script);
+        // 透過加上 ?v=時間戳，讓瀏覽器認為這是一個全新的檔案
+        script.src = `/app.js?v=${new Date().getTime()}`;
+        loader.parentNode.insertBefore(script, loader.nextSibling);
     </script>
+
 </body>
 </html>

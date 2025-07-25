@@ -28,18 +28,12 @@
 
     <!-- ✅ 品牌與桌機版使用者名稱（左側） -->
     <div class="d-flex align-items-center">
-      <a class="navbar-brand fw-bold d-flex align-items-center mb-0" href="#">
+      <a class="navbar-brand fw-bold d-flex align-items-center mb-0" text-truncate href="#">
         <img src="favicon.png" alt="好管家Logo" style="height: 30px; margin-right: 8px;">
         小管家。紀念品代領
       </a>
       <div id="desktopUserName" class="ms-2 small text-muted d-none d-md-block"></div>
     </div>
-
-    <!-- ✅ 手機版使用者名稱與漢堡選單按鈕（右側） -->
-            <div class="d-flex align-items-center">
-                <!-- ✅【修改】加上 text-truncate 讓過長的文字變成...，並調整間距 -->
-                <div id="mobileUserName" class="small text-muted d-block d-md-none text-truncate me-2"></div>
-                  
 
     <!-- ✅ 手機版使用者名稱：放在這裡（navbar-toggler 之前） -->
     <div id="mobileUserName" class="ms-0.1 small text-muted d-block d-md-none"></div>
@@ -63,11 +57,18 @@
     <div class="container-fluid">
         <section id="page-recommend" class="page-container">
             <div class="recommend-wrapper">
-                <h3 class="text-center">🌟 推薦清單</h3>
-                <div class="d-flex align-items-center gap-2 recommend-controls mb-0">
-                    <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
-                    <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;"><option>分類載入中...</option></select>
-                </div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+
+    <div class="d-flex align-items-center gap-2 recommend-controls">
+        <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
+        <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
+            <option>分類載入中...</option>
+        </select>
+    </div>
+
+    <h3 class="mb-0">🌟 推薦清單</h3>
+
+</div>
                 <div class="table-responsive">
                     <table class="table table-bordered table-sm" id="recommendTable">
                         <thead class="table-warning"></thead>

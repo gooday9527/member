@@ -123,33 +123,18 @@ async function loadExternalHtmlSection(sectionId) {
     }
 }
 
-// ✅【修正】修正頁面導航邏輯，正確處理 recommend 頁面
 function navigateTo(id, fromHistory = false) {
-    // 先隱藏所有主要內容區
-    if (recommendPage) recommendPage.style.display = 'none';
-    if (dynamicContentArea) dynamicContentArea.style.display = 'none';
+    // 讓所有頁面的載入邏輯都統一
+    dynamicContentArea.innerHTML = ''; // 先清空內容
+    loadExternalHtmlSection(id); // 直接交給外部載入函數處理
 
-    if (id === 'recommend') {
-        // 如果是推薦清單，則顯示靜態的推薦清單容器
-        if (recommendPage) {
-            recommendPage.style.display = 'block';
-            initializeRecommendPage(); // 並執行其初始化腳本
-        }
-    } else {
-        // 其他所有頁面，都使用動態載入的方式
-        if (dynamicContentArea) {
-            dynamicContentArea.style.display = 'block';
-            loadExternalHtmlSection(id);
-        }
-    }
-    
+    // 更新網址列的邏輯保持不變
     if (!fromHistory && id && id !== "logout") {
         const url = new URL(window.location);
         url.searchParams.set('view', id);
         window.history.pushState({ section: id }, '', url);
     }
 }
-window.navigateTo = navigateTo;
 
 // --- 事件監聽與啟動邏輯 (其餘部分保持不變) ---
 document.body.addEventListener("click", function (e) {

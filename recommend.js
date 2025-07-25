@@ -1,8 +1,8 @@
 // =================================================================
 //                 recommend.js (最終動態版)
 // =================================================================
-// 在 recommend.js 的最上方，從 app.js 導入 APP_URLS
-import { APP_URLS } from './app.js';
+
+const STATIC_JSON_URL = "https://member.gooday9527.com/data/recommendations_latest.json";
 
 let isRecommendInitialized = false;
 let recommendDataCache = {}; // 格式：{ 分類名稱: [...] }

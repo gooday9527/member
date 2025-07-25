@@ -8,7 +8,7 @@ import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/fi
 const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f", measurementId: "G-J3Z7YTHJ9P" };
 
 export const APP_URLS = {
-    main: "https://script.google.com/macros/s/AKfycbw7BQrq9T7l-BMxUIQqPbwK6RwUad09JRmP5BmkmD0T1jkV1lwA7FxJ1DTBledjz6S-mw/exec",
+    main: "https://script.google.com/macros/s/AKfycbwFSVsZNUeuQXiJ9cU-KSBCg1ZZLVRs-urxiwdQVHt3n_9DJBBvWLZ1Mez0pExtM04Q/exec",
 };
 
 const app = initializeApp(firebaseConfig);

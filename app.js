@@ -114,9 +114,9 @@ async function loadMemberName(email) {
 }
 function updateLoginStatusLink(isLoggedIn) {
     if (isLoggedIn) {
-        loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="logout">登出</a>`;
+        loginStatus.innerHTML = `<a class="nav-link ms-2 me-3 text-red" href="#" data-section="logout">登出</a>`;
     } else {
-        loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="login">登入</a>`;
+        loginStatus.innerHTML = `<a class="nav-link ms-2 me-3 text-red" href="#" data-section="login">登入</a>`;
     }
 }
 

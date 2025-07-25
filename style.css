@@ -145,7 +145,7 @@ html, body {
   .recommend-wrapper .recommend-controls {
     flex-shrink: 0;
     padding: 1rem 1rem 1rem;
-    background-color: #fffbea;
+    background-color: #ffffff; /*分類列背景色*/
   }
   .recommend-wrapper .table-responsive {
     flex-grow: 1;

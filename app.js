@@ -1,8 +1,10 @@
 // =================================================================
-//                 app.js (穩定還原版)
+//                 app.js (最終修正版)
 // =================================================================
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+// ✅【修正】加回 recommend.js 的 import，以便初始化推薦清單頁面
+import { initializeRecommendPage } from './recommend.js';
 
 // --- 全域設定 ---
 const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f", measurementId: "G-J3Z7YTHJ9P" };
@@ -22,11 +24,11 @@ const loginStatus = document.getElementById("loginStatus");
 const mobileUserName = document.getElementById("mobileUserName");
 const desktopUserName = document.getElementById("desktopUserName");
 const dynamicContentArea = document.getElementById('dynamic-content-area');
-const pages = document.querySelectorAll('.page-container');
+// ✅【修正】明確定義推薦清單頁面的容器
+const recommendPage = document.getElementById('page-recommend');
 const navbarCollapse = document.getElementById('navbarNav');
 const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
 
-// 使用一個布林值來追蹤是否為首次載入，邏輯更清晰
 let isInitialLoad = true; 
 
 // --- 函數定義區 ---
@@ -56,10 +58,8 @@ async function loadMemberName(email) {
     document.getElementById("desktopUserName").innerText = "";
     return;
   }
-
   document.getElementById("mobileUserName").innerText = "載入中...";
   document.getElementById("desktopUserName").innerText = "載入中...";
-
   try {
     const response = await fetch(APP_URLS.main, {
         method: 'POST',
@@ -73,7 +73,7 @@ async function loadMemberName(email) {
         document.getElementById("mobileUserName").innerText = memberText;
         document.getElementById("desktopUserName").innerText = memberText;
     } else {
-        throw new Error(result.message || "找不到會員名稱");
+        throw new Error(result.data.message || "找不到會員名稱");
     }
   } catch (error) {
     console.error("取得會員資料失敗:", error);
@@ -113,10 +113,25 @@ async function loadExternalHtmlSection(sectionId) {
     }
 }
 
+// ✅【修正】修正頁面導航邏輯，正確處理 recommend 頁面
 function navigateTo(id, fromHistory = false) {
-    pages.forEach(p => p.style.display = 'none');
-    dynamicContentArea.style.display = 'block';
-    loadExternalHtmlSection(id);
+    // 先隱藏所有主要內容區
+    if (recommendPage) recommendPage.style.display = 'none';
+    if (dynamicContentArea) dynamicContentArea.style.display = 'none';
+
+    if (id === 'recommend') {
+        // 如果是推薦清單，則顯示靜態的推薦清單容器
+        if (recommendPage) {
+            recommendPage.style.display = 'block';
+            initializeRecommendPage(); // 並執行其初始化腳本
+        }
+    } else {
+        // 其他所有頁面，都使用動態載入的方式
+        if (dynamicContentArea) {
+            dynamicContentArea.style.display = 'block';
+            loadExternalHtmlSection(id);
+        }
+    }
     
     if (!fromHistory && id && id !== "logout") {
         const url = new URL(window.location);
@@ -126,7 +141,7 @@ function navigateTo(id, fromHistory = false) {
 }
 window.navigateTo = navigateTo;
 
-// --- 事件監聽與啟動邏輯 ---
+// --- 事件監聽與啟動邏輯 (其餘部分保持不變) ---
 document.body.addEventListener("click", function (e) {
     const clickedLink = e.target.closest("a[data-section]");
     if (clickedLink) {
@@ -151,40 +166,32 @@ window.addEventListener('popstate', function(event) {
     }
 });
 
-// onAuthStateChanged 負責監聽登入狀態的變化，並更新 UI
 onAuthStateChanged(auth, (user) => {
     const wasLoggedIn = !!loginEmail;
     loginEmail = user ? user.email : null;
     window.currentUserEmail = loginEmail;
     const isLoggedIn = !!user;
 
-    // 只有在登入狀態真實改變時，才更新大部分 UI
     if (isLoggedIn !== wasLoggedIn) {
         renderNavTabs();
         updateLoginStatusLink(isLoggedIn);
         if (isLoggedIn) {
             loadMemberName(loginEmail);
         } else {
-            // 登出時清空會員名稱並導向到預設頁面
             document.getElementById("mobileUserName").innerText = "";
             document.getElementById("desktopUserName").innerText = "";
             navigateTo("souvenir");
         }
     }
 
-    // 只有在首次載入頁面時，才執行這段邏輯
     if (isInitialLoad) {
-        isInitialLoad = false; // 將旗標設為 false，確保此區塊只執行一次
+        isInitialLoad = false;
         document.getElementById("initialLoading")?.remove();
-
-        // 首次載入時，根據登入狀態，預先渲染一次 UI
         renderNavTabs();
         updateLoginStatusLink(isLoggedIn);
         if (isLoggedIn) {
             loadMemberName(loginEmail);
         }
-        
-        // 根據 URL 參數決定要顯示哪個頁面，若無則顯示預設頁面
         const urlParams = new URLSearchParams(window.location.search);
         const view = urlParams.get("view") || "souvenir";
         navigateTo(view);

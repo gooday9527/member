@@ -50,39 +50,60 @@ function renderNavTabs() {
     });
 }
 
+// =================================================================
+//                 會員名稱載入函數 (完整修正版)
+// =================================================================
 async function loadMemberName(email) {
-  if (!email) {
-    document.getElementById("mobileUserName").innerText = "";
-    document.getElementById("desktopUserName").innerText = "";
-    return;
-  }
-
-  document.getElementById("mobileUserName").innerText = "載入中...";
-  document.getElementById("desktopUserName").innerText = "載入中...";
-
-  try {
-    const response = await fetch(APP_URLS.main, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'getMemberInfo', email: email })
-    });
-    if (!response.ok) throw new Error('網路回應錯誤');
-    const result = await response.json();
-    if (result.success && result.data && result.data.name && result.data.name !== "未知會員") {
-        const memberText = `會員：${result.data.name}`;
-        document.getElementById("mobileUserName").innerText = memberText;
-        document.getElementById("desktopUserName").innerText = memberText;
-    } else {
-        throw new Error(result.message || "找不到會員名稱");
+    // 如果沒有 email，就清空名稱並退出
+    if (!email) {
+        document.getElementById("mobileUserName").innerText = "";
+        document.getElementById("desktopUserName").innerText = "";
+        return;
     }
-  } catch (error) {
-    console.error("取得會員資料失敗:", error);
-    const errorText = "會員：載入失敗";
-    document.getElementById("mobileUserName").innerText = errorText;
-    document.getElementById("desktopUserName").innerText = errorText;
-  }
-}
 
+    // 先顯示載入中...
+    document.getElementById("mobileUserName").innerText = "載入中...";
+    document.getElementById("desktopUserName").innerText = "載入中...";
+
+    try {
+        // 1. 建立 URL 參數物件
+        const params = new URLSearchParams({
+            view: 'getMemberInfo', // 使用 view 參數
+            email: email
+        });
+
+        // 2. 組合出完整的請求網址
+        const urlWithParams = `${APP_URLS.main}?${params.toString()}`;
+
+        // 3. 發送 GET 請求
+        const response = await fetch(urlWithParams);
+
+        // 4. 檢查網路回應是否正常 (例如 404, 500 錯誤)
+        if (!response.ok) {
+            throw new Error(`網路回應錯誤: ${response.status}`);
+        }
+
+        // 5. 解析後端回傳的 JSON 資料
+        const result = await response.json();
+
+        // 6. 根據後端回報的 success 狀態來更新畫面
+        if (result.success && result.data && result.data.name && result.data.name !== "未知會員") {
+            const memberText = `會員：${result.data.name}`;
+            document.getElementById("mobileUserName").innerText = memberText;
+            document.getElementById("desktopUserName").innerText = memberText;
+        } else {
+            // 如果後端明確回報 success: false，也拋出錯誤
+            throw new Error(result.message || "後端回報錯誤但未提供訊息");
+        }
+
+    } catch (error) {
+        // 捕捉所有可能發生的錯誤 (網路錯誤、JSON 解析錯誤、後端錯誤等)
+        console.error("取得會員資料失敗:", error);
+        const errorText = "會員：載入失敗";
+        document.getElementById("mobileUserName").innerText = errorText;
+        document.getElementById("desktopUserName").innerText = errorText;
+    }
+}
 function updateLoginStatusLink(isLoggedIn) {
     if (isLoggedIn) {
         loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="logout">登出</a>`;

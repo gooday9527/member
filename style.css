@@ -82,12 +82,12 @@ html, body {
   .souvenir-wrapper {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 60px);
   }
   .souvenir-wrapper .table-controls-fixed {
     flex-shrink: 0;
     padding: 1rem;
-    background-color: #fffbea;
+    background-color: #ffffff;
   }
   .souvenir-wrapper .table-scroll-container {
     flex-grow: 1;

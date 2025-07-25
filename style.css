@@ -179,24 +179,23 @@ html, body {
 
 @media (max-width: 576px) {
   /* 讓 controls + 標題這一列可以換行 */
-  .recommend-wrapper .d-flex.position-relative.mb-2 {
-    flex-wrap: wrap;
+  .recommend-wrapper .d-flex.align-items-center.position-relative.mb-2 {
+    flex-wrap: wrap !important;
   }
 
-  /* 把標題撥到第二行，並且讓它水平置中 */
-  .recommend-wrapper h3 {
-    position: static;       /* 取消原本的絕對定位 */
-    width: 100%;            /* 滿版寬度 */
-    text-align: center;     
-    margin: 0.5rem 0;       /* 上下留點空隙 */
-  }
-
-  /* 把 controls 區塊往左靠，維持原本排版 */
+  /* controls 佔整行 */
   .recommend-wrapper .recommend-controls {
-    flex: 1 0 100%;         /* 佔整行 */
+    flex: 1 0 100% !important;
+  }
+
+  /* 標題撥到下一行，並置中 */
+  .recommend-wrapper h3 {
+    position: static !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0.5rem 0 !important;
   }
 }
-
 
 /* --- 通用樣式 (推薦清單) --- */
 .recommend-wrapper thead th {
@@ -207,9 +206,9 @@ html, body {
   white-space: nowrap;
 }
 
-/* 表格斑馬紋：每隔一列為淺灰色 */
-.recommend-wrapper tbody tr:nth-child(even) {
-  background-color: #f8f9fa; /* Bootstrap 的淺灰背景 */
+/* 通用：強制每隔一列的所有儲存格都套用灰底 */
+.recommend-wrapper .table-responsive table tbody tr:nth-child(even) td {
+  background-color: #f8f9fa !important;
 }
 
 /* 只改「推薦清單」分類下拉選單文字顏色 */

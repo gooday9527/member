@@ -179,7 +179,7 @@ html, body {
 
 @media (max-width: 576px) {
  /* 取消整列的絕對定位，改成一般流式 */
-  .recommend-wrapper .d-flex.position-relative.mb-2 {
+  .recommend-wrapper .d-flex.position-relative.mb-0.5 {
     flex-direction: column !important;    /* 由橫改直 */
     align-items: flex-start !important;   /* 左對齊 */
     position: static !important;          /* 取消 position:absolute 影響 */
@@ -198,7 +198,7 @@ html, body {
     transform: none !important;
     width: 100% !important;
     text-align: left !important;         /* 或置中都行 */
-    margin: 0.5rem 0 !important;         /* 上下間距 */
+    margin: 0.5rem 0.5 !important;         /* 上下間距 */
   }
 }
 

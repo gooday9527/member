@@ -11,7 +11,13 @@ const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", auth
 
 export const APP_URLS = {
     main: "https://script.google.com/macros/s/AKfycbwFSVsZNUeuQXiJ9cU-KSBCg1ZZLVRs-urxiwdQVHt3n_9DJBBvWLZ1Mez0pExtM04Q/exec",
+    // ✅ 新增這一行，專門給推薦清單使用
+    recommend: "https://script.google.com/macros/s/AKfycbzdoezSaX2ujsE5ejjac3HbZWWHhDKQbX0nN1rVTIPSZm7opdCtslmwPAIq6zBNvcTp/exec"
+    
+    // 未來如果您有 souvenir 的後端網址，也可以加在這裡
+    // souvenir: "https://..."
 };
+
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);

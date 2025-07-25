@@ -87,19 +87,20 @@ html, body {
   .souvenir-wrapper .table-controls-fixed {
     flex-shrink: 0;
     padding: 1rem;
-    background-color: #fffbea;
+    background-color: #ffffff;
   }
   .souvenir-wrapper .table-scroll-container {
     flex-grow: 1;
     overflow-y: auto !important; /* 桌機主要垂直滾動 */
-    border: 1px solid #dee2e6;
+    border: 1px none #dee2e6;
     position: relative;
   }
   .souvenir-wrapper #souvenirPaginationWrapper {
     flex-shrink: 0;
     padding: 1rem;
-    background-color: #fffbea;
+    background-color: #ffffff;
     text-align: center;
+    margin-bottom: 4rem; /* 或 2rem，看你想多遠 */
   }
 }
 
@@ -152,7 +153,10 @@ html, body {
     overflow-y: auto; /* 桌機主要垂直滾動 */
     border: 1px solid #dee2e6;
     position: relative;
-  }
+   }
+   .recommend-wrapper tbody tr:nth-child(even) {
+    background-color: #f8f9fa; /* 淺灰 */
+   } 
 }
 
 /* --- 手機版佈局 (Mobile Layout) --- */

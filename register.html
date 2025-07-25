@@ -1,193 +1,85 @@
-// =================================================================
-//                 app.js (正常登入修正版)
-// =================================================================
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+<!-- register.html -->
+<h3 class="text-center">👋 註冊新帳號</h3>
+<form id="registerForm" class="text-center mt-3" style="max-width: 400px; margin: auto;">
+    <div class="mb-3">
+        <input type="text" class="form-control" id="name" placeholder="姓名" required />
+    </div>
+    <div class="mb-3">
+        <input type="email" class="form-control" id="email" placeholder="Email (將作為您的登入帳號)" required />
+    </div>
+    <div class="mb-3">
+        <input type="password" class="form-control" id="password" placeholder="密碼 (至少6位數)" required minlength="6" />
+    </div>
+    <div class="mb-3">
+        <input type="password" class="form-control" id="confirmPassword" placeholder="確認密碼" required minlength="6" />
+    </div>
+    <button type="submit" class="btn btn-primary w-100 mb-3">確認註冊</button>
+    <div class="text-center">
+        <a href="#" data-section="login">已經有帳號了？返回登入</a>
+    </div>
+</form>
 
-// --- 全域設定 ---
-const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f", measurementId: "G-J3Z7YTHJ9P" };
+<script type="module">
+    import { getApps, initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword,signOut  } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-export const APP_URLS = {
-    main: "https://script.google.com/macros/s/AKfycbwFSVsZNUeuQXiJ9cU-KSBCg1ZZLVRs-urxiwdQVHt3n_9DJBBvWLZ1Mez0pExtM04Q/exec",
-};
+    const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f" };
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const auth = getAuth(app);
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+    function initializeRegisterForm() {
+        const registerForm = document.getElementById('registerForm');
+        if (!registerForm) return;
+        registerForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
 
-// --- 全域變數 ---
-let loginEmail = null;
-window.currentUserEmail = null;
-const navMenu = document.getElementById("navMenu");
-const loginStatus = document.getElementById("loginStatus");
-const mobileUserName = document.getElementById("mobileUserName");
-const desktopUserName = document.getElementById("desktopUserName");
-const dynamicContentArea = document.getElementById('dynamic-content-area');
-const pages = document.querySelectorAll('.page-container');
-const navbarCollapse = document.getElementById('navbarNav');
-const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
+            if (password !== confirmPassword) { alert("錯誤：兩次輸入的密碼不相符！"); return; }
+            if (!name) { alert("錯誤：請輸入您的姓名！"); return; }
 
-// 使用一個布林值來追蹤是否為首次載入，邏輯更清晰
-let isInitialLoad = true; 
+            const submitButton = registerForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '處理中...';
 
-// --- 函數定義區 ---
+            try {
+                // 步驟 1: Firebase 註冊
+                await createUserWithEmailAndPassword(auth, email, password);
+                await signOut(auth);  // ✅ 註冊後立即登出，避免導覽列誤判登入
+                
+                // 步驟 2: 寫入 Google Sheet
+                const relayUrl = "https://script.google.com/macros/s/AKfycbzk_RKeBgLtWsVJe79WUIYklyOnLL94nVZ41rb_zG_bV-LOSsi9PtSHQX0H0a2hMId0/exec";
+                const response = await fetch(relayUrl, { method: "POST", body: JSON.stringify({ action: "register", email, name }) });
+                const result = await response.json();
+                if (!result.success) { throw new Error(result.message || "寫入會員資料失敗"); }
+                
+                // ✅ 步驟 3: 提示成功並跳轉登入
+                alert("✅ 註冊成功！請使用您的新帳號登入。");
+                if (window.showSection) {
+                  window.showSection('login'); // SPA 模式
+                } else {
+                 window.location.href = "/?view=login"; // 非 SPA 模式
+                }
 
-const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }];
-const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "delegation-manage-dropdown", label: "📥 委託管理", isDropdown: true, children: [ { id: "delegable-list", label: "可委託代領清單" }, { id: "delegated-query", label: "已委託代領查詢" } ] }, { id: "souvenir-manage-dropdown", label: "🧾 紀念品管理", isDropdown: true, children: [ { id: "souvenir-inventory", label: "紀念品總庫存" }, { id: "souvenir-transaction-query", label: "紀念品進出查詢" }, { id: "souvenir-withdrawal-query", label: "領出申請查詢" }, { id: "souvenir-album", label: "專屬紀念品相冊" } ] }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "add-account-shares", label: "� 新增帳號／持股" }, { id: "deposit-withdrawal", label: "💵 儲值 / 提款" }, { id: "account-query", label: "🔍 帳務查詢" } ] } ];
-
-function renderNavTabs() {
-    navMenu.innerHTML = "";
-    const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
-    tabs.forEach(tab => {
-        const li = document.createElement("li");
-        li.className = "nav-item";
-        if (tab.isDropdown) {
-            li.className = "nav-item dropdown";
-            li.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">${tab.label}</a><ul class="dropdown-menu" aria-labelledby="${tab.id}Link">${tab.children.map(child => `<li><a class="dropdown-item" href="#" data-section="${child.id}">${child.label}</a></li>`).join('')}</ul>`;
-        } else {
-            li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
-        }
-        navMenu.appendChild(li);
-    });
-}
-
-async function loadMemberName(email) {
-  if (!email) {
-    document.getElementById("mobileUserName").innerText = "";
-    document.getElementById("desktopUserName").innerText = "";
-    return;
-  }
-
-  document.getElementById("mobileUserName").innerText = "載入中...";
-  document.getElementById("desktopUserName").innerText = "載入中...";
-
-  try {
-    const response = await fetch(APP_URLS.main, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'getMemberInfo', email: email })
-    });
-    if (!response.ok) throw new Error('網路回應錯誤');
-    const result = await response.json();
-    if (result.success && result.data && result.data.name && result.data.name !== "未知會員") {
-        const memberText = `會員：${result.data.name}`;
-        document.getElementById("mobileUserName").innerText = memberText;
-        document.getElementById("desktopUserName").innerText = memberText;
-    } else {
-        throw new Error(result.message || "找不到會員名稱");
-    }
-  } catch (error) {
-    console.error("取得會員資料失敗:", error);
-    const errorText = "會員：載入失敗";
-    document.getElementById("mobileUserName").innerText = errorText;
-    document.getElementById("desktopUserName").innerText = errorText;
-  }
-}
-
-function updateLoginStatusLink(isLoggedIn) {
-    if (isLoggedIn) {
-        loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="logout">登出</a>`;
-    } else {
-        loginStatus.innerHTML = `<a class="nav-link ms-2 me-2 text-red" href="#" data-section="login">登入</a>`;
-    }
-}
-
-async function loadExternalHtmlSection(sectionId) {
-    if (!sectionId || sectionId === 'null') {
-      dynamicContentArea.innerHTML = '';
-      return;
-    }
-    dynamicContentArea.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"></div></div>`;
-    try {
-        const response = await fetch(`/${sectionId}.html`);
-        if (!response.ok) throw new Error(`載入 ${sectionId}.html 失敗`);
-        dynamicContentArea.innerHTML = await response.text();
-        dynamicContentArea.querySelectorAll('script').forEach(oldScript => {
-            const newScript = document.createElement('script');
-            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-            oldScript.parentNode.replaceChild(newScript, oldScript);
+            } catch (error) {
+                let message = "❌ 註冊失敗：";
+                if (error.code) {
+                     switch (error.code) {
+                        case 'auth/email-already-in-use': message += "這個 Email 已經被註冊過了。"; break;
+                        case 'auth/invalid-email': message += "Email 格式不正確。"; break;
+                        case 'auth/weak-password': message += "密碼強度不足，請至少設定6位數。"; break;
+                        default: message += "請稍後再試。";
+                    }
+                } else { message += error.message; }
+                alert(message);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            }
         });
-    } catch (error) {
-        console.error('載入外部內容錯誤:', error);
-        dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">頁面載入失敗</h3>`;
     }
-}
-
-function navigateTo(id, fromHistory = false) {
-    pages.forEach(p => p.style.display = 'none');
-    dynamicContentArea.style.display = 'block';
-    loadExternalHtmlSection(id);
-    
-    if (!fromHistory && id && id !== "logout") {
-        const url = new URL(window.location);
-        url.searchParams.set('view', id);
-        window.history.pushState({ section: id }, '', url);
-    }
-}
-window.navigateTo = navigateTo;
-
-// --- 事件監聽與啟動邏輯 ---
-document.body.addEventListener("click", function (e) {
-    const clickedLink = e.target.closest("a[data-section]");
-    if (clickedLink) {
-        e.preventDefault();
-        const id = clickedLink.dataset.section;
-        if (id === "logout") {
-            signOut(auth).catch((error) => console.error("登出失敗:", error));
-        } else {
-            navigateTo(id);
-        }
-        if (navbarCollapse.classList.contains('show')) {
-            bsCollapse.hide();
-        }
-    }
-});
-
-window.addEventListener('popstate', function(event) {
-    if (event.state && event.state.section) {
-        navigateTo(event.state.section, true);
-    } else {
-        navigateTo('souvenir', true);
-    }
-});
-
-// onAuthStateChanged 負責監聽登入狀態的變化，並更新 UI
-onAuthStateChanged(auth, (user) => {
-    const wasLoggedIn = !!loginEmail;
-    loginEmail = user ? user.email : null;
-    window.currentUserEmail = loginEmail;
-    const isLoggedIn = !!user;
-
-    // 只有在登入狀態真實改變時，才更新大部分 UI
-    if (isLoggedIn !== wasLoggedIn) {
-        renderNavTabs();
-        updateLoginStatusLink(isLoggedIn);
-        if (isLoggedIn) {
-            loadMemberName(loginEmail);
-        } else {
-            // 登出時清空會員名稱並導向到預設頁面
-            document.getElementById("mobileUserName").innerText = "";
-            document.getElementById("desktopUserName").innerText = "";
-            navigateTo("souvenir");
-        }
-    }
-
-    // 只有在首次載入頁面時，才執行這段邏輯
-    if (isInitialLoad) {
-        isInitialLoad = false; // 將旗標設為 false，確保此區塊只執行一次
-        document.getElementById("initialLoading")?.remove();
-
-        // 首次載入時，根據登入狀態，預先渲染一次 UI
-        renderNavTabs();
-        updateLoginStatusLink(isLoggedIn);
-        if (isLoggedIn) {
-            loadMemberName(loginEmail);
-        }
-        
-        // 根據 URL 參數決定要顯示哪個頁面，若無則顯示預設頁面
-        const urlParams = new URLSearchParams(window.location.search);
-        const view = urlParams.get("view") || "souvenir";
-        navigateTo(view);
-    }
-});
-�
+    setTimeout(initializeRegisterForm, 0);
+</script>

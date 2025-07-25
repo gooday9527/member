@@ -60,39 +60,37 @@ async function loadMemberName(email) {
   }
   document.getElementById("mobileUserName").innerText = "載入中...";
   document.getElementById("desktopUserName").innerText = "載入中...";
-  try {
-    // 1. 建立 URL 參數物件
-    const params = new URLSearchParams({
-        view: 'getMemberInfo', // 參數從 action 改為 view
-        email: email
-    });
+try { // TRY 區塊開始
+        const params = new URLSearchParams({
+            view: 'getMemberInfo',
+            email: email
+        });
+        const urlWithParams = `${APP_URLS.main}?${params.toString()}`;
+        const response = await fetch(urlWithParams);
 
-    // 2. 將參數附加到 URL 後方
-    const urlWithParams = `${APP_URLS.main}?${params.toString()}`;
+        // ✅【修正】把所有後續處理邏輯全部搬進來
+        if (!response.ok) {
+            // 如果網路回應不OK (例如 404, 500 錯誤)，就直接拋出錯誤
+            throw new Error(`網路回應錯誤: ${response.status}`);
+        }
 
-    // 3. 發送 GET 請求，不再需要 method, headers, body
-    const response = await fetch(urlWithParams);
+        const result = await response.json();
 
-    // ... 後續處理 response 的程式碼不變 ...
+        if (result.success && result.data && result.data.name && result.data.name !== "未知會員") {
+            const memberText = `會員：${result.data.name}`;
+            document.getElementById("mobileUserName").innerText = memberText;
+            document.getElementById("desktopUserName").innerText = memberText;
+        } else {
+            // 如果後端回傳 success: false，也拋出錯誤
+            throw new Error(result.message || "找不到會員名稱");
+        }
 
-} catch (error) {
-    // ... 錯誤處理不變 ...
-}
-    if (!response.ok) throw new Error('網路回應錯誤');
-    const result = await response.json();
-    if (result.success && result.data && result.data.name && result.data.name !== "未知會員") {
-        const memberText = `會員：${result.data.name}`;
-        document.getElementById("mobileUserName").innerText = memberText;
-        document.getElementById("desktopUserName").innerText = memberText;
-    } else {
-        throw new Error(result.data.message || "找不到會員名稱");
+    } catch (error) { // CATCH 區塊，用來捕捉上面所有可能發生的錯誤
+        console.error("取得會員資料失敗:", error);
+        const errorText = "會員：載入失敗";
+        document.getElementById("mobileUserName").innerText = errorText;
+        document.getElementById("desktopUserName").innerText = errorText;
     }
-  } catch (error) {
-    console.error("取得會員資料失敗:", error);
-    const errorText = "會員：載入失敗";
-    document.getElementById("mobileUserName").innerText = errorText;
-    document.getElementById("desktopUserName").innerText = errorText;
-  }
 }
 
 function updateLoginStatusLink(isLoggedIn) {

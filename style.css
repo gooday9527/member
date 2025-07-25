@@ -5,7 +5,7 @@ body {
   background-color: #ffffff;
   font-family: 'Noto Sans TC', sans-serif;
   margin: 0;
-  padding:0; 
+  padding: 0;
 }
 
 html, body {
@@ -82,12 +82,12 @@ html, body {
   .souvenir-wrapper {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 100px);
   }
   .souvenir-wrapper .table-controls-fixed {
     flex-shrink: 0;
     padding: 1rem;
-    background-color: #ffffff;
+    background-color: #fffbea;
   }
   .souvenir-wrapper .table-scroll-container {
     flex-grow: 1;
@@ -100,7 +100,6 @@ html, body {
     padding: 1rem;
     background-color: #fffbea;
     text-align: center;
-    margin-bottom: 2rem; /* 或 2rem，看你想多遠 */
   }
 }
 
@@ -151,7 +150,7 @@ html, body {
   .recommend-wrapper .table-responsive {
     flex-grow: 1;
     overflow-y: auto; /* 桌機主要垂直滾動 */
-    border: 2px solid #fffbea;
+    border: 1px solid #dee2e6;
     position: relative;
   }
 }

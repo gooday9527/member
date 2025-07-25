@@ -234,7 +234,7 @@ html, body {
 
 /* 確保下拉選單中的每個項目在懸停或被選中時也有合適的背景色和文字顏色 */
 .dropdown-menu .dropdown-item {
-    color: #343a40; /* 預設文字顏色，或您選擇的顏色 */
+    color: #007bf; /* 預設文字顏色，或您選擇的顏色 */
 }
 
 .dropdown-menu .dropdown-item:hover,

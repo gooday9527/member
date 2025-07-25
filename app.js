@@ -1,6 +1,8 @@
 // =================================================================
 //                 app.js (穩定還原版)
 // =================================================================
+
+import { initializeRecommendPage } from './recommend.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 

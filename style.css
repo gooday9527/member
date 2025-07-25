@@ -27,7 +27,7 @@ html, body {
     overflow-y: auto;
   }
    #loginStatus .nav-link {
-    padding-left: 0.5rem !important;
+    padding-left: 1rem !important;
     color: #007bff !important;
   }
 }
@@ -46,7 +46,7 @@ html, body {
   
   /* 讓手機版的登入/登出連結樣式與其他項目一致 */
   #loginStatus .nav-link {
-    padding-left: 0.5rem !important;
+    padding-left: 1rem !important;
     color: #007bff !important;
   }
 }

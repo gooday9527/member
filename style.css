@@ -159,9 +159,7 @@ html, body {
    } 
 
    .recommend-controls label {
-    flex-basis: content; /* 讓它根據內容決定寬度 */
-    /* 或者 */
-    width: auto;
+    white-space: nowrap;
    }
 }
 

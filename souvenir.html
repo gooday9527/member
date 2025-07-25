@@ -114,6 +114,14 @@
             .catch(error => { console.error('載入紀念品資料錯誤：', error); });
     }
 
-// 因為這段 script 是在被動態載入後立即執行，所以直接呼叫主函數即可
-loadSouvenirDataWithoutDataTables();
+// ✅ 加上這個「安全啟動」邏輯
+if (document.readyState === 'loading') {
+    // 如果文件還在載入中（理論上不太會發生，但這是最保險的寫法），
+    // 就等它載入完畢再執行。
+    document.addEventListener('DOMContentLoaded', loadSouvenirDataWithoutDataTables);
+} else {
+    // 如果文件已經載入完畢，就直接執行。
+    // 對於動態載入的腳本，通常會走這一條路。
+    loadSouvenirDataWithoutDataTables();
+}
 </script>

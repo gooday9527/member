@@ -245,5 +245,5 @@ html, body {
 .dropdown-menu .dropdown-item:focus,
 .dropdown-menu .dropdown-item.active {
     background-color: #ffd766; /* 懸停時稍深一點的黃色，或您希望的顏色 */
-    color: #ffffff; /* 懸停時的文字顏色 */
+    color:#ff4500; /* 懸停時的文字顏色 */
 }

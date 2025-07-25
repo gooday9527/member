@@ -1,18 +1,30 @@
 <!-- souvenir.html -->
-<h3 class="text-center">🎁 紀念品</h3>
-<div class="souvenir-wrapper mt-2">
-    <div class="table-controls-fixed d-flex flex-wrap align-items-center gap-2" id="souvenirControlsContainer"></div>
+<section id="page-souvenir" class="page-container">
+  <div class="souvenir-wrapper mt-2">
+    <!-- 控制列：左側標題，右側搜尋＋筆數 -->
+    <div
+      class="align-items-center flex-wrap gap-2 table-controls-fixed d-flex justify-content-between "
+      id="souvenirControlsContainer"
+    >
+      <h3 class="mb-0">🎁 紀念品</h3>
+      <!-- 這裡會由 JS 動態插入搜尋和筆數控制 -->
+    </div>
+
+    <!-- 資料表區 -->
     <div class="table-scroll-container table-responsive">
-        <table class="table table-bordered table-sm" id="souvenirTable">
-            <thead class="table-warning"></thead>
-            <tbody></tbody>
-        </table>
+      <table class="table table-bordered table-sm" id="souvenirTable">
+        <thead class="table-warning"></thead>
+        <tbody></tbody>
+      </table>
     </div>
+
+    <!-- 分頁按鈕 -->
     <div id="souvenirPaginationWrapper">
-        <div id="souvenirPagination" class="d-flex justify-content-center flex-wrap"></div>
+      <div id="souvenirPagination" class="d-flex justify-content-center flex-wrap"></div>
     </div>
-</div>
-<!-- 相關 JavaScript 邏輯將會從 index.html 移到這裡 -->
+  </div>
+</section>
+
 <script>
     // 這些函數原本在 index.html 的 <script type="module"> 裡面
     // 現在它們將在這個頁面載入時執行

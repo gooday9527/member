@@ -1,6 +1,10 @@
 // =================================================================
 //                 app.js (穩定還原版)
 // =================================================================
+// 關閉自動 restore scroll，重新整理後就不會保持舊的位置
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
 
 import { initializeRecommendPage } from './recommend.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';

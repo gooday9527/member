@@ -141,13 +141,7 @@ document.body.addEventListener("click", function (e) {
 });
 
 window.addEventListener('popstate', function(event) {
-    // 由於我們使用 window.location.href 進行跳轉，popstate 觸發時
-    // 頁面已經重新載入了，所以這裡的 navigateTo(event.state.section, true) 
-    // 可能不再需要，或者需要重新思考其作用
-    // 在目前完全重載頁面的模式下，popstate 可能會導致重複載入，
-    // 但如果它是為了處理瀏覽器前後按鈕，則其邏輯需調整為僅更新 UI 而非再次跳轉
-    // 對於基於 Apps Script URL 參數的頁面導航，popstate 預設就會重新載入頁面，
-    // 所以這裡的邏輯可以簡化。
+
     if (event.state && event.state.section) {
         // 在這種模式下，popstate 已經改變了 URL，瀏覽器會重新載入，
         // 所以這裡不需要再次 navigateTo，除非您想更新一些 UI 狀態
@@ -158,45 +152,35 @@ window.addEventListener('popstate', function(event) {
 // ✅ 修正：將 onAuthStateChanged 放入 DOMContentLoaded 監聽器中
 // 確保在 DOM 完全載入且 auth 變數被成功定義後才執行
 document.addEventListener('DOMContentLoaded', () => {
-    // 初始化 Firebase Auth
-    // const app = initializeApp(firebaseConfig); // 這裡不需要再次初始化
-    // const auth = getAuth(app); // 這裡也不需要再次定義 auth，因為它已經在文件頂部定義了
-
-    onAuthStateChanged(auth, (user) => { // ✅ auth 在這裡應該已經定義好了
+   onAuthStateChanged(auth, (user) => { 
         const wasLoggedIn = !!loginEmail;
         loginEmail = user ? user.email : null;
         window.currentUserEmail = loginEmail;
-        const isLoggedIn = !!user;
-
-        
-        // 只有在首次載入頁面時，才執行這段邏輯
-        if (isInitialLoad) {
-            isInitialLoad = false;
-            document.getElementById("initialLoading")?.remove(); // 如果有這個載入提示
-
-            renderNavTabs();
-            updateLoginStatusLink(isLoggedIn);
-            if (isLoggedIn) {
-                loadMemberName(loginEmail);
-            }
+        const isLoggedIn = !!user;     
+        // ★ 只做 UI 更新，不跳頁 ★
+     if (isLoggedIn !== wasLoggedIn) {
+       renderNavTabs();
+       updateLoginStatusLink(isLoggedIn);
+       if (isLoggedIn) {
+         loadMemberName(loginEmail);
+       } else {
+         mobileUserName.innerText = "";
+         desktopUserName.innerText = "";
+       }
+     }
             
-            // 根據 URL 參數決定要顯示哪個頁面，若無則顯示預設頁面
-            const urlParams = new URLSearchParams(window.location.search);
-            const view = urlParams.get("page") || "souvenir"; // ✅ 這裡從 'view' 改為 'page'
-            
-            // 首次載入時，如果當前 URL 的 page 參數與應顯示的 page 不同，才進行跳轉
-            // 否則，表示頁面已經是正確的，無需再次跳轉
-            const currentPageParam = urlParams.get("page");
-            if (!currentPageParam || currentPageParam !== view) {
-                window.location.href = `${APP_URLS.main}?page=${view}`;
-            } else {
-                // 如果是首次載入且頁面已經是正確的，確保 UI 狀態正確
-                // 例如，如果頁面載入時就帶有 ?page=souvenir，且用戶已登入，那麼就顯示紀念品頁面
-                // 這裡的邏輯需要確保所有 DOM 元素已準備好
-            }
-        }
-    });
-});
+     // --- 改成這樣：只在 UI 上做第一次渲染，就不跳轉刷新了 ---
++    if (isInitialLoad) {
++      isInitialLoad = false;
++      document.getElementById("initialLoading")?.remove();
++
++      renderNavTabs();
++      updateLoginStatusLink(isLoggedIn);
++      if (isLoggedIn) loadMemberName(loginEmail);
++      // 不要做任何 window.location.href
++    }
+   });
+ });
 
 // =================================================================
 // 您之前 app.js 中可能有的其他函數，請確保已移除或不再使用:

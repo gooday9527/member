@@ -175,10 +175,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isLoggedIn) {
                 loadMemberName(loginEmail);
             } else {
+                // 清空使用者名稱，但不要重新導向
                 document.getElementById("mobileUserName").innerText = "";
                 document.getElementById("desktopUserName").innerText = "";
-                // 登出時導向預設頁面，使用 Apps Script Web App URL
-                window.location.href = `${APP_URLS.main}?page=souvenir`; 
             }
         }
 

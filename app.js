@@ -115,6 +115,7 @@ async function loadExternalHtmlSection(sectionId) {
 }
 
 function navigateTo(id, fromHistory = false) {
+    console.log(`[導航追蹤] navigateTo 正在執行，目標頁面 ID: ${id}`); // ✅ 請加上這一行追蹤碼
     const recommendPage = document.getElementById('page-recommend');
     const dynamicContentArea = document.getElementById('dynamic-content-area');
     if (recommendPage) recommendPage.style.display = 'none';

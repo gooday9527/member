@@ -128,15 +128,22 @@ async function loadExternalHtmlSection(sectionId) {
     }
     dynamicContentArea.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"></div></div>`;
     try {
-        const response = await fetch(`/${sectionId}.html`);
+        // ✅【修改 1】加上 cacheBuster 避免瀏覽器快取舊的 HTML 內容
+        const response = await fetch(`${sectionId}.html?v=${new Date().getTime()}`);
         if (!response.ok) throw new Error(`載入 ${sectionId}.html 失敗`);
+        
         dynamicContentArea.innerHTML = await response.text();
-        dynamicContentArea.querySelectorAll('script').forEach(oldScript => {
-            const newScript = document.createElement('script');
-            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-            oldScript.parentNode.replaceChild(newScript, oldScript);
-        });
+        
+        // ✅【修改 2】核心步驟！
+        // 在 HTML 內容成功載入後，我們手動檢查 sectionId，
+        // 如果是 'delegable-list'，就呼叫它的專屬初始化函式。
+        if (sectionId === 'delegable-list') {
+            initializeDelegableListPage();
+        }
+        // 未來如果有其他頁面 (例如 add-account-shares) 需要初始化，也可以加在這裡
+        // else if (sectionId === 'add-account-shares') {
+        //     initializeAppSharesPage(); 
+        // }
     } catch (error) {
         console.error('載入外部內容錯誤:', error);
         dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">頁面載入失敗</h3>`;

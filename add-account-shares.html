@@ -113,18 +113,42 @@
                     if (!show) document.getElementById("newSubAccountInput").value = "";
                 }
             },
-            saveNewSubAccount: async function() {
+     saveNewSubAccount: async function() {
                 const name = document.getElementById("newSubAccountInput").value.trim();
                 if (!name) return displayMessage("請輸入子帳號名稱", "danger");
+                
                 const btn = document.querySelector('#addSubWrapper .btn-primary');
                 btn.disabled = true;
                 btn.textContent = '儲存中...';
+                
                 try {
                     const result = await fetchDataFromBackend("addAndSelectSubAccount", { name: name });
                     displayMessage(result.message, result.success ? "success" : "danger");
+                    
                     if (result.success) {
                         this.toggleSubAccountInput(false);
-                        await loadInitialData(name);
+                        
+                        // ✅ 【核心修正】
+                        // 不再重新從後端載入整個列表 (await loadInitialData(name))，以避免資料延遲問題。
+                        // 我們直接在前端，手動將剛才新增成功的帳號加入下拉選單。
+                        
+                        const select = document.getElementById("subAccountSelect");
+                        
+                        // 檢查下拉選單目前是否為 "尚無子帳號..." 的初始狀態
+                        if (select.options.length === 1 && select.options[0].textContent.includes("尚無子帳號")) {
+                            select.innerHTML = '<option value="">請選擇子帳號</option>'; // 先清空提示訊息
+                        }
+
+                        // 建立新的 <option> 元素
+                        const newOption = document.createElement("option");
+                        newOption.value = name;
+                        newOption.textContent = name;
+                        
+                        // 將新選項加入選單
+                        select.appendChild(newOption);
+
+                        // 直接將新選項設定為當前選中項
+                        select.value = name;
                     }
                 } catch (e) {
                     displayMessage("儲存失敗：" + e.message, "danger");

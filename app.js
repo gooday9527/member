@@ -1,73 +1,73 @@
 // =================================================================
-//                 app.js (最終修訂版)
+//                 app.js (還原到穩定版)
 // =================================================================
 // 關閉自動 restore scroll，重新整理後就不會保持舊的位置
 if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
 }
 
-import { initializeRecommendPage } from './recommend.js'; // 如果推薦清單是內嵌的才需要
+// 這裡不再 import 任何與推薦清單或委託清單相關的模組
+// 因為它們的功能暫時被視為未整合或不啟動
+// import { initializeRecommendPage } from './recommend.js'; 
+
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 // --- 全域設定 ---
 const firebaseConfig = { apiKey: "AIzaSyD9Bt0HwGGwlRT3_CWFBDhjGcnYf5lCuZU", authDomain: "goodaymember.firebaseapp.com", projectId: "goodaymember", storageBucket: "goodaymember.appspot.com", messagingSenderId: "730801053598", appId: "1:730801053598:web:a2ec0dc91c78fef6bfc08f", measurementId: "G-J3Z7YTHJ9P" };
 
-window.APP_URLS = { // 將 APP_URLS 設置為全局可訪問
+// 這個 Apps Script URL 將只用於 loadMemberName 函數，不用於頁面導航
+window.APP_URLS = {
     main: "https://script.google.com/macros/s/AKfycbwFSVsZNUeuQXiJ9cU-KSBCg1ZZLVRs-urxiwdQVHt3n_9DJBBvWLZ1Mez0pExtM04Q/exec",
-    recommend: "https://script.google.com/macros/s/AKfycbzdoezSaX2ujsE5ejjac3HbZWWHhDKQbX0nN1rVTIPSZm7opdCtslmwPAIq6zBNvcTp/exec"
+    // 推薦清單的 URL 也暫時不使用
+    // recommend: "https://script.google.com/macros/s/AKfycbzdoezSaX2ujsE5ejjac3HbZWWHhDKQbX0nN1rVTIPSZm7opdCtslmwPAIq6zBNvcTp/exec"
 };
 export const APP_URLS = window.APP_URLS; // 確保兼容其他可能 import 的地方
 
 let app;
 let auth;
 try {
-    app = initializeApp(firebaseConfig); // 嘗試初始化 Firebase App
-    auth = getAuth(app); // 嘗試獲取 Auth 實例
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
 } catch (error) {
     console.error("Firebase 初始化失敗:", error);
-    // 在這裡可以添加用戶友好的錯誤提示
     alert("Firebase 服務載入失敗，部分功能可能無法使用。請刷新頁面或聯繫管理員。");
 }
 
 
 // --- 全域變數 ---
 let loginEmail = null;
-window.currentUserEmail = null; // 全局變數
+window.currentUserEmail = null;
 const navMenu = document.getElementById("navMenu");
 const loginStatus = document.getElementById("loginStatus");
 const mobileUserName = document.getElementById("mobileUserName");
 const desktopUserName = document.getElementById("desktopUserName");
-const dynamicContentArea = document.getElementById('dynamic-content-area'); // 這個元素在目前架構中可能已不再使用
-const pages = document.querySelectorAll('.page-container'); // 這個選擇器在目前架構中可能已不再使用
+const dynamicContentArea = document.getElementById('dynamic-content-area'); // 可能不再使用
+const pages = document.querySelectorAll('.page-container'); // 可能不再使用
 const navbarCollapse = document.getElementById('navbarNav');
 const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
 
-let isInitialLoad = true; // 用來追蹤是否為首次載入
+let isInitialLoad = true; 
 
-// --- 函數定義區 ---
-const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }];
-const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "公告欄" }, { id: "delegation-manage-dropdown", label: "委託管理", isDropdown: true, children: [ { id: "delegable-list", label: "可委託代領清單" }, { id: "delegated-query", label: "已委託代領查詢" } ] }, { id: "souvenir-manage-dropdown", label: "紀念品管理", isDropdown: true, children: [ { id: "souvenir-inventory", label: "紀念品總庫存" }, { id: "souvenir-transaction-query", label: "紀念品進出查詢" }, { id: "souvenir-withdrawal-query", label: "領出申請查詢" }, { id: "souvenir-album", label: "專屬紀念品相冊" } ] }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "account-query", label: "帳務查詢" }, { id: "deposit-withdrawal", label: "儲值 / 提款" },{ id: "add-account-shares", label: "新增帳號／持股" } ] } ];
+// --- 函數定義區 (還原到僅顯示紀念品和基本頁面，不包含委託管理等新下拉菜單) ---
+const tabsBeforeLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "login", label: "登入" } ];
+// 恢復到沒有 dropdown 的版本
+const tabsAfterLogin = [ { id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦清單" }, { id: "notice", label: "注意事項" }, { id: "about", label: "關於我" }, { id: "announcement", label: "📣 公告欄" }, { id: "logout", label: "登出" } ]; // 簡化，只保留登出
 
 function renderNavTabs() {
     navMenu.innerHTML = "";
     const tabs = loginEmail ? tabsAfterLogin : tabsBeforeLogin;
-    const webAppBaseUrl = APP_URLS.main; // Apps Script Web App 的 URL
-
+    
     tabs.forEach(tab => {
         const li = document.createElement("li");
         li.className = "nav-item";
-        if (tab.isDropdown) {
-            li.className = "nav-item dropdown";
-            li.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">${tab.label}</a><ul class="dropdown-menu" aria-labelledby="${tab.id}Link">${tab.children.map(child => `<li><a class="dropdown-item" href="${webAppBaseUrl}?page=${child.id}" data-section="${child.id}">${child.label}</a></li>`).join('')}</ul>`;
-        } else {
-            // 所有導覽項都生成一個指向 Apps Script Web App 的 URL
-            li.innerHTML = `<a class="nav-link" href="${webAppBaseUrl}?page=${tab.id}" data-section="${tab.id}">${tab.label}</a>`;
-        }
+        // 暫時移除所有下拉選單的處理，只生成普通連結
+        li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
         navMenu.appendChild(li);
     });
 }
 
+// 會員名稱載入函數
 async function loadMemberName(email) {
     if (!email) {
         if (mobileUserName) mobileUserName.innerText = "";
@@ -105,42 +105,104 @@ async function loadMemberName(email) {
     }
 }
 
+// 更新登入狀態連結
 function updateLoginStatusLink(isLoggedIn) {
-    const webAppBaseUrl = APP_URLS.main;
     if (isLoggedIn) {
-        loginStatus.innerHTML = `<a class="nav-link ms-3 me-3 text-red" href="${webAppBaseUrl}?page=logout" data-section="logout">登出</a>`;
+        loginStatus.innerHTML = `<a class="nav-link ms-3 me-3 text-red" href="#" data-section="logout">登出</a>`;
     } else {
-        loginStatus.innerHTML = `<a class="nav-link ms-3 me-3 text-red" href="${webAppBaseUrl}?page=login" data-section="login">登入</a>`;
+        loginStatus.innerHTML = `<a class="nav-link ms-3 me-3 text-red" href="#" data-section="login">登入</a>`;
     }
 }
 
+// --- 頁面導航邏輯 (恢復到使用動態載入片段，不觸發整頁重載) ---
+// 這部分是基於您之前能夠正常運行的 app.js 中的導航邏輯
+// 它將確保頁面不會因為導航而重新載入，從而避免迴圈
+async function loadExternalHtmlSection(sectionId) {
+    // 顯示載入動畫
+    dynamicContentArea.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"></div></div>`;
+    try {
+        const response = await fetch(`/${sectionId}.html`); // 假設 HTML 檔案在根目錄
+        if (!response.ok) throw new Error(`載入 ${sectionId}.html 失敗`);
+        const htmlContent = await response.text();
+        dynamicContentArea.innerHTML = htmlContent;
+        // 重新執行載入的 HTML 中的 script 標籤
+        dynamicContentArea.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+            oldScript.parentNode.replaceChild(newScript, oldScript);
+        });
+    } catch (error) {
+        console.error('載入外部內容錯誤:', error);
+        dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">頁面載入失敗</h3>`;
+    }
+}
+
+function navigateTo(id, fromHistory = false) {
+    // 獲取頁面容器
+    const recommendPage = document.getElementById('page-recommend'); // 如果推薦清單是獨立的 section
+    const dynamicContentArea = document.getElementById('dynamic-content-area'); // 載入外部 HTML 的區域
+
+    // 隱藏所有頁面容器
+    if (recommendPage) recommendPage.style.display = 'none';
+    if (dynamicContentArea) dynamicContentArea.style.display = 'none';
+
+    // 根據 ID 顯示對應的內容
+    if (id === 'recommend') {
+        if (recommendPage) {
+            recommendPage.style.display = 'block';
+            // initializeRecommendPage(); // 如果推薦清單有自己的初始化函數，這裡調用
+        }
+    } else {
+        // 對於其他頁面，載入外部 HTML 片段
+        if (dynamicContentArea) {
+            dynamicContentArea.style.display = 'block';
+            loadExternalHtmlSection(id);
+        }
+    }
+    
+    // 更新網址列的邏輯保持不變 (使用 history.pushState)
+    if (!fromHistory && id && id !== "logout") {
+        const url = new URL(window.location);
+        url.searchParams.set('view', id); // 使用 'view' 參數來區分頁面
+        window.history.pushState({ section: id }, '', url);
+    }
+}
+
+
 // --- 事件監聽與啟動邏輯 ---
 document.body.addEventListener("click", function (e) {
-    const clickedLink = e.target.closest("a[data-section]"); // 監聽帶有 data-section 的連結
+    const clickedLink = e.target.closest("a[data-section]");
     if (clickedLink) {
+        e.preventDefault(); // 阻止所有 data-section 連結的默認行為，由 JS 處理導航
         const id = clickedLink.dataset.section;
         if (id === "logout") {
-            e.preventDefault(); // 阻止登出連結的默認行為，執行 Firebase 登出
             if (auth) { // 確保 auth 已定義
                 signOut(auth).catch((error) => console.error("登出失敗:", error));
             } else {
                 console.error("Firebase Auth 未初始化，無法登出。");
             }
+        } else {
+            navigateTo(id); // 調用內部導航函數
         }
-        // 對於其他帶有 data-section 的連結，它們的 href 已經是正確的 Apps Script URL
-        // 我們不再阻止默認行為，讓瀏覽器處理頁面跳轉 (這會導致 Apps Script 重新載入對應的 HTML)
-        // e.preventDefault(); // ✅ 移除這行，讓連結正常跳轉
-        
         // 手機版導覽列展開後，點擊項目應該自動收起
-        if (navbarCollapse && navbarCollapse.classList.contains('show')) {
-            navbarCollapse.classList.remove('show');
+        if (navbarCollapse.classList.contains('show')) {
+            bsCollapse.hide(); // 使用 bsCollapse.hide() 來收起導覽列
         }
     }
 });
 
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.section) {
+        navigateTo(event.state.section, true); // 瀏覽器前後按鈕時重新導航
+    } else {
+        navigateTo('souvenir', true); // 預設導航到紀念品頁面
+    }
+});
+
 // onAuthStateChanged 負責監聽登入狀態的變化，並更新 UI
-document.addEventListener('DOMContentLoaded', () => {
-    if (!auth) { // 如果 auth 在 try...catch 中初始化失敗，這裡就跳過
+document.addEventListener('DOMContentLoaded', () => { // 確保 DOM 準備好才執行
+    if (!auth) { // 檢查 auth 是否已定義 (Firebase 初始化是否成功)
         console.error("Firebase Auth 未成功初始化，無法監聽登入狀態。");
         return;
     }
@@ -150,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginEmail = user ? user.email : null;
         window.currentUserEmail = loginEmail;
         const isLoggedIn = !!user;
-        const webAppBaseUrl = APP_URLS.main;
 
         // 只有在登入狀態真實改變時，才更新大部分 UI
         if (isLoggedIn !== wasLoggedIn) {
@@ -159,10 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isLoggedIn) {
                 loadMemberName(loginEmail);
             } else {
-                if (mobileUserName) mobileUserName.innerText = "";
-                if (desktopUserName) desktopUserName.innerText = "";
-                // 登出時導向預設頁面，使用 Apps Script Web App URL
-                window.location.href = `${webAppBaseUrl}?page=souvenir`;
+                mobileUserName.innerText = "";
+                desktopUserName.innerText = "";
+                navigateTo("login"); // 登出後導向登入頁面
             }
         }
 
@@ -179,21 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 根據 URL 參數決定要顯示哪個頁面，若無則顯示預設頁面
             const urlParams = new URLSearchParams(window.location.search);
-            const view = urlParams.get("page") || "souvenir"; // 從 'page' 參數獲取視圖
-            
-            // 首次載入時，如果當前 URL 的 page 參數與應顯示的 page 不同，才進行跳轉
-            // 否則，表示頁面已經是正確的，無需再次跳轉
-            const currentPageParam = urlParams.get("page");
-            if (!currentPageParam || currentPageParam !== view) {
-                // 如果當前頁面不是預期的，則跳轉到正確的 Apps Script URL
-                window.location.href = `${webAppBaseUrl}?page=${view}`;
-            } else {
-                // 如果頁面已經是正確的，確保 UI 狀態正確，但不觸發額外跳轉
-                // 這裡可以放置任何頁面載入後需要執行的初始化代碼
-                // 例如，如果是紀念品頁面，觸發其 DataTables 載入數據
-                // 如果是推薦清單頁面，觸發其初始化
-                // 由於這些頁面現在由 Apps Script 完全提供 HTML，其各自的 JS 會自行初始化。
-            }
+            const view = urlParams.get("view") || "souvenir"; // 使用 'view' 參數
+            navigateTo(view); // 首次載入時導航到指定頁面
         }
     });
 });

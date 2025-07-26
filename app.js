@@ -95,13 +95,23 @@ function updateLoginStatusLink(isLoggedIn) {
 async function loadExternalHtmlSection(sectionId) {
     if (!sectionId || sectionId === 'null') {
         dynamicContentArea.innerHTML = '';
-        return;
+        return; // 如果沒有 sectionId，就清空內容並結束
     }
+    // 顯示載入中的 spinner 動畫
     dynamicContentArea.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"></div></div>`;
+    
     try {
         const response = await fetch(`${sectionId}.html?v=${new Date().getTime()}`);
         if (!response.ok) throw new Error(`載入 ${sectionId}.html 失敗`);
+        
+        // 載入成功後，直接把 HTML 內容放進來，然後函式就結束了
         dynamicContentArea.innerHTML = await response.text();
+
+    } catch (error) {
+        console.error('載入外部內容錯誤:', error);
+        dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">頁面載入失敗</h3>`;
+    }
+}
         
         // 在 HTML 內容成功載入後，呼叫對應的初始化函式
         if (sectionId === 'delegable-list') {
@@ -114,28 +124,50 @@ async function loadExternalHtmlSection(sectionId) {
     }
 }
 
-function navigateTo(id, fromHistory = false) {
-    console.log(`[導航追蹤] navigateTo 正在執行，目標頁面 ID: ${id}`); // ✅ 請加上這一行追蹤碼
+async function navigateTo(id, fromHistory = false) {
+    // 加上 async 關鍵字，讓它可以等待載入完成
     const recommendPage = document.getElementById('page-recommend');
     const dynamicContentArea = document.getElementById('dynamic-content-area');
+
+    // 先隱藏所有區塊
     if (recommendPage) recommendPage.style.display = 'none';
     if (dynamicContentArea) dynamicContentArea.style.display = 'none';
 
     if (id === 'recommend') {
+        // 處理「推薦清單」的邏輯不變
         if (recommendPage) {
             recommendPage.style.display = 'block';
             initializeRecommendPage();
         }
     } else {
+        // 處理所有其他動態頁面
         if (dynamicContentArea) {
             dynamicContentArea.style.display = 'block';
-            loadExternalHtmlSection(id);
+            
+            // ✅ 【核心修正】
+            // 先用 await 等待 HTML 內容完全載入到頁面上
+            await loadExternalHtmlSection(id);
+            
+            // 然後，再根據載入的頁面 ID，決定是否要執行對應的初始化 JS
+            if (id === 'delegable-list') {
+                initializeDelegableListPage();
+            }
+            // 未來若 add-account-shares 頁面也需要 JS 初始化，就加在這裡
+            // else if (id === 'add-account-shares') {
+            //     initializeAppSharesPage();
+            // }
         }
     }
+    
+    // 更新網址列的邏輯保持不變
     if (!fromHistory && id && id !== "logout") {
-        const url = new URL(window.location);
-        url.searchParams.set('view', id);
-        window.history.pushState({ section: id }, '', url);
+        const currentParams = new URLSearchParams(window.location.search);
+        // ✅ 增加一個判斷，如果目標頁面和當前頁面相同，就不再更新歷史紀錄，避免重複操作
+        if (id !== currentParams.get('view')) {
+            const url = new URL(window.location);
+            url.searchParams.set('view', id);
+            window.history.pushState({ section: id }, '', url);
+        }
     }
 }
 

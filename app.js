@@ -238,3 +238,115 @@ onAuthStateChanged(auth, (user) => {
         navigateTo(view);
     }
 });
+// =================================================================
+//          可委託代領清單頁面 (delegable-list) 的專屬邏輯
+// =================================================================
+
+// 這個函式會在 delegable-list.html 被載入到頁面後才執行
+function initializeDelegableListPage() {
+    
+    // 您的後端網址
+    const APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzk_RKeBgLtWsVJe79WUIYklyOnLL94nVZ41rb_zG_bV-LOSsi9PtSHQX0H0a2hMId0/exec"; // ‼️ 請換成您自己的
+
+    // 共用的 fetch 函式
+    async function fetchDataFromBackend(action, payload = {}) {
+        const userEmail = window.currentUserEmail;
+        if (!userEmail) throw new Error("無法獲取登入狀態，請重新整理或登入。");
+        const fullPayload = { action, email: userEmail, ...payload };
+        const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
+            method: 'POST',
+            body: JSON.stringify(fullPayload),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        if (!response.ok) throw new Error(`網路錯誤: ${response.statusText}`);
+        const result = await response.json();
+        if (!result.success) throw new Error(result.data.message || "後端處理時發生未知錯誤");
+        return result.data;
+    }
+
+    // 檢查登入狀態
+    if (!window.currentUserEmail) {
+        $('#delegableTable tbody').html('<tr><td colspan="7" class="text-center alert alert-danger">請先登入才能查看您的委託清單。</td></tr>');
+        return;
+    }
+
+    // 初始化 DataTables
+    const table = new DataTable('#delegableTable', {
+        ajax: async (data, callback, settings) => {
+            try {
+                const responseData = await fetchDataFromBackend("getDelegableList");
+                callback({ data: responseData });
+            } catch (error) {
+                console.error("載入可委託清單失敗:", error);
+                $('#delegableTable tbody').html(`<tr><td colspan="7" class="text-center alert alert-danger">${error.message}</td></tr>`);
+            }
+        },
+        columns: [
+            { data: 'stockCode' },
+            { data: 'stockName' },
+            { data: 'eVotingStartDate', defaultContent: '-' },
+            { data: 'delegationDeadline', defaultContent: '-' },
+            { data: 'delegationConditions', defaultContent: '-' },
+            {
+                data: 'totalHoldingAccounts',
+                className: 'text-center',
+                render: (data, type, row) => `<button class="btn btn-sm btn-outline-primary view-details-btn" data-details='${JSON.stringify(row.holdingsDetail)}' data-company="${row.stockName} (${row.stockCode})" data-stock-code="${row.stockCode}" data-conditions="${row.delegationConditions}">${data}</button>`
+            },
+            { data: 'delegatedAccounts', className: 'text-center' }
+        ],
+        language: { url: 'https://cdn.datatables.net/plug-ins/2.0.8/i18n/zh-HANT.json' },
+        responsive: true,
+        order: [[3, 'asc']]
+    });
+
+    // Modal 相關邏輯
+    const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+
+    $('#delegableTable tbody').on('click', '.view-details-btn', function () {
+        const button = $(this);
+        const details = JSON.parse(button.attr('data-details'));
+        const companyName = button.attr('data-company');
+        const stockCode = button.attr('data-stock-code');
+        const delegationConditions = button.attr('data-conditions');
+
+        $('#modalCompanyName').text(companyName);
+        const modalTableBody = $('#modalTableBody');
+        modalTableBody.empty();
+
+        details.forEach(account => {
+            let actionHtml = '';
+            const docType = String(account.documentType || '').trim();
+            const isDocMatch = delegationConditions.includes("身分證") ? docType === "身分證" : true;
+
+            if (account.delegationStatus === '已委託') {
+                actionHtml = `<span class="badge bg-success">已委託</span>`;
+            } else if (account.delegationStatus === '已收購') {
+                actionHtml = `<span class="badge bg-info">已收購</span>`;
+            } else if (!isDocMatch) {
+                actionHtml = `<span class="badge bg-danger">證件不符</span>`;
+            } else {
+                actionHtml = `<button class="btn btn-primary btn-sm action-btn" data-status="已委託" data-account-name="${account.accountName}" data-stock-code="${stockCode}">我要委託</button>
+                              <button class="btn btn-info btn-sm action-btn ms-1" data-status="已收購" data-account-name="${account.accountName}" data-stock-code="${stockCode}">我要收購</button>`;
+            }
+            modalTableBody.append(`<tr><td>${account.accountName}</td><td>${docType || '未提供'}</td><td class="text-center">${actionHtml}</td></tr>`);
+        });
+        detailsModal.show();
+    });
+
+    $('#modalTableBody').on('click', '.action-btn', async function () {
+        const btn = $(this);
+        const newStatus = btn.data('status');
+        const accountName = btn.data('account-name');
+        const stockCode = btn.data('stock-code');
+        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
+        try {
+            const result = await fetchDataFromBackend("updateDelegationStatus", { subAccountName: accountName, stockCode: stockCode, newStatus: newStatus });
+            detailsModal.hide();
+            table.ajax.reload();
+            alert(result.message);
+        } catch (error) {
+            alert("更新失敗：" + error.message);
+            btn.prop('disabled', false).text(newStatus === '已委託' ? '我要委託' : '我要收購');
+        }
+    });
+}

@@ -1,5 +1,5 @@
 // =================================================================
-//                 app.js (最終修正版)
+//                 app.js (最終穩定版)
 // =================================================================
 
 // 關閉自動 restore scroll，重新整理後就不會保持舊的位置
@@ -57,30 +57,30 @@ function renderNavTabs() {
 
 async function loadMemberName(email) {
     if (!email) {
-        document.getElementById("mobileUserName").innerText = "";
-        document.getElementById("desktopUserName").innerText = "";
+        if(mobileUserName) mobileUserName.innerText = "";
+        if(desktopUserName) desktopUserName.innerText = "";
         return;
     }
-    document.getElementById("mobileUserName").innerText = "載入中...";
-    document.getElementById("desktopUserName").innerText = "載入中...";
+    if(mobileUserName) mobileUserName.innerText = "載入中...";
+    if(desktopUserName) desktopUserName.innerText = "載入中...";
     try {
         const params = new URLSearchParams({ view: 'getMemberInfo', email: email });
         const urlWithParams = `${APP_URLS.main}?${params.toString()}`;
         const response = await fetch(urlWithParams);
-        if (!response.ok) { throw new Error(`網路回應錯誤: ${response.status}`); }
+        if (!response.ok) throw new Error(`網路回應錯誤: ${response.status}`);
         const result = await response.json();
         if (result.success && result.data && result.data.name && result.data.name !== "未知會員") {
             const memberText = `會員：${result.data.name}`;
-            document.getElementById("mobileUserName").innerText = memberText;
-            document.getElementById("desktopUserName").innerText = memberText;
+            if(mobileUserName) mobileUserName.innerText = memberText;
+            if(desktopUserName) desktopUserName.innerText = memberText;
         } else {
             throw new Error(result.message || "後端回報錯誤但未提供訊息");
         }
     } catch (error) {
         console.error("取得會員資料失敗:", error);
         const errorText = "會員：載入失敗";
-        document.getElementById("mobileUserName").innerText = errorText;
-        document.getElementById("desktopUserName").innerText = errorText;
+        if(mobileUserName) mobileUserName.innerText = errorText;
+        if(desktopUserName) desktopUserName.innerText = errorText;
     }
 }
 
@@ -93,76 +93,44 @@ function updateLoginStatusLink(isLoggedIn) {
 }
 
 async function loadExternalHtmlSection(sectionId) {
-    if (!sectionId || sectionId === 'null') {
-        dynamicContentArea.innerHTML = '';
-        return; // 如果沒有 sectionId，就清空內容並結束
+    if (!sectionId || sectionId === 'null' || !dynamicContentArea) {
+        if(dynamicContentArea) dynamicContentArea.innerHTML = '';
+        return;
     }
-    // 顯示載入中的 spinner 動畫
-    dynamicContentArea.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"></div></div>`;
-    
+    dynamicContentArea.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>`;
     try {
         const response = await fetch(`${sectionId}.html?v=${new Date().getTime()}`);
         if (!response.ok) throw new Error(`載入 ${sectionId}.html 失敗`);
-        
-        // 載入成功後，直接把 HTML 內容放進來，然後函式就結束了
         dynamicContentArea.innerHTML = await response.text();
-
     } catch (error) {
         console.error('載入外部內容錯誤:', error);
-        dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">頁面載入失敗</h3>`;
-    }
-}
-        
-        // 在 HTML 內容成功載入後，呼叫對應的初始化函式
-        if (sectionId === 'delegable-list') {
-            initializeDelegableListPage();
-        }
-
-    } catch (error) {
-        console.error('載入外部內容錯誤:', error);
-        dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">頁面載入失敗</h3>`;
+        dynamicContentArea.innerHTML = `<div class="alert alert-danger">頁面 ${sectionId} 載入失敗。</div>`;
     }
 }
 
 async function navigateTo(id, fromHistory = false) {
-    // 加上 async 關鍵字，讓它可以等待載入完成
     const recommendPage = document.getElementById('page-recommend');
-    const dynamicContentArea = document.getElementById('dynamic-content-area');
-
-    // 先隱藏所有區塊
+    
     if (recommendPage) recommendPage.style.display = 'none';
     if (dynamicContentArea) dynamicContentArea.style.display = 'none';
 
     if (id === 'recommend') {
-        // 處理「推薦清單」的邏輯不變
         if (recommendPage) {
             recommendPage.style.display = 'block';
             initializeRecommendPage();
         }
     } else {
-        // 處理所有其他動態頁面
         if (dynamicContentArea) {
             dynamicContentArea.style.display = 'block';
-            
-            // ✅ 【核心修正】
-            // 先用 await 等待 HTML 內容完全載入到頁面上
             await loadExternalHtmlSection(id);
-            
-            // 然後，再根據載入的頁面 ID，決定是否要執行對應的初始化 JS
             if (id === 'delegable-list') {
                 initializeDelegableListPage();
             }
-            // 未來若 add-account-shares 頁面也需要 JS 初始化，就加在這裡
-            // else if (id === 'add-account-shares') {
-            //     initializeAppSharesPage();
-            // }
         }
     }
     
-    // 更新網址列的邏輯保持不變
     if (!fromHistory && id && id !== "logout") {
         const currentParams = new URLSearchParams(window.location.search);
-        // ✅ 增加一個判斷，如果目標頁面和當前頁面相同，就不再更新歷史紀錄，避免重複操作
         if (id !== currentParams.get('view')) {
             const url = new URL(window.location);
             url.searchParams.set('view', id);
@@ -171,11 +139,8 @@ async function navigateTo(id, fromHistory = false) {
     }
 }
 
-// =================================================================
-//          可委託代領清單頁面 (delegable-list) 的專屬邏輯
-// =================================================================
 function initializeDelegableListPage() {
-    const APPS_SCRIPT_WEB_APP_URL = APP_URLS.main; // ✅ 直接使用全域設定的網址
+    const APPS_SCRIPT_WEB_APP_URL = APP_URLS.main;
 
     async function fetchDataFromBackend(action, payload = {}) {
         const userEmail = window.currentUserEmail;
@@ -215,60 +180,60 @@ function initializeDelegableListPage() {
         responsive: true, order: [[3, 'asc']]
     });
 
-    const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
-
-    $('#delegableTable tbody').on('click', '.view-details-btn', function () {
-        const button = $(this);
-        const details = JSON.parse(button.attr('data-details'));
-        const companyName = button.attr('data-company');
-        const stockCode = button.attr('data-stock-code');
-        const delegationConditions = button.attr('data-conditions');
-        $('#modalCompanyName').text(companyName);
-        const modalTableBody = $('#modalTableBody');
-        modalTableBody.empty();
-        details.forEach(account => {
-            let actionHtml = '';
-            const docType = String(account.documentType || '').trim();
-            const isDocMatch = delegationConditions.includes("身分證") ? docType === "身分證" : true;
-            if (account.delegationStatus === '已委託') {
-                actionHtml = `<span class="badge bg-success">已委託</span>`;
-            } else if (account.delegationStatus === '已收購') {
-                actionHtml = `<span class="badge bg-info">已收購</span>`;
-            } else if (!isDocMatch) {
-                actionHtml = `<span class="badge bg-danger">證件不符</span>`;
-            } else {
-                actionHtml = `<button class="btn btn-primary btn-sm action-btn" data-status="已委託" data-account-name="${account.accountName}" data-stock-code="${stockCode}">我要委託</button>
-                              <button class="btn btn-info btn-sm action-btn ms-1" data-status="已收購" data-account-name="${account.accountName}" data-stock-code="${stockCode}">我要收購</button>`;
-            }
-            modalTableBody.append(`<tr><td>${account.accountName}</td><td>${docType || '未提供'}</td><td class="text-center">${actionHtml}</td></tr>`);
+    const detailsModal = document.getElementById('detailsModal');
+    if (detailsModal) {
+        const modalInstance = new bootstrap.Modal(detailsModal);
+        $('#delegableTable tbody').on('click', '.view-details-btn', function () {
+            const button = $(this);
+            const details = JSON.parse(button.attr('data-details'));
+            const companyName = button.attr('data-company');
+            const stockCode = button.attr('data-stock-code');
+            const delegationConditions = button.attr('data-conditions');
+            $('#modalCompanyName').text(companyName);
+            const modalTableBody = $('#modalTableBody');
+            modalTableBody.empty();
+            details.forEach(account => {
+                let actionHtml = '';
+                const docType = String(account.documentType || '').trim();
+                const isDocMatch = delegationConditions.includes("身分證") ? docType === "身分證" : true;
+                if (account.delegationStatus === '已委託') {
+                    actionHtml = `<span class="badge bg-success">已委託</span>`;
+                } else if (account.delegationStatus === '已收購') {
+                    actionHtml = `<span class="badge bg-info">已收購</span>`;
+                } else if (!isDocMatch) {
+                    actionHtml = `<span class="badge bg-danger">證件不符</span>`;
+                } else {
+                    actionHtml = `<button class="btn btn-primary btn-sm action-btn" data-status="已委託" data-account-name="${account.accountName}" data-stock-code="${stockCode}">我要委託</button>
+                                  <button class="btn btn-info btn-sm action-btn ms-1" data-status="已收購" data-account-name="${account.accountName}" data-stock-code="${stockCode}">我要收購</button>`;
+                }
+                modalTableBody.append(`<tr><td>${account.accountName}</td><td>${docType || '未提供'}</td><td class="text-center">${actionHtml}</td></tr>`);
+            });
+            modalInstance.show();
         });
-        detailsModal.show();
-    });
 
-    $('#modalTableBody').on('click', '.action-btn', async function () {
-        const btn = $(this);
-        const newStatus = btn.data('status');
-        const accountName = btn.data('account-name');
-        const stockCode = btn.data('stock-code');
-        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
-        try {
-            const result = await fetchDataFromBackend("updateDelegationStatus", { subAccountName: accountName, stockCode: stockCode, newStatus: newStatus });
-            detailsModal.hide();
-            table.ajax.reload();
-            alert(result.message);
-        } catch (error) {
-            alert("更新失敗：" + error.message);
-            btn.prop('disabled', false).text(newStatus === '已委託' ? '我要委託' : '我要收購');
-        }
-    });
+        $('#modalTableBody').on('click', '.action-btn', async function () {
+            const btn = $(this);
+            const newStatus = btn.data('status');
+            const accountName = btn.data('account-name');
+            const stockCode = btn.data('stock-code');
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
+            try {
+                const result = await fetchDataFromBackend("updateDelegationStatus", { subAccountName: accountName, stockCode: stockCode, newStatus: newStatus });
+                modalInstance.hide();
+                table.ajax.reload();
+                alert(result.message);
+            } catch (error) {
+                alert("更新失敗：" + error.message);
+                btn.prop('disabled', false).text(newStatus === '已委託' ? '我要委託' : '我要收購');
+            }
+        });
+    }
 }
 
-
 // =================================================================
-//                      【核心修正】啟動邏輯
+//                      啟動邏輯 (DOM Ready)
 // =================================================================
 window.addEventListener('DOMContentLoaded', function() {
-    // 將所有「啟動邏輯」都放在這裡面，確保外部函式庫 (jQuery, DataTables) 已載入
     
     document.body.addEventListener("click", function (e) {
         const clickedLink = e.target.closest("a[data-section]");
@@ -280,7 +245,7 @@ window.addEventListener('DOMContentLoaded', function() {
             } else {
                 navigateTo(id);
             }
-            if (navbarCollapse.classList.contains('show')) {
+            if (navbarCollapse && navbarCollapse.classList.contains('show')) {
                 bsCollapse.hide();
             }
         }
@@ -306,20 +271,23 @@ window.addEventListener('DOMContentLoaded', function() {
             if (isLoggedIn) {
                 loadMemberName(loginEmail);
             } else {
-                document.getElementById("mobileUserName").innerText = "";
-                document.getElementById("desktopUserName").innerText = "";
+                if(mobileUserName) mobileUserName.innerText = "";
+                if(desktopUserName) desktopUserName.innerText = "";
                 navigateTo("souvenir");
             }
         }
 
         if (isInitialLoad) {
             isInitialLoad = false;
-            document.getElementById("initialLoading")?.remove();
+            const initialLoadingEl = document.getElementById("initialLoading");
+            if(initialLoadingEl) initialLoadingEl.remove();
+
             renderNavTabs();
             updateLoginStatusLink(isLoggedIn);
             if (isLoggedIn) {
                 loadMemberName(loginEmail);
             }
+            
             const urlParams = new URLSearchParams(window.location.search);
             const view = urlParams.get("view") || "souvenir";
             navigateTo(view);

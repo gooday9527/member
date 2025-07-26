@@ -144,7 +144,7 @@
                 btn.disabled = true;
                 btn.textContent = '處理中...';
                 try {
-                    const result = await fetchDataFromBackend("executeStockOperation", { subAccount, stocks, operationType });
+                    const result = await fetchDataFromBackend("executeStockOperation", { subAccountName: subAccount, stockInput: stocks, operationType });
                     displayMessage(result.message, "success");
                     document.getElementById("stockInput").value = "";
                 } catch (e) {

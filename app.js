@@ -260,6 +260,7 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 
     onAuthStateChanged(auth, (user) => {
+      console.log("--- Firebase Auth State Changed 觸發！---"); // ✅ 請在第一行加上這個
         const wasLoggedIn = !!loginEmail;
         loginEmail = user ? user.email : null;
         window.currentUserEmail = loginEmail;

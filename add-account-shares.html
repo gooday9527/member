@@ -113,49 +113,59 @@
                     if (!show) document.getElementById("newSubAccountInput").value = "";
                 }
             },
-     saveNewSubAccount: async function() {
+saveNewSubAccount: function() {
                 const name = document.getElementById("newSubAccountInput").value.trim();
-                if (!name) return displayMessage("請輸入子帳號名稱", "danger");
-                
-                const btn = document.querySelector('#addSubWrapper .btn-primary');
-                btn.disabled = true;
-                btn.textContent = '儲存中...';
-                
-                try {
-                    const result = await fetchDataFromBackend("addAndSelectSubAccount", { name: name });
-                    displayMessage(result.message, result.success ? "success" : "danger");
-                    
-                    if (result.success) {
-                        this.toggleSubAccountInput(false);
-                        
-                        // ✅ 【核心修正】
-                        // 不再重新從後端載入整個列表 (await loadInitialData(name))，以避免資料延遲問題。
-                        // 我們直接在前端，手動將剛才新增成功的帳號加入下拉選單。
-                        
-                        const select = document.getElementById("subAccountSelect");
-                        
-                        // 檢查下拉選單目前是否為 "尚無子帳號..." 的初始狀態
-                        if (select.options.length === 1 && select.options[0].textContent.includes("尚無子帳號")) {
-                            select.innerHTML = '<option value="">請選擇子帳號</option>'; // 先清空提示訊息
-                        }
-
-                        // 建立新的 <option> 元素
-                        const newOption = document.createElement("option");
-                        newOption.value = name;
-                        newOption.textContent = name;
-                        
-                        // 將新選項加入選單
-                        select.appendChild(newOption);
-
-                        // 直接將新選項設定為當前選中項
-                        select.value = name;
-                    }
-                } catch (e) {
-                    displayMessage("儲存失敗：" + e.message, "danger");
-                } finally {
-                    btn.disabled = false;
-                    btn.textContent = '儲存';
+                if (!name) {
+                    displayMessage("請輸入子帳號名稱", "warning");
+                    return;
                 }
+
+                // --- 步驟 1: 立刻更新前端介面 (UI) ---
+                
+                // 隱藏輸入框
+                this.toggleSubAccountInput(false);
+
+                // 在下拉選單中新增並選取該帳號
+                const select = document.getElementById("subAccountSelect");
+                
+                // 如果原本是"尚無子帳號"的提示，就先清掉
+                if (select.options.length === 1 && select.options[0].textContent.includes("尚無子帳號")) {
+                    select.innerHTML = '<option value="">請選擇子帳號</option>';
+                }
+
+                const newOption = document.createElement("option");
+                newOption.value = name;
+                newOption.textContent = name;
+                select.appendChild(newOption);
+                select.value = name; // 直接選取新帳號
+
+                // 顯示處理中的提示
+                displayMessage("帳號建立中，請稍候...", "info");
+                
+                // --- 步驟 2: 在背景執行後端請求 ---
+
+                const btn = document.querySelector('#addSubWrapper .btn-primary');
+                // 注意：這裡我們不再讓儲存按鈕失效，因為UI已經更新，使用者可以繼續操作
+                
+                fetchDataFromBackend("addAndSelectSubAccount", { name: name })
+                    .then(result => {
+                        // ✅ 後端成功後，顯示您指定的成功訊息
+                        if (result.success) {
+                            displayMessage(`子帳號「${name}」已建立`, "success");
+                        } else {
+                            // 如果後端因故失敗 (例如名稱重複)，顯示後端傳來的錯誤訊息
+                            displayMessage(result.message, "danger");
+                            // 移除剛剛樂觀新增的選項
+                            const optionToRemove = select.querySelector(`option[value="${name}"]`);
+                            if (optionToRemove) optionToRemove.remove();
+                        }
+                    })
+                    .catch(e => {
+                        // ✅ 如果是網路問題等嚴重錯誤，也提示並移除選項
+                        displayMessage("儲存失敗，請檢查網路連線：" + e.message, "danger");
+                        const optionToRemove = select.querySelector(`option[value="${name}"]`);
+                        if (optionToRemove) optionToRemove.remove();
+                    });
             },
             executeOperation: async function() {
                 const subAccount = document.getElementById("subAccountSelect").value;

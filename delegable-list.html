@@ -60,186 +60,143 @@
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    // IIFE (立即調用函式表達式) 來創建一個局部作用域，避免污染全局
+    (function() {
+        // --- 步驟 1: 設定您的後端網址 ---
+        // ‼️ 請務必確認這裡的網址是您從「管理部署作業」複製出來的正確網址
+        const APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzk_RKeBgLtWsVJe79WUIYklyOnLL94nVZ41rb_zG_bV-LOSsi9PtSHQX0H0a2hMId0/exec";
 
-        const email = window.currentUserEmail; // 從主 app.js 獲取當前登入的用戶 Email
-        if (!email) {
-            $('#delegableTable').html('<tr><td colspan="7" class="text-center alert alert-danger">請先登入才能查看您的委託清單。</td></tr>');
-            return;
+        // --- 步驟 2: 建立與後端溝通的共用函式 ---
+        async function fetchDataFromBackend(action, payload = {}) {
+            const userEmail = window.currentUserEmail; // 從主 app.js 獲取
+            if (!userEmail) {
+                throw new Error("無法獲取登入狀態，請重新整理或登入。");
+            }
+            const fullPayload = { action, email: userEmail, ...payload };
+            
+            const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(fullPayload),
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) throw new Error(`網路錯誤: ${response.statusText}`);
+            const result = await response.json();
+            if (!result.success) throw new Error(result.data.message || "後端處理時發生未知錯誤");
+            return result.data;
         }
 
+        // --- 步驟 3: 初始化 DataTables ---
         const table = new DataTable('#delegableTable', {
-            ajax: function (data, callback, settings) {
-                // 在 DataTables 載入數據時顯示載入中訊息
-                $('#delegableTable tbody').html('<tr><td colspan="7" class="text-center p-4">資料載入中...</td></tr>');
-                
-                // 調用後端 Apps Script 中的 getDelegableListData 函數來獲取數據
-                // 注意：getDelegableListData(email) 是 Apps Script Code.gs 裡的一個頂層函數
-                google.script.run
-                    .withSuccessHandler(function (response) {
-                        // 後端回傳的 response 應該是 { data: [...], status: "success", appSettings: {...} }
-                        if (response.status === "success") {
-                            // 将 appSettings 存儲到一個可訪問的地方，例如全局變數或 jQuery data
-                            // 這裡我們暫時把它作為 callback 的額外參數傳遞給 DataTables
-                            // DataTables 的 callback 只期望 data 屬性，所以我們額外存儲
-                            settings.ajax.appSettings = response.appSettings; // 將設定儲存到 settings.ajax 中
-
-                            callback(response); // 將數據傳遞給 DataTables 進行渲染 (DataTables 會自動處理 response.data)
-                        } else {
-                            console.error("後端回傳錯誤:", response.message);
-                            settings.oInstance.api().clear().draw(); // 清空表格
-                            $('#delegableTable tbody').html('<tr><td colspan="7" class="text-center alert alert-danger">' + (response.message || '資料載入失敗') + '</td></tr>');
-                        }
-                    })
-                    .withFailureHandler(function (error) {
-                        // 處理後端調用失敗的情況
-                        console.error("呼叫後端失敗:", error);
-                        settings.oInstance.api().clear().draw(); // 清空表格
-                        $('#delegableTable tbody').html('<tr><td colspan="7" class="text-center alert alert-danger">無法載入資料，請檢查網路或聯繫管理員。</td></tr>');
-                    })
-                    .getDelegableListData(email); // 直接調用頂層函數並傳遞 email
+            // ✅ 改用 fetch 來獲取資料
+            ajax: async function (data, callback, settings) {
+                try {
+                    const responseData = await fetchDataFromBackend("getDelegableList");
+                    callback({ data: responseData }); // DataTables 需要的格式是 { data: [...] }
+                } catch (error) {
+                    console.error("載入可委託清單失敗:", error);
+                    $('#delegableTable tbody').html(`<tr><td colspan="7" class="text-center alert alert-danger">${error.message}</td></tr>`);
+                }
             },
             columns: [
                 { data: 'stockCode' },
                 { data: 'stockName' },
-                { data: 'eVotingStartDate' },
-                { data: 'delegationDeadline' },
-                { data: 'delegationConditions' },
+                { data: 'eVotingStartDate', defaultContent: '-' },
+                { data: 'delegationDeadline', defaultContent: '-' },
+                { data: 'delegationConditions', defaultContent: '-' },
                 {
                     data: 'totalHoldingAccounts',
                     className: 'text-center',
-                    // 自訂「持有帳號數」欄位的顯示內容，增加點擊按鈕
                     render: function (data, type, row) {
-                        if (data > 0) {
-                            // 將該行的詳細資料 (holdingsDetail) 轉成 JSON 字串後，存在按鈕的 data-details 屬性中
-                            // 同時也將該公司的委託條件傳入，供 Modal 內部的邏輯使用
-                            return `<button class="btn btn-sm btn-outline-primary view-details-btn"
-                                            data-details='${JSON.stringify(row.holdingsDetail)}'
-                                            data-company="${row.stockName} (${row.stockCode})"
-                                            data-conditions="${row.delegationConditions}">
-                                        ${data}
-                                    </button>`;
-                        }
-                        return data; // 如果持有帳號數為 0，則只顯示數字
+                        // 這段 render 邏輯不變，寫得很好
+                        return `<button class="btn btn-sm btn-outline-primary view-details-btn"
+                                        data-details='${JSON.stringify(row.holdingsDetail)}'
+                                        data-company="${row.stockName} (${row.stockCode})"
+                                        data-stock-code="${row.stockCode}"
+                                        data-conditions="${row.delegationConditions}">
+                                    ${data}
+                                </button>`;
                     }
                 },
                 { data: 'delegatedAccounts', className: 'text-center' }
             ],
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.0.8/i18n/zh-HANT.json' // DataTables 中文化
-            },
-            responsive: true, // 啟用響應式設計
-            order: [[3, 'asc']] // 預設使用第 4 欄 (委託截止日) 進行升冪排序
+            language: { url: 'https://cdn.datatables.net/plug-ins/2.0.8/i18n/zh-HANT.json' },
+            responsive: true,
+            order: [[3, 'asc']]
         });
 
+        // --- 步驟 4: 處理彈出視窗 (Modal) 的邏輯 ---
         const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
 
-        // 使用事件委派，監聽表格 tbody 中點擊「持有帳號數」按鈕的事件
+        // 點擊「持有帳號數」按鈕，打開 Modal
         $('#delegableTable tbody').on('click', '.view-details-btn', function () {
-            const details = JSON.parse($(this).attr('data-details')); // 獲取持有帳號的詳細資訊
-            const companyName = $(this).attr('data-company'); // 獲取公司名稱和股號
-            const delegationConditions = $(this).attr('data-conditions'); // 獲取該公司的委託條件
+            const button = $(this);
+            const details = JSON.parse(button.attr('data-details'));
+            const companyName = button.attr('data-company');
+            const stockCode = button.attr('data-stock-code'); // 新增取得股號
+            const delegationConditions = button.attr('data-conditions');
 
-            // ✅ 獲取 DataTables 實例中儲存的 appSettings
-            const appSettings = table.ajax.appSettings || { isDelegationAcquisitionEnabled: true }; // 如果沒有獲取到，預設啟用
-
-            $('#modalCompanyName').text(companyName); // 設定 Modal 標題中的公司名稱
+            $('#modalCompanyName').text(companyName);
             const modalTableBody = $('#modalTableBody');
-            modalTableBody.empty(); // 清空 Modal 表格舊的明細內容
+            modalTableBody.empty();
 
             details.forEach(account => {
-                let actionHtml = ''; // 用於存放操作按鈕或狀態徽章的 HTML
-                
-                // 1. 最高優先級：判斷是否已委託
-                if (account.isDelegated) {
-                    actionHtml = '<button class="btn btn-warning btn-sm action-btn" data-action="cancel-delegate" data-account-name="${account.accountName}">取消委託</button>'; // "取消委託" 按鈕
+                let actionHtml = '';
+                const docType = String(account.documentType || '').trim();
+                const isDocMatch = delegationConditions.includes("身分證") ? docType === "身分證" : true;
+
+                if (account.delegationStatus === '已委託') {
+                    actionHtml = `<span class="badge bg-success">已委託</span>`;
+                } else if (account.delegationStatus === '已收購') {
+                    actionHtml = `<span class="badge bg-info">已收購</span>`;
+                } else if (!isDocMatch) {
+                    actionHtml = `<span class="badge bg-danger">證件不符</span>`;
                 } else {
-                    // 2. 判斷證件是否符合委託條件
-                    let isDocumentMatch = true; // 預設符合
-                    const docType = String(account.documentType || '').trim(); // 確保證件類型是字串且去除空格
-
-                    // 判斷委託條件是否包含特定證件要求
-                    const requiresIDSpecific = delegationConditions.includes("身分證正本");
-                    const requiresCertSpecific = delegationConditions.includes("證件正本"); // 包含身分證或健保卡
-
-                    if (requiresIDSpecific) {
-                        // 委託條件要求「身分證正本」
-                        if (docType !== "身分證") {
-                            isDocumentMatch = false;
-                        }
-                    } else if (requiresCertSpecific) {
-                        // 委託條件要求「證件正本」（身分證或健保卡）
-                        if (docType !== "身分證" && docType !== "健保卡") {
-                            isDocumentMatch = false;
-                        }
-                    }
-                    // 否則，如果委託條件不包含這兩種特定文字，isDocumentMatch 保持 true (一律符合)
-
-                    if (isDocumentMatch) {
-                        // 證件符合委託條件
-                        // 根據管理員設定判斷是否顯示委託/收購功能
-                        if (appSettings.isDelegationAcquisitionEnabled) { // ✅ 根據後端設定控制功能顯示
-                            const requiresMailNotice = delegationConditions.includes("寄開會通知書給我");
-                            let delegateButtonText = '委託'; // 簡潔文字
-                            if (requiresMailNotice) {
-                                delegateButtonText = '委託 (需寄單)'; // 簡潔文字 + 提示
-                            }
-
-                            actionHtml = `
-                                <button class="btn btn-primary btn-sm action-btn me-1" data-action="delegate" data-account-name="${account.accountName}" data-company-name="${companyName}" data-is-requires-mail="${requiresMailNotice}">
-                                    ${delegateButtonText}
-                                </button>
-                                <button class="btn btn-info btn-sm action-btn" data-action="acquire" data-account-name="${account.accountName}" data-company-name="${companyName}">
-                                    收購
-                                </button>
-                            `;
-                        } else {
-                            // 功能被管理員禁用
-                            actionHtml = '<span class="badge bg-secondary">功能維護中</span>';
-                        }
-                    } else {
-                        // 證件不符合委託條件
-                        actionHtml = '<span class="badge bg-danger" title="證件不符合委託條件">X (不可操作)</span>';
-                    }
+                    actionHtml = `
+                        <button class="btn btn-primary btn-sm action-btn" data-action="delegate" data-status="已委託" data-account-name="${account.accountName}" data-stock-code="${stockCode}">我要委託</button>
+                        <button class="btn btn-info btn-sm action-btn ms-1" data-action="acquire" data-status="已收購" data-account-name="${account.accountName}" data-stock-code="${stockCode}">我要收購</button>
+                    `;
                 }
 
-                // 將生成的 HTML 加入到 Modal 表格的行中
                 const rowHtml = `<tr>
                                     <td>${account.accountName}</td>
-                                    <td>${account.documentType || '未提供'}</td>
+                                    <td>${docType || '未提供'}</td>
                                     <td class="text-center">${actionHtml}</td>
-                                </tr>`;
+                                 </tr>`;
                 modalTableBody.append(rowHtml);
             });
 
-            detailsModal.show(); // 顯示 Modal 彈出視窗
+            detailsModal.show();
         });
 
-        // 監聽 Modal 內部「委託」/「收購」/「取消委託」按鈕的點擊事件
-        $('#modalTableBody').on('click', '.action-btn', function () {
-            const actionType = $(this).data('action'); // 'delegate', 'acquire', 'cancel-delegate'
-            const accountName = $(this).data('account-name');
-            const companyName = $(this).data('company-name');
-            const requiresMailNotice = $(this).data('is-requires-mail'); // 僅委託按鈕有此屬性
+        // ✅ 監聽 Modal 內部所有「操作按鈕」的點擊事件
+        $('#modalTableBody').on('click', '.action-btn', async function () {
+            const btn = $(this);
+            const action = btn.data('action');
+            const newStatus = btn.data('status');
+            const accountName = btn.data('account-name');
+            const stockCode = btn.data('stock-code');
 
-            // 這裡將觸發後端的實際操作 API
-            if (actionType === 'delegate') {
-                if (requiresMailNotice) {
-                    alert(`模擬：這是「需寄單」委託。\n帳號: ${accountName}\n公司: ${companyName}`);
-                    // google.script.run.withSuccessHandler(...).withFailureHandler(...).requestMailNoticeDelegate(companyName, accountName, email);
-                } else {
-                    alert(`模擬：執行「委託」操作！\n帳號: ${accountName}\n公司: ${companyName}`);
-                    // google.script.run.withSuccessHandler(...).withFailureHandler(...).delegateStock(companyName, accountName, email);
-                }
-            } else if (actionType === 'acquire') {
-                alert(`模擬：執行「收購」操作！\n帳號: ${accountName}\n公司: ${companyName}`);
-                // google.script.run.withSuccessHandler(...).withFailureHandler(...).acquireStock(companyName, accountName, email);
-            } else if (actionType === 'cancel-delegate') {
-                alert(`模擬：執行「取消委託」操作！\n帳號: ${accountName}\n公司: ${companyName}`);
-                // google.script.run.withSuccessHandler(...).withFailureHandler(...).cancelDelegate(companyName, accountName, email);
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
+
+            try {
+                // 使用 fetch 呼叫後端 updateDelegationStatus
+                const result = await fetchDataFromBackend("updateDelegationStatus", {
+                    subAccountName: accountName,
+                    stockCode: stockCode,
+                    newStatus: newStatus
+                });
+
+                // 成功後關閉 Modal 並重載 DataTables 的資料
+                detailsModal.hide();
+                table.ajax.reload(); // 重載表格以顯示最新狀態
+                alert(result.message); // 顯示成功訊息
+
+            } catch (error) {
+                alert("更新失敗：" + error.message);
+                btn.prop('disabled', false).text(action === 'delegate' ? '我要委託' : '我要收購');
             }
-
-            detailsModal.hide(); // 點擊後關閉 Modal
         });
-    });
+
+    })(); // 立即執行
 </script>

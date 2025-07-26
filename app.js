@@ -168,19 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.currentUserEmail = loginEmail;
         const isLoggedIn = !!user;
 
-        // 只有在登入狀態真實改變時，才更新大部分 UI
-        if (isLoggedIn !== wasLoggedIn) {
-            renderNavTabs();
-            updateLoginStatusLink(isLoggedIn);
-            if (isLoggedIn) {
-                loadMemberName(loginEmail);
-            } else {
-                // 清空使用者名稱，但不要重新導向
-                document.getElementById("mobileUserName").innerText = "";
-                document.getElementById("desktopUserName").innerText = "";
-            }
-        }
-
+        
         // 只有在首次載入頁面時，才執行這段邏輯
         if (isInitialLoad) {
             isInitialLoad = false;

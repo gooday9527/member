@@ -31,39 +31,31 @@ export function initializeRecommendPage() {
             recommendDataCache = json;
             const categories = Object.keys(json);
 
-// 填入下拉選單
- selectElements.forEach(select => {
-  // 填入 options
-  select.innerHTML = '';
-  categories.forEach(category => {
-    const option = document.createElement('option');
-    option.value = category;
-    option.textContent = category;
-    select.appendChild(option);
-  });
-  select.disabled = false;
-
-  // 綁事件
-  select.addEventListener('change', () => {
-    const v = select.value;
-    renderRecommendTable(recommendDataCache[v] || []);
-    // 同步到另一個
-    selectElements.forEach(other => { other.value = v; });
-  });
-});
-
-// 初始顯示第一組
-if (categories[0]) {
-  const first = categories[0];
-  renderRecommendTable(recommendDataCache[first]);
-  selectElements.forEach(sel => sel.value = first);
-}
-            // 下拉選單切換時
-            selectElement.addEventListener('change', () => {
-                const selected = selectElement.value;
-                renderRecommendTable(recommendDataCache[selected] || []);
-            });
-        })
+//── 同時處理所有桌機＆手機版的下拉 select[id="recommendSheet"]
++            const allSelects = document.querySelectorAll('#recommendSheet');
++            // 填入 options、啟用、綁事件
++            allSelects.forEach(sel => {
++              sel.innerHTML = '';
++              categories.forEach(cat => {
++                const opt = document.createElement('option');
++                opt.value = cat;
++                opt.textContent = cat;
++                sel.appendChild(opt);
++              });
++              sel.disabled = false;
++              sel.addEventListener('change', () => {
++                // 同步所有 selects 的值
++                const v = sel.value;
++                allSelects.forEach(o=> o.value = v);
++                renderRecommendTable(recommendDataCache[v] || []);
++              });
++            });
++
++            // 初始顯示第一組
++            if (categories[0]) {
++              allSelects.forEach(o=> o.value = categories[0]);
++              renderRecommendTable(recommendDataCache[categories[0]]);
++            }
         .catch(err => {
             console.error("推薦清單載入失敗", err);
             const tableBody = document.querySelector('#recommendTable tbody');

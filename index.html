@@ -58,28 +58,54 @@
   <section id="page-recommend" class="page-container">
     <div class="recommend-wrapper">
 
-<!-- 推薦清單控制列 -->
-<div class="d-flex flex-wrap align-items-center px-3 mb-2 justify-content-between justify-content-md-start">
+<!-- 桌机版 (md↑)：一行内「推荐清单｜下拉分类｜估计金額／家数」-->
+<div class="d-none d-md-flex flex-nowrap align-items-center px-3 py-2" style="gap: 1rem;">
+  <!-- 标题 -->
+  <h3 class="mb-0 flex-shrink-0">🌟 推薦清單</h3>
 
-  <!-- 1️⃣ 推薦清單 標題 -->
-  <h3 class="mb-0 order-1 order-md-1">🌟 推薦清單</h3>
-
-  <!-- 2️⃣ 估計金額／家數 -->
-  <span id="summaryInfo"
-        class="small text-muted order-1 order-md-1 ms-md-1">
-    估計 -- 元／-- 家
-  </span>
-
-  <!-- 3️⃣ 分類下拉 -->
-  <div class="d-flex align-items-center gap-2 order-1 order-md-1 w-100 w-md-auto
-              justify-content-center justify-content-md-start mt-1 mt-md-0">
-    <label for="recommendSheet" class="form-label mb-0 me-1">選擇分類：</label>
+  <!-- 下拉分类 -->
+  <div class="d-flex align-items-center flex-shrink-0" style="gap: 0.5rem;">
+    <label for="recommendSheet" class="mb-0">選擇分類：</label>
     <select id="recommendSheet" class="form-select form-select-sm" style="width: 160px;">
-      <option>分類載入中...</option>
+      <option>載入中...</option>
     </select>
   </div>
 
+  <!-- 弹性空隙 -->
+  <div class="flex-grow-1"></div>
+
+  <!-- 估计金額／家数 -->
+  <span id="summaryInfo" class="small text-muted flex-shrink-0 text-nowrap">
+    估計 -- 元／-- 家
+  </span>
 </div>
+
+<!-- 手機版 (md↓)：兩行排列 -->
+<div class="d-flex d-md-none flex-column px-3 py-2" style="gap: 0.75rem;">
+  <!-- 第一行：标题 + 估计 -->
+  <div class="d-flex justify-content-between align-items-center">
+    <h3 class="mb-0">🌟 推薦清單</h3>
+    <span id="summaryInfoMobile" class="small text-muted text-nowrap">
+      估計 -- 元／-- 家
+    </span>
+  </div>
+  <!-- 第二行：置中下拉分类 -->
+  <div class="d-flex justify-content-center align-items-center" style="gap: 0.5rem;">
+    <label for="recommendSheet" class="mb-0">選擇分類：</label>
+    <select id="recommendSheet" class="form-select form-select-sm" style="width: 160px;">
+      <option>載入中...</option>
+    </select>
+  </div>
+</div>
+
+<!-- 推薦清單表格 -->
+<div class="table-responsive px-3 pb-3">
+  <table class="table table-bordered table-sm" id="recommendTable">
+    <thead class="table-warning"></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
 
 
 

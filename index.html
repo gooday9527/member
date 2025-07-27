@@ -54,24 +54,42 @@
   </div>
 </nav>
 
-    <div class="container-fluid">
-        <section id="page-recommend" class="page-container">
-            <div class="recommend-wrapper">
-                <h3 class="text-center">🌟 推薦清單</h3>
-                <div class="d-flex align-items-center gap-2 recommend-controls mb-0">
-                    <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
-                    <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;"><option>分類載入中...</option></select>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-sm" id="recommendTable">
-                        <thead class="table-warning"></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-        <section id="dynamic-content-area" class="page-container"></section>
+<div class="container-fluid">
+  <section id="page-recommend" class="page-container">
+    <div class="recommend-wrapper">
+
+      <!-- 🌟 控制列：標題 + 分類下拉 -->
+      <div class="d-block d-md-flex align-items-center justify-content-between px-3 gap-3 mb-2 flex-wrap">
+
+        <!-- 左：標題 -->
+        <div class="text-center text-md-start">
+          <h3 class="mt-1 mb-1 mb-md-0">🌟 推薦清單</h3>
+        </div>
+
+        <!-- 右：分類下拉 -->
+        <div class="d-flex justify-content-center justify-content-md-end align-items-center gap-2">
+          <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
+          <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
+            <option>分類載入中...</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- 📋 推薦清單表格 -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-sm" id="recommendTable">
+          <thead class="table-warning"></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
     </div>
+  </section>
+
+  <section id="dynamic-content-area" class="page-container"></section>
+</div>
+
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

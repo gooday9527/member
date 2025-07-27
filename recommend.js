@@ -64,62 +64,57 @@ export function initializeRecommendPage() {
 
 
 function renderRecommendTable(data) {
-    const tableElement = document.getElementById('recommendTable');
-    if (!tableElement) {
-        console.error("錯誤：在 recommend.html 中找不到 ID 為 'recommendTable' 的表格。");
-        return;
-    }
+  const tableElement = document.getElementById('recommendTable');
+  const summaryElement = document.getElementById('summaryInfo');
 
-    const thead = tableElement.querySelector('thead');
-    const tbody = tableElement.querySelector('tbody');
-    thead.innerHTML = '';
-    tbody.innerHTML = '';
+  if (!tableElement) {
+    console.error("錯誤：找不到 #recommendTable");
+    return;
+  }
 
-    if (!data || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="100%" class="text-center p-4">這個分類目前沒有資料</td></tr>';
-        return;
-    }
+  const thead = tableElement.querySelector('thead');
+  const tbody = tableElement.querySelector('tbody');
+  thead.innerHTML = '';
+  tbody.innerHTML = '';
 
-    // 動態產生表頭
-    const headers = Object.keys(data[0]);
-    thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="100%" class="text-center p-4">這個分類目前沒有資料</td></tr>';
+    if (summaryElement) summaryElement.textContent = `估計 0 元／0 家`;
+    return;
+  }
 
-    // 動態產生表格內容
-    const fragment = document.createDocumentFragment();
-    data.forEach(row => {
-        const tr = document.createElement('tr');
-        headers.forEach(h => {
-            const td = document.createElement('td');
-            td.textContent = row[h] || '';
-            tr.appendChild(td);
-        });
-        fragment.appendChild(tr);
-    });
-    tbody.appendChild(fragment);
-}
+  // ➤ 取得表頭
+  const headers = Object.keys(data[0]);
+  thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
 
-function renderRecommendTable(data) {
-  const tbody = document.querySelector("#recommendTable tbody");
-  tbody.innerHTML = "";
-
+  // ➤ 統計總金額（假設第 3 欄為金額）
   let totalAmount = 0;
 
+  const fragment = document.createDocumentFragment();
   data.forEach(row => {
     const tr = document.createElement("tr");
-    row.forEach(cell => {
+
+    headers.forEach((key, idx) => {
       const td = document.createElement("td");
-      td.textContent = cell;
+      const value = row[key] || '';
+
+      // 統計第 3 欄金額（index 2）
+      if (idx === 2) {
+        const amount = parseInt(value.toString().replace(/,/g, ""), 10);
+        if (!isNaN(amount)) totalAmount += amount;
+      }
+
+      td.textContent = value;
       tr.appendChild(td);
     });
 
-    // 第三欄是金額
-    const amount = parseInt((row[2] || "").toString().replace(/,/g, ""), 10);
-    if (!isNaN(amount)) totalAmount += amount;
-
-    tbody.appendChild(tr);
+    fragment.appendChild(tr);
   });
 
-  // 更新統計區塊
-  const summaryText = `估計 ${totalAmount.toLocaleString()} 元／${data.length} 家`;
-  document.getElementById("summaryInfo").textContent = summaryText;
+  tbody.appendChild(fragment);
+
+  // ➤ 顯示統計資訊
+  if (summaryElement) {
+    summaryElement.textContent = `估計 ${totalAmount.toLocaleString()} 元／${data.length} 家`;
+  }
 }

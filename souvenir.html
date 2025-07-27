@@ -1,4 +1,4 @@
-<div class="souvenir-wrapper mt-1">
+<div class="souvenir-wrapper mt-2">
     <div class="table-controls-fixed" id="souvenirControlsContainer"></div>
     <div class="table-scroll-container table-responsive">
         <table class="table table-bordered table-sm" id="souvenirTable">
@@ -23,8 +23,8 @@
 
                 if (controlsContainer) {
                     controlsContainer.innerHTML = `
-                        <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 mb-1">
-                            <h3 class="mb-1 mb-md-0">🎁 紀念品</h3>
+                        <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-100 mb-2">
+                            <h3 class="mb-2 mb-md-0">🎁 紀念品</h3>
                             <div class="d-flex align-items-center gap-3">
                                 <div>
                                     <label for="rowsPerPageSelect" class="form-label mb-0 me-1">筆數:</label>
@@ -54,23 +54,23 @@
                 let sortAsc = true;
                 let sortedData = [...data];
                 let filteredData = [...data];
-                
-                tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} <span></span></th>`).join('')}</tr>`;
-                
-                // ✅ 【還原】使用您最初的 forEach 迴圈方式來為每個標題綁定排序事件
-                headers.forEach(h => {
-                    const th = tableHead.querySelector(`th[data-key="${h}"]`);
-                    if (th) {
-                        th.style.cursor = 'pointer';
-                        th.addEventListener('click', () => sortTable(h));
-                    }
-                });
+                let firstLoad = true; // ✅ 【還原】使用您原本的 firstLoad 旗標
+
+                tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer;">${h} <span></span></th>`).join('')}</tr>`;
                 
                 function updateSortIndicator() {
                     tableHead.querySelectorAll('th.sortable span').forEach(span => span.textContent = '');
                     const th = tableHead.querySelector(`th[data-key="${sortKey}"] span`);
                     if (th) th.textContent = sortAsc ? ' ▲' : ' ▼';
                 }
+
+                // ✅ 【還原】使用您最初的 forEach 迴圈方式來為每個標題綁定排序事件
+                headers.forEach(h => {
+                    const th = tableHead.querySelector(`th[data-key="${h}"]`);
+                    if (th) {
+                        th.addEventListener('click', () => sortTable(h));
+                    }
+                });
 
                 document.getElementById('searchInput').addEventListener('input', (e) => {
                     const keyword = e.target.value.trim().toLowerCase();
@@ -85,9 +85,14 @@
                     renderTable();
                 });
 
+                // ✅ 【還原】使用您最初的 sortTable 函式邏輯
                 function sortTable(key) {
-                    // ✅ 【還原】使用您原始版本的排序方向判斷邏輯
-                    sortAsc = (sortKey === key) ? !sortAsc : true;
+                    if (firstLoad) {
+                        firstLoad = false;
+                        sortAsc = true;
+                    } else {
+                        sortAsc = (sortKey === key) ? !sortAsc : true;
+                    }
                     sortKey = key;
                     
                     sortedData.sort((a, b) => {
@@ -142,8 +147,7 @@
                 window.changePage = (offset) => { currentPage += offset; renderTable(); };
                 window.goToPage = (page) => { currentPage = page; renderTable(); };
 
-                // 初始載入時，直接渲染一次，不主動排序
-                renderTable();
+                sortTable(sortKey);
             })
             .catch(error => {
                 console.error('載入紀念品資料錯誤：', error);

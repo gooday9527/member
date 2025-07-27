@@ -97,3 +97,29 @@ function renderRecommendTable(data) {
     });
     tbody.appendChild(fragment);
 }
+
+function renderRecommendTable(data) {
+  const tbody = document.querySelector("#recommendTable tbody");
+  tbody.innerHTML = "";
+
+  let totalAmount = 0;
+
+  data.forEach(row => {
+    const tr = document.createElement("tr");
+    row.forEach(cell => {
+      const td = document.createElement("td");
+      td.textContent = cell;
+      tr.appendChild(td);
+    });
+
+    // 第三欄是金額
+    const amount = parseInt((row[2] || "").toString().replace(/,/g, ""), 10);
+    if (!isNaN(amount)) totalAmount += amount;
+
+    tbody.appendChild(tr);
+  });
+
+  // 更新統計區塊
+  const summaryText = `估計 ${totalAmount.toLocaleString()} 元／${data.length} 家`;
+  document.getElementById("summaryInfo").textContent = summaryText;
+}

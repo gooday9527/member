@@ -54,9 +54,9 @@
                 let sortAsc = true;
                 let sortedData = [...data];
                 let filteredData = [...data];
-                let isFirstSort = true; // ✅ 【排序修正】新增一個旗標來處理首次排序
+                let isFirstSort = true;
 
-                tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} <span></span></th>`).join('')}</tr>`;
+                tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer;">${h} <span></span></th>`).join('')}</tr>`;
                 
                 function updateSortIndicator() {
                     tableHead.querySelectorAll('th.sortable span').forEach(span => span.textContent = '');
@@ -64,12 +64,14 @@
                     if (th) th.textContent = sortAsc ? ' ▲' : ' ▼';
                 }
 
-                headers.forEach(h => {
-                    const th = tableHead.querySelector(`th[data-key="${h}"]`);
-                    if (th) {
-                        th.style.cursor = 'pointer';
-                        th.addEventListener('click', () => sortTable(h));
-                    }
+                // ✅ 【排序修正】改用事件委派，將監聽器綁定在父層 a thead 上
+                tableHead.addEventListener('click', (e) => {
+                    // 檢查點擊的是否是帶有 sortable class 的 th 元素
+                    const headerCell = e.target.closest('th.sortable');
+                    if (!headerCell) return; // 如果點的不是 th，就什麼都不做
+
+                    const key = headerCell.dataset.key;
+                    sortTable(key);
                 });
 
                 document.getElementById('searchInput').addEventListener('input', (e) => {
@@ -86,7 +88,6 @@
                 });
 
                 function sortTable(key) {
-                    // ✅ 【排序修正】如果是第一次排序，強制為升冪；否則才切換
                     if (isFirstSort) {
                         sortAsc = true;
                         isFirstSort = false;
@@ -124,32 +125,21 @@
                     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
                     const paginationContainer = document.getElementById('souvenirPagination');
                     paginationContainer.innerHTML = ''; 
-                    if (totalPages <= 0) return; // 如果沒有資料，不顯示頁碼
+                    if (totalPages <= 0) return;
 
-                    // ✅ 【頁碼修正】補回完整的頁碼產生邏輯
                     const pageButtons = [];
                     pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上頁</button>`);
                     
                     let startPage = Math.max(1, currentPage - 2);
                     let endPage = Math.min(totalPages, currentPage + 2);
 
-                    if (startPage > 1) {
-                        pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
-                    }
-                    if (startPage > 2) {
-                        pageButtons.push(`<span class="align-self-center me-1">...</span>`);
-                    }
-
+                    if (startPage > 1) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
+                    if (startPage > 2) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
                     for (let i = startPage; i <= endPage; i++) {
                         pageButtons.push(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>`);
                     }
-
-                    if (endPage < totalPages - 1) {
-                        pageButtons.push(`<span class="align-self-center me-1">...</span>`);
-                    }
-                    if (endPage < totalPages) {
-                        pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
-                    }
+                    if (endPage < totalPages - 1) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
+                    if (endPage < totalPages) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
 
                     pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''} onclick="changePage(1)">下頁</button>`);
                     paginationContainer.innerHTML = pageButtons.join('');
@@ -158,7 +148,7 @@
                 window.changePage = (offset) => { currentPage += offset; renderTable(); };
                 window.goToPage = (page) => { currentPage = page; renderTable(); };
 
-                sortTable(sortKey); // 初始排序和渲染
+                sortTable(sortKey);
             })
             .catch(error => {
                 console.error('載入紀念品資料錯誤：', error);
@@ -166,7 +156,6 @@
             });
     }
 
-    // 安全啟動邏輯不變
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', loadSouvenirDataWithoutDataTables);
     } else {

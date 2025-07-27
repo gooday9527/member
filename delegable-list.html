@@ -1,155 +1,262 @@
 <div class="souvenir-wrapper pt-2 pb-2 pt-md-0 pb-md-0">
-  <!-- 控制列（搜尋 + 筆數） -->
-  <div class="d-block d-md-flex align-items-center gap-3 mb-2 mb-md-0 px-3" id="delegableControlsContainer">
-    <div class="me-3">
-      <h3 class="mt-1 mb-1 mb-md-0" style="white-space: nowrap;">📥 可委託清單</h3>
+    <div class="d-block d-md-flex align-items-center gap-3 mb-2 mb-md-0 px-3" id="delegableControlsContainer">
+        <div class="me-3">
+            <h3 class="mt-1 mb-1 mb-md-0" style="white-space: nowrap;">📥 可委託清單</h3>
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-nowrap w-100 w-md-auto justify-content-start">
+            <div class="d-flex align-items-center">
+                <label for="delegRowsPerPage" class="form-label mb-0 me-1">筆數:</label>
+                <select id="delegRowsPerPage" class="form-select form-select-sm" style="width: 80px;">
+                    <option>10</option><option>25</option><option>50</option><option>100</option>
+                </select>
+            </div>
+            <div class="d-flex align-items-center">
+                <label for="delegSearchInput" class="form-label mb-0 me-1">搜尋:</label>
+                <input type="text" id="delegSearchInput" class="form-control form-control-sm" style="width: 150px;" placeholder="關鍵字...">
+            </div>
+        </div>
     </div>
-   <!-- 筆數 + 搜尋：強制同一行不換行 -->
-  <div class="d-flex align-items-center gap-2 flex-nowrap w-100 w-md-auto justify-content-center justify-content-md-start">
-    <div class="d-flex align-items-center">
-        <label for="delegRowsPerPage" class="form-label mb-0 me-1">筆數:</label>
-        <select id="delegRowsPerPage" class="form-select form-select-sm" style="width: 80px;">
-          <option>10</option><option>25</option><option>50</option><option>100</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center">
-        <label for="delegSearchInput" class="form-label mb-0 me-1">搜尋:</label>
-        <input type="text" id="delegSearchInput" class="form-control form-control-sm" style="width: 150px;" placeholder="關鍵字...">
-      </div>
+
+    <div class="table-scroll-container table-responsive">
+        <table class="table table-bordered table-sm" id="delegableListTable">
+            <thead class="table-warning"></thead>
+            <tbody>
+                <tr><td colspan="7" class="text-center p-4">資料載入中...</td></tr>
+            </tbody>
+        </table>
     </div>
-  </div>
 
-  <!-- 表格容器 -->
-  <div class="table-scroll-container table-responsive">
-    <table class="table table-bordered table-sm" id="delegableListTable">
-      <thead class="table-warning"></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <!-- 分頁 -->
-  <div id="delegablePaginationWrapper" class="mt-2">
-    <div id="delegablePagination" class="d-flex justify-content-center flex-wrap"></div>
-  </div>
+    <div id="delegablePaginationWrapper" class="mt-2">
+        <div id="delegablePagination" class="d-flex justify-content-center flex-wrap"></div>
+    </div>
 </div>
 
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">持有帳號明細</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>公司：</strong><span id="modalCompanyName" class="fw-bold"></span></p>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>姓名</th>
+                                <th>證件狀態</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 (function(){
-  const email = window.currentUserEmail;
-  if (!email) return;
-
-  // 狀態
-  let rawData = [], filteredData = [], currentPage = 1, rowsPerPage = 10;
-  let sortKey = '委託截止日', sortAsc = true;
-
-  // 欄位
-  const columns = ['股號','股名','電投開始日','委託截止日','委託條件','持有帳號數','已委託數'];
-
-  // DOM
-  const tblHead = document.querySelector('#delegableListTable thead');
-  const tblBody = document.querySelector('#delegableListTable tbody');
-  const ctrlRows = document.getElementById('delegRowsPerPage');
-  const ctrlSearch = document.getElementById('delegSearchInput');
-  const pagContainer = document.getElementById('delegablePagination');
-
-  // 初始化控制列事件
-  ctrlRows.addEventListener('change', ()=>{ rowsPerPage = +ctrlRows.value; currentPage=1; renderTable(); });
-  ctrlSearch.addEventListener('input', ()=>{ currentPage=1; filterData(); renderTable(); });
-
-  // 取得資料
-  google.script.run
-    .withSuccessHandler(resp=>{
-      rawData = resp.data||[];
-      // 先排序、再 filter
-      sortData(); filterData();
-      // 繪製表頭
-      tblHead.innerHTML = '<tr>' + columns.map(h=>`<th class="sortable" data-key="${h}" style="cursor:pointer;white-space:nowrap">${h}<span></span></th>`).join('') + '</tr>';
-      tblHead.querySelectorAll('th.sortable').forEach(th=>th.addEventListener('click', ()=>{ sortKey=th.dataset.key; sortAsc = (sortKey===th.dataset.key)?!sortAsc:true; sortData(); filterData(); renderTable(); }));
-      renderTable();
-    })
-    .withFailureHandler(err=>{ tblBody.innerHTML='<tr><td colspan="7" class="text-center text-danger p-4">載入失敗</td></tr>'; })
-    .getDelegableListData(email);
-
-  function sortData(){
-    rawData.sort((a,b)=>{
-      let A=a[sortKey], B=b[sortKey];
-      const numA=Number(A), numB=Number(B);
-      if (!isNaN(numA) && !isNaN(numB)) return sortAsc?numA-numB:numB-numA;
-      return sortAsc?String(A).localeCompare(B,'zh-Hant'):String(B).localeCompare(A,'zh-Hant');
-    });
-  }
-
-  function filterData(){
-    const kw = ctrlSearch.value.trim().toLowerCase();
-    filteredData = kw? rawData.filter(r=>columns.some(h=>String(r[h]||'').toLowerCase().includes(kw))) : rawData.slice();
-  }
-
-  function renderTable(){
-    // 標示排序箭頭
-    tblHead.querySelectorAll('th.sortable span').forEach(s=>s.textContent='');
-    const sp = tblHead.querySelector(`th[data-key="${sortKey}"] span`);
-    if (sp) sp.textContent = sortAsc?' ▲':' ▼';
-
-    // 分頁切片
-    const start=(currentPage-1)*rowsPerPage, end=start+rowsPerPage;
-    const pageData=filteredData.slice(start,end);
-
-    // 渲染列
-    tblBody.innerHTML = pageData.map(r=>{
-      let tds = columns.map(key=>{
-        let v=r[key]||'';
-        if (key==='持有帳號數' && v>0){
-          return `<td class="text-center"><button class="btn btn-sm btn-outline-primary view-details-btn" data-details='${JSON.stringify(r.holdingsDetail)}' data-company="${r.股名} (${r.股號})" data-conditions="${r.委託條件}">${v}</button></td>`;
-        }
-        if (key==='持有帳號數' || key==='已委託數') return `<td class="text-center">${v}</td>`;
-        return `<td>${v}</td>`;
-      }).join('');
-      return `<tr>${tds}</tr>`;
-    }).join('')||'<tr><td colspan="7" class="text-center p-4">沒有資料</td></tr>';
-
-    // 綁明細按鈕
-    document.querySelectorAll('.view-details-btn').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const det=JSON.parse(btn.dataset.details);
-        const company=btn.dataset.company;
-        const cond=btn.dataset.conditions;
-        showModal(det,company,cond);
-      });
-    });
-
-    renderPagination();
-  }
-
-  function renderPagination(){
-    const totalPages=Math.ceil(filteredData.length/rowsPerPage)||1;
-    let html='';
-    html+=`<button class="btn btn-sm me-1"${currentPage===1?' disabled':''} onclick="changePage(-1)">上頁</button>`;
-    for(let i=1;i<=totalPages;i++){
-      html+=`<button class="btn btn-sm me-1 ${i===currentPage?'btn-primary':'btn-outline-primary'}" onclick="goPage(${i})">${i}</button>`;
+    // 確認使用者已登入
+    const email = window.currentUserEmail;
+    if (!email) {
+        document.querySelector('#delegableListTable tbody').innerHTML = '<tr><td colspan="7" class="text-center text-danger p-4">請先登入</td></tr>';
+        return;
     }
-    html+=`<button class="btn btn-sm"${currentPage===totalPages?' disabled':''} onclick="changePage(1)">下頁</button>`;
-    pagContainer.innerHTML=html;
-  }
 
-  window.changePage=off=>{ currentPage=Math.min(Math.max(1,currentPage+off),Math.ceil(filteredData.length/rowsPerPage)); renderTable(); };
-  window.goPage=pg=>{ currentPage=pg; renderTable(); };
+    // 狀態變數
+    let rawData = [], filteredData = [], currentPage = 1, rowsPerPage = 10;
+    let sortKey = '委託截止日', sortAsc = true;
+    let appSettings = { isDelegationAcquisitionEnabled: true }; // 預設值
+    let detailsModal; // Modal 實例
 
-  function showModal(details,company,conditions){
-    document.getElementById('modalCompanyName').textContent=company;
-    const mb=document.getElementById('modalTableBody'); mb.innerHTML='';
-    details.forEach(acc=>{
-      let action='';
-      if(acc.isDelegated) action=`<button class="btn btn-warning btn-sm" data-action="cancel">取消委託</button>`;
-      else{
-        let ok=true; const doc=acc.documentType||'';
-        if(conditions.includes('身分證正本')&&doc!=='身分證') ok=false;
-        if(conditions.includes('證件正本')&&!['身分證','健保卡'].includes(doc)) ok=false;
-        if(ok) action=`<button class="btn btn-primary btn-sm me-1" data-action="delegate">委託</button><button class="btn btn-info btn-sm" data-action="acquire">收購</button>`;
-        else action=`<span class="badge bg-danger">X</span>`;
-      }
-      mb.insertAdjacentHTML('beforeend',`<tr><td>${acc.accountName}</td><td>${acc.documentType||'未提供'}</td><td class="text-center">${action}</td></tr>`);
+    // 顯示的欄位
+    const columns = ['股號','股名','電投開始日','委託截止日','委託條件','持有帳號數','已委託數'];
+
+    // DOM 元素快取
+    const tblHead = document.querySelector('#delegableListTable thead');
+    const tblBody = document.querySelector('#delegableListTable tbody');
+    const ctrlRows = document.getElementById('delegRowsPerPage');
+    const ctrlSearch = document.getElementById('delegSearchInput');
+    const pagContainer = document.getElementById('delegablePagination');
+    const modalTitle = document.getElementById('modalCompanyName');
+    const modalBody = document.getElementById('modalTableBody');
+
+    // 初始化事件綁定
+    ctrlRows.addEventListener('change', ()=>{ rowsPerPage = +ctrlRows.value; currentPage = 1; renderTable(); });
+    ctrlSearch.addEventListener('input', ()=>{ currentPage = 1; filterData(); renderTable(); });
+    
+    // 從後端取得資料
+    google.script.run
+        .withSuccessHandler(response => {
+            if (response.status !== 'success' || !response.data) {
+                tblBody.innerHTML='<tr><td colspan="7" class="text-center text-danger p-4">載入失敗: ' + (response.message || '未知錯誤') + '</td></tr>';
+                return;
+            }
+            rawData = response.data || [];
+            appSettings = response.appSettings || appSettings; // 更新後端設定
+            
+            // 首次資料處理
+            sortData(); 
+            filterData();
+            
+            // 首次渲染
+            renderHeader();
+            renderTable();
+        })
+        .withFailureHandler(err => { 
+            tblBody.innerHTML='<tr><td colspan="7" class="text-center text-danger p-4">載入失敗，請檢查網路連線</td></tr>'; 
+        })
+        .getDelegableListData(email);
+
+    function sortData() {
+        rawData.sort((a,b) => {
+            let valA = a[sortKey], valB = b[sortKey];
+            if (sortKey === '持有帳號數' || sortKey === '已委託數') {
+                return sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA);
+            }
+            return sortAsc ? String(valA).localeCompare(valB, 'zh-Hant') : String(valB).localeCompare(valA, 'zh-Hant');
+        });
+    }
+
+    function filterData() {
+        const keyword = ctrlSearch.value.trim().toLowerCase();
+        if (keyword) {
+            filteredData = rawData.filter(row => columns.some(key => String(row[key] || '').toLowerCase().includes(keyword)));
+        } else {
+            filteredData = [...rawData]; // 使用展開運算符創建淺拷貝
+        }
+    }
+
+    function renderHeader() {
+        tblHead.innerHTML = '<tr>' + columns.map(h => `<th class="sortable" data-key="${h}" style="cursor:pointer;white-space:nowrap">${h}<span></span></th>`).join('') + '</tr>';
+        tblHead.querySelectorAll('th.sortable').forEach(th => th.addEventListener('click', () => {
+            const key = th.dataset.key;
+            sortAsc = (sortKey === key) ? !sortAsc : true;
+            sortKey = key;
+            sortData(); 
+            filterData(); 
+            renderTable();
+        }));
+    }
+    
+    function renderTable() {
+        // 更新排序指示箭頭
+        tblHead.querySelectorAll('th.sortable span').forEach(s => s.textContent = '');
+        const sortIndicator = tblHead.querySelector(`th[data-key="${sortKey}"] span`);
+        if (sortIndicator) sortIndicator.textContent = sortAsc ? ' ▲' : ' ▼';
+
+        // 根據分頁切片資料
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageData = filteredData.slice(start, end);
+
+        // 渲染表格內容
+        if (pageData.length === 0) {
+            tblBody.innerHTML = '<tr><td colspan="7" class="text-center p-4">沒有符合條件的資料</td></tr>';
+        } else {
+            tblBody.innerHTML = pageData.map(row => {
+                const cells = columns.map(key => {
+                    let value = row[key] || '';
+                    let className = (key === '持有帳號數' || key === '已委託數') ? 'text-center' : '';
+                    
+                    if (key === '持有帳號數' && value > 0) {
+                        return `<td class="${className}"><button class="btn btn-sm btn-outline-primary view-details-btn">${value}</button></td>`;
+                    }
+                    return `<td class="${className}">${value}</td>`;
+                }).join('');
+                // 將整列資料存在 tr 的 dataset 中，方便後續取用
+                return `<tr data-row-details='${JSON.stringify(row)}'>${cells}</tr>`;
+            }).join('');
+        }
+
+        // 為新產生的「明細按鈕」綁定事件
+        tblBody.querySelectorAll('.view-details-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const rowData = JSON.parse(e.currentTarget.closest('tr').dataset.rowDetails);
+                showDetailsModal(rowData);
+            });
+        });
+
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
+        let html = '';
+        html += `<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="window.delegableTable.changePage(-1)">上頁</button>`;
+        
+        // 簡易分頁邏輯 (可替換為更複雜的 "..." 版本)
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="btn btn-sm me-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="window.delegableTable.goToPage(${i})">${i}</button>`;
+        }
+        
+        html += `<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="window.delegableTable.changePage(1)">下頁</button>`;
+        pagContainer.innerHTML = html;
+    }
+
+    function showDetailsModal(rowData) {
+        if (!detailsModal) {
+            detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+        }
+        modalTitle.textContent = `${rowData.stockName} (${rowData.stockCode})`;
+        modalBody.innerHTML = ''; // 清空舊內容
+
+        rowData.holdingsDetail.forEach(account => {
+            let actionHtml = '';
+            // 1. 最高優先級：已委託
+            if (account.isDelegated) {
+                actionHtml = `<button class="btn btn-warning btn-sm action-btn" data-action="cancel-delegate">取消委託</button>`;
+            } else {
+                // 2. 判斷證件是否符合
+                let isDocumentMatch = true;
+                const docType = String(account.documentType || '').trim();
+                if (rowData.delegationConditions.includes("身分證正本") && docType !== "身分證") isDocumentMatch = false;
+                if (rowData.delegationConditions.includes("證件正本") && !["身分證", "健保卡"].includes(docType)) isDocumentMatch = false;
+
+                // 3. 根據證件符合度與後端開關，決定按鈕內容
+                if (isDocumentMatch) {
+                    if (appSettings.isDelegationAcquisitionEnabled) {
+                        const btnText = rowData.delegationConditions.includes("寄開會通知書給我") ? '委託 (需寄單)' : '委託';
+                        actionHtml = `
+                            <button class="btn btn-primary btn-sm action-btn me-1" data-action="delegate">${btnText}</button>
+                            <button class="btn btn-info btn-sm action-btn" data-action="acquire">收購</button>`;
+                    } else {
+                        actionHtml = `<span class="badge bg-secondary">功能維護中</span>`;
+                    }
+                } else {
+                    actionHtml = `<span class="badge bg-danger">X (證件不符)</span>`;
+                }
+            }
+            const rowHtml = `<tr>
+                <td>${account.accountName}</td>
+                <td>${account.documentType || '未提供'}</td>
+                <td class="text-center" data-company-name="${modalTitle.textContent}" data-account-name="${account.accountName}">${actionHtml}</td>
+            </tr>`;
+            modalBody.insertAdjacentHTML('beforeend', rowHtml);
+        });
+        detailsModal.show();
+    }
+    
+    // Modal 內部事件委派
+    document.getElementById('detailsModal').addEventListener('click', function(e){
+        if(e.target.classList.contains('action-btn')){
+            const target = e.target;
+            const cell = target.closest('td');
+            alert(`模擬操作：\n類型: ${target.dataset.action}\n公司: ${cell.dataset.companyName}\n帳號: ${cell.dataset.accountName}`);
+            detailsModal.hide();
+        }
     });
-    new bootstrap.Modal('#detailsModal').show();
-  }
+
+    // 將分頁函式掛載到 window 物件下，以便 onclick 調用
+    window.delegableTable = {
+        changePage: offset => { currentPage = Math.min(Math.max(1, currentPage + offset), Math.ceil(filteredData.length / rowsPerPage)); renderTable(); },
+        goToPage: page => { currentPage = page; renderTable(); }
+    };
+
 })();
 </script>

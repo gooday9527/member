@@ -54,25 +54,23 @@
                 let sortAsc = true;
                 let sortedData = [...data];
                 let filteredData = [...data];
-                let isFirstSort = true;
-
-                tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer;">${h} <span></span></th>`).join('')}</tr>`;
+                
+                tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} <span></span></th>`).join('')}</tr>`;
+                
+                // ✅ 【還原】使用您最初的 forEach 迴圈方式來為每個標題綁定排序事件
+                headers.forEach(h => {
+                    const th = tableHead.querySelector(`th[data-key="${h}"]`);
+                    if (th) {
+                        th.style.cursor = 'pointer';
+                        th.addEventListener('click', () => sortTable(h));
+                    }
+                });
                 
                 function updateSortIndicator() {
                     tableHead.querySelectorAll('th.sortable span').forEach(span => span.textContent = '');
                     const th = tableHead.querySelector(`th[data-key="${sortKey}"] span`);
                     if (th) th.textContent = sortAsc ? ' ▲' : ' ▼';
                 }
-
-                // ✅ 【排序修正】改用事件委派，將監聽器綁定在父層 a thead 上
-                tableHead.addEventListener('click', (e) => {
-                    // 檢查點擊的是否是帶有 sortable class 的 th 元素
-                    const headerCell = e.target.closest('th.sortable');
-                    if (!headerCell) return; // 如果點的不是 th，就什麼都不做
-
-                    const key = headerCell.dataset.key;
-                    sortTable(key);
-                });
 
                 document.getElementById('searchInput').addEventListener('input', (e) => {
                     const keyword = e.target.value.trim().toLowerCase();
@@ -88,12 +86,8 @@
                 });
 
                 function sortTable(key) {
-                    if (isFirstSort) {
-                        sortAsc = true;
-                        isFirstSort = false;
-                    } else {
-                        sortAsc = (sortKey === key) ? !sortAsc : true;
-                    }
+                    // ✅ 【還原】使用您原始版本的排序方向判斷邏輯
+                    sortAsc = (sortKey === key) ? !sortAsc : true;
                     sortKey = key;
                     
                     sortedData.sort((a, b) => {
@@ -148,7 +142,8 @@
                 window.changePage = (offset) => { currentPage += offset; renderTable(); };
                 window.goToPage = (page) => { currentPage = page; renderTable(); };
 
-                sortTable(sortKey);
+                // 初始載入時，直接渲染一次，不主動排序
+                renderTable();
             })
             .catch(error => {
                 console.error('載入紀念品資料錯誤：', error);

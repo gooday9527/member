@@ -40,7 +40,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 (function(){
-    // ✅ 請將此處替換為您從步驟二複製的 Web App 網址
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwFSVsZNUeuQXiJ9cU-KSBCg1ZZLVRs-urxiwdQVHt3n_9DJBBvWLZ1Mez0pExtM04Q/exec';
 
     const email = window.currentUserEmail;
@@ -71,7 +70,7 @@
     ctrlRows.addEventListener('change', ()=>{ rowsPerPage = +ctrlRows.value; currentPage = 1; renderTable(); });
     ctrlSearch.addEventListener('input', ()=>{ currentPage = 1; filterData(); renderTable(); });
     
-    // ✅ 【核心修改】使用 fetch 呼叫您的 Web App API
+    // 使用 fetch 呼叫您的 Web App API
     const apiUrl = `${WEB_APP_URL}?view=getDelegableList&email=${encodeURIComponent(email)}`;
 
     fetch(apiUrl)
@@ -87,6 +86,7 @@
             filterData();
             renderHeader();
             renderTable();
+        // ❌ 【修正】移除這裡多餘的 `})`
         })
         .catch(err => { 
             console.error('API 呼叫失敗:', err);
@@ -141,43 +141,35 @@
         renderPagination();
     }
 
-function renderPagination() {
-  // 計算總頁數
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-  // 抓到正確的容器：delegablePagination
-  const paginationContainer = document.getElementById('delegablePagination');
-  // 如果頁數 0 或 1，就顯示 “1”
-  if (totalPages <= 1) {
-    paginationContainer.innerHTML = `<button class="btn btn-sm btn-primary me-1">1</button>`;
-    return;
-  }
+    // ✅ 【修正】採用我們之前討論過的「聰明分頁」版本
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
+        // ✅ 【修正】使用正確的 ID: delegablePagination
+        const paginationContainer = document.getElementById('delegablePagination');
+        paginationContainer.innerHTML = '';
 
-  // 產生按鈕
-  let pageButtons = '';
-  pageButtons += `<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="delegableTable.changePage(-1)">上頁</button>`;
+        if (totalPages <= 1) return;
 
-  // 中間頁碼
-  for (let i = 1; i <= totalPages; i++) {
-    pageButtons += `<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="delegableTable.goToPage(${i})">${i}</button>`;
-  }
+        let pageButtons = [];
+        pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="window.delegableTable.changePage(-1)">上頁</button>`);
 
-  pageButtons += `<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="delegableTable.changePage(1)">下頁</button>`;
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
 
-  paginationContainer.innerHTML = pageButtons;
-}  // ← 這裡結束 renderPagination
+        if (startPage > 1) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.delegableTable.goToPage(1)">1</button>`);
+        if (startPage > 2) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            // ✅ 【修正】使用 window.delegableTable.goToPage
+            pageButtons.push(`<button class="btn btn-sm me-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="window.delegableTable.goToPage(${i})">${i}</button>`);
+        }
+        
+        if (endPage < totalPages - 1) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
+        if (endPage < totalPages) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.delegableTable.goToPage(${totalPages})">${totalPages}</button>`);
 
-// 全域分頁控制，注意這兩行要寫在 renderPagination 函式外面
-window.delegableTable = {
-  changePage: offset => {
-    currentPage = Math.min(Math.max(1, currentPage + offset), Math.ceil(filteredData.length / rowsPerPage));
-    renderTable();
-  },
-  goToPage: page => {
-    currentPage = page;
-    renderTable();
-  }
-};
-
+        pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="window.delegableTable.changePage(1)">下頁</button>`);
+        paginationContainer.innerHTML = pageButtons.join('');
+    }
 
     function showDetailsModal(rowData) {
         if (!detailsModal) detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
@@ -216,5 +208,6 @@ window.delegableTable = {
         changePage: offset => { currentPage = Math.min(Math.max(1, currentPage + offset), Math.ceil(filteredData.length / rowsPerPage)); renderTable(); },
         goToPage: page => { currentPage = page; renderTable(); }
     };
+
 })();
 </script>

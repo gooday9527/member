@@ -11,7 +11,8 @@ export function initializeRecommendPage() {
     if (isRecommendInitialized) return; 
     isRecommendInitialized = true;
 
-    const selectElement = document.getElementById('recommendSheet');
+    // 抓到所有帶 recommendSheet 的下拉（桌機 + 手機）
+    const selectElements = document.querySelectorAll('#recommendSheet');
     if (!selectElement) {
         console.error("錯誤：在 recommend.html 中找不到 ID 為 'recommendSheet' 的下拉選單。");
         return;
@@ -30,22 +31,33 @@ export function initializeRecommendPage() {
             recommendDataCache = json;
             const categories = Object.keys(json);
 
-            // 填入下拉選單
-            selectElement.innerHTML = '';
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                selectElement.appendChild(option);
-            });
-            selectElement.disabled = false;
-            
-            // 初始顯示第一組
-            if (categories[0]) {
-                selectElement.value = categories[0];
-                renderRecommendTable(json[categories[0]]);
-            }
+// 填入下拉選單
+ selectElements.forEach(select => {
+  // 填入 options
+  select.innerHTML = '';
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    select.appendChild(option);
+  });
+  select.disabled = false;
 
+  // 綁事件
+  select.addEventListener('change', () => {
+    const v = select.value;
+    renderRecommendTable(recommendDataCache[v] || []);
+    // 同步到另一個
+    selectElements.forEach(other => { other.value = v; });
+  });
+});
+
+// 初始顯示第一組
+if (categories[0]) {
+  const first = categories[0];
+  renderRecommendTable(recommendDataCache[first]);
+  selectElements.forEach(sel => sel.value = first);
+}
             // 下拉選單切換時
             selectElement.addEventListener('change', () => {
                 const selected = selectElement.value;

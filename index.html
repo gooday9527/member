@@ -66,17 +66,16 @@
     <h3 class="mt-1 mb-1 mb-md-0 text-start">🌟 推薦清單</h3>
   </div>
 
-  <!-- 🔽 下拉選單 -->
-  <div class="order-3 order-md-2 w-100 w-md-auto d-flex justify-content-center justify-content-md-start align-items-center">
+ <!-- 🔽 下拉 + 估計金額（同一行一起）-->
+  <div class="order-3 order-md-2 d-flex flex-wrap justify-content-center justify-content-md-start align-items-center gap-2">
+    <!-- 下拉選單 -->
     <label for="recommendSheet" class="form-label mb-0 me-1">選擇分類：</label>
     <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
       <option>分類載入中...</option>
     </select>
-  </div>
 
-  <!-- 🧮 估計金額／家數 -->
-  <div class="order-2 order-md-3 flex-shrink-0 text-end text-md-start ms-md-2">
-    <span id="summaryInfo" class="small text-muted">估計 -- 元／-- 家</span>
+    <!-- 統計 -->
+    <span id="summaryInfo" class="small text-muted ms-md-2">估計 -- 元／-- 家</span>
   </div>
 
 </div>

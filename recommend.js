@@ -39,6 +39,12 @@ export function initializeRecommendPage() {
                 selectElement.appendChild(option);
             });
             selectElement.disabled = false;
+            // ── 如果有手機版下拉，就一起填
+      const mobileSelect = document.getElementById('recommendSheetMobile');
+      if (mobileSelect) {
+       mobileSelect.innerHTML = selectElement.innerHTML;
+       mobileSelect.disabled = false;
+       }
 
             // 初始顯示第一組
             if (categories[0]) {

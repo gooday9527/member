@@ -1,76 +1,109 @@
 <div class="souvenir-wrapper pt-2 pb-2 pt-md-0 pb-md-0">
-    <div class="table-controls-fixed" id="souvenirControlsContainer"></div>
+    <div class="table-controls-fixed" id="delegableControlsContainer"></div>
     <div class="table-scroll-container table-responsive">
-        <table class="table table-bordered table-sm" id="souvenirTable">
+        <table class="table table-bordered table-sm" id="delegableListTable">
             <thead class="table-warning"></thead>
             <tbody></tbody>
         </table>
     </div>
-    <div id="souvenirPaginationWrapper">
-        <div id="souvenirPagination" class="d-flex justify-content-center flex-wrap"></div>
+    <div id="delegablePaginationWrapper">
+        <div id="delegablePagination" class="d-flex justify-content-center flex-wrap"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">持有帳號明細</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>公司：</strong><span id="modalCompanyName" class="fw-bold"></span></p>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>姓名</th>
+                                <th>證件狀態</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    function loadSouvenirDataWithoutDataTables() {
-        fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
-            .then(res => res.json())
-            .then(data => {
-                const tableElement = document.getElementById('souvenirTable');
+    function loadDelegableData() {
+        const email = window.currentUserEmail;
+        if (!email) {
+            document.getElementById('delegableListTable').querySelector('tbody').innerHTML = '<tr><td colspan="100%" class="text-center text-danger">請先登入</td></tr>';
+            return;
+        }
+
+        // ✅ 【核心修改】將 fetch 改為 google.script.run
+        google.script.run
+            .withSuccessHandler(function(response) {
+                if (response.status !== 'success' || !response.data) {
+                    console.error("後端回傳錯誤:", response.message);
+                    document.getElementById('delegableListTable').querySelector('tbody').innerHTML = '<tr><td colspan="100%" class="text-danger text-center">資料載入失敗: ' + (response.message || '未知錯誤') + '</td></tr>';
+                    return;
+                }
+
+                // 成功取得資料後，開始執行您的客製化表格邏輯
+                const rawData = response.data;
+                const appSettings = response.appSettings || { isDelegationAcquisitionEnabled: true }; // 從後端取得設定
+                const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+
+                const tableElement = document.getElementById('delegableListTable');
                 const tableHead = tableElement.querySelector('thead');
                 const tableBody = tableElement.querySelector('tbody');
-                const controlsContainer = document.getElementById('souvenirControlsContainer');
+                const controlsContainer = document.getElementById('delegableControlsContainer');
 
-if (controlsContainer) {
-  controlsContainer.innerHTML = `
-    <div class="d-block d-md-flex align-items-center gap-3 mb-2 mb-md-0 px-3">
-      <!-- 🎁 標題 -->
-      <div class="me-3">
-        <h3 class="mt-1 mb-1 mb-md-0" style="white-space: nowrap; min-width: 100px;">🎁 紀念品</h3>
-      </div>
+                // 注入控制項 (搜尋、筆數)
+                if (controlsContainer) {
+                    controlsContainer.innerHTML = `
+                    <div class="d-block d-md-flex align-items-center gap-3 mb-2 mb-md-0 px-3">
+                        <div class="me-3">
+                            <h3 class="mt-1 mb-1 mb-md-0" style="white-space: nowrap; min-width: 100px;">📥 可委託清單</h3>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 flex-nowrap w-100" style="overflow-x: auto;">
+                            <div class="d-flex align-items-center">
+                                <label for="rowsPerPageSelect" class="form-label mb-0 me-0 me-md-1">筆數:</label>
+                                <select id="rowsPerPageSelect" class="form-select form-select-sm" style="width: 80px;">
+                                    <option>10</option><option>25</option><option>50</option><option>100</option>
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <label for="searchInput" class="form-label mb-0 me-0 me-md-1">搜尋:</label>
+                                <input type="text" id="searchInput" class="form-control form-control-sm" style="min-width: 100px; max-width: 150px;" placeholder="關鍵字...">
+                            </div>
+                        </div>
+                    </div>`;
+                }
 
-      <!-- 📊 筆數 + 搜尋欄 -->
-  <div class="d-flex align-items-center gap-2 flex-nowrap w-100" style="overflow-x: auto;">
-  <!-- 筆數 -->
-  <div class="d-flex align-items-center">
-    <label for="rowsPerPageSelect" class="form-label mb-0 me-0 me-md-1">筆數:</label>
-    <select id="rowsPerPageSelect" class="form-select form-select-sm" style="width: 80px;">
-      <option>10</option>
-      <option>25</option>
-      <option>50</option>
-      <option>100</option>
-    </select>
-  </div>
-
-  <!-- 搜尋 -->
-  <div class="d-flex align-items-center">
-    <label for="searchInput" class="form-label mb-0 me-0 me-md-1">搜尋:</label>
-    <input type="text" id="searchInput" class="form-control form-control-sm" style="min-width: 100px; max-width: 150px;" placeholder="關鍵字...">
-  </div>
-</div>
-
-
-    </div>
-  `;
-}
-
-
-                if (!data || data.length === 0) {
+                if (!rawData || rawData.length === 0) {
                     tableHead.innerHTML = '';
                     tableBody.innerHTML = '<tr><td colspan="100%">沒有可用的資料</td></tr>';
                     return;
                 }
 
-                const headers = Object.keys(data[0]);
+                // ✅ 定義要顯示的欄位順序 + 新增「操作」欄位
+                const columnsToDisplay = ['股號', '股名', '電投開始日', '委託截止日', '委託條件', '持有帳號數', '已委託數'];
+                
                 let currentPage = 1;
                 let rowsPerPage = 10;
-                let sortKey = "股號";
+                let sortKey = "委託截止日"; // 預設排序欄位
                 let sortAsc = true;
-                let sortedData = [...data];
-                let filteredData = [...data];
-                let firstLoad = true; // ✅ 【還原】使用您原本的 firstLoad 旗標
+                let sortedData = [...rawData];
+                let filteredData = [...rawData];
 
-                tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer;">${h} <span></span></th>`).join('')}</tr>`;
+                // 產生表頭
+                tableHead.innerHTML = `<tr>${columnsToDisplay.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer;">${h} <span></span></th>`).join('')}</tr>`;
                 
                 function updateSortIndicator() {
                     tableHead.querySelectorAll('th.sortable span').forEach(span => span.textContent = '');
@@ -78,17 +111,13 @@ if (controlsContainer) {
                     if (th) th.textContent = sortAsc ? ' ▲' : ' ▼';
                 }
 
-                // ✅ 【還原】使用您最初的 forEach 迴圈方式來為每個標題綁定排序事件
-                headers.forEach(h => {
-                    const th = tableHead.querySelector(`th[data-key="${h}"]`);
-                    if (th) {
-                        th.addEventListener('click', () => sortTable(h));
-                    }
+                tableHead.querySelectorAll('th.sortable').forEach(th => {
+                    th.addEventListener('click', (e) => sortTable(e.currentTarget.dataset.key));
                 });
-
+                
                 document.getElementById('searchInput').addEventListener('input', (e) => {
                     const keyword = e.target.value.trim().toLowerCase();
-                    filteredData = sortedData.filter(row => headers.some(h => String(row[h] || '').toLowerCase().includes(keyword)));
+                    filteredData = sortedData.filter(row => columnsToDisplay.some(h => String(row[h] || '').toLowerCase().includes(keyword)));
                     currentPage = 1;
                     renderTable();
                 });
@@ -99,14 +128,8 @@ if (controlsContainer) {
                     renderTable();
                 });
 
-                // ✅ 【還原】使用您最初的 sortTable 函式邏輯
                 function sortTable(key) {
-                    if (firstLoad) {
-                        firstLoad = false;
-                        sortAsc = true;
-                    } else {
-                        sortAsc = (sortKey === key) ? !sortAsc : true;
-                    }
+                    sortAsc = (sortKey === key) ? !sortAsc : true;
                     sortKey = key;
                     
                     sortedData.sort((a, b) => {
@@ -114,13 +137,13 @@ if (controlsContainer) {
                         const valB = b[key] || '';
                         const isNumber = !isNaN(parseFloat(valA)) && !isNaN(parseFloat(valB)) && isFinite(valA) && isFinite(valB);
                         if (isNumber) {
-                           return sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA);
+                            return sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA);
                         } else {
-                           return sortAsc ? String(valA).localeCompare(String(valB), 'zh-Hant') : String(valB).localeCompare(String(valA), 'zh-Hant');
+                            return sortAsc ? String(valA).localeCompare(String(valB), 'zh-Hant') : String(valB).localeCompare(String(valA), 'zh-Hant');
                         }
                     });
                     const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-                    filteredData = keyword ? sortedData.filter(row => headers.some(h => String(row[h] || '').toLowerCase().includes(keyword))) : [...sortedData];
+                    filteredData = keyword ? sortedData.filter(row => columnsToDisplay.some(h => String(row[h] || '').toLowerCase().includes(keyword))) : [...sortedData];
                     currentPage = 1;
                     renderTable();
                 }
@@ -129,18 +152,97 @@ if (controlsContainer) {
                     const start = (currentPage - 1) * rowsPerPage;
                     const end = start + rowsPerPage;
                     const pageData = filteredData.slice(start, end);
-                    tableBody.innerHTML = pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('');
+                    
+                    // ✅ 【核心修改】重新整合「操作」按鈕的產生邏輯
+                    tableBody.innerHTML = pageData.map(row => {
+                        const cells = columnsToDisplay.map(key => {
+                            let cellContent = row[key] || '';
+                            // 特別處理「持有帳號數」，如果大於 0，就變成按鈕
+                            if (key === '持有帳號數' && cellContent > 0) {
+                                return `<td class="text-center"><button class="btn btn-sm btn-outline-primary view-details-btn">${cellContent}</button></td>`;
+                            }
+                            if (key === '已委託數' || key === '持有帳號數') {
+                                return `<td class="text-center">${cellContent}</td>`;
+                            }
+                            return `<td>${cellContent}</td>`;
+                        }).join('');
+                        return `<tr data-row-details='${JSON.stringify(row)}'>${cells}</tr>`;
+                    }).join('');
+                    
+                    // 為新產生的按鈕綁定事件
+                    tableBody.querySelectorAll('.view-details-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const rowData = JSON.parse(e.currentTarget.closest('tr').dataset.rowDetails);
+                            showDetailsModal(rowData);
+                        });
+                    });
+
                     renderPagination();
                     updateSortIndicator();
                 }
+                
+                function showDetailsModal(rowData) {
+                    const companyName = `${rowData.stockName} (${rowData.stockCode})`;
+                    const delegationConditions = rowData.delegationConditions;
+                    const details = rowData.holdingsDetail;
+
+                    document.getElementById('modalCompanyName').innerText = companyName;
+                    const modalTableBody = document.getElementById('modalTableBody');
+                    modalTableBody.innerHTML = ''; // 清空
+
+                    details.forEach(account => {
+                        let actionHtml = '';
+                        if (account.isDelegated) {
+                            actionHtml = `<button class="btn btn-warning btn-sm action-btn" data-action="cancel-delegate">取消委託</button>`;
+                        } else {
+                            let isDocumentMatch = true;
+                            const docType = String(account.documentType || '').trim();
+                            if (delegationConditions.includes("身分證正本") && docType !== "身分證") isDocumentMatch = false;
+                            if (delegationConditions.includes("證件正本") && !["身分證", "健保卡"].includes(docType)) isDocumentMatch = false;
+
+                            if (isDocumentMatch && appSettings.isDelegationAcquisitionEnabled) {
+                                const btnText = delegationConditions.includes("寄開會通知書給我") ? '委託 (需寄單)' : '委託';
+                                actionHtml = `
+                                    <button class="btn btn-primary btn-sm action-btn me-1" data-action="delegate" data-requires-mail="${delegationConditions.includes("寄開會通知書給我")}">${btnText}</button>
+                                    <button class="btn btn-info btn-sm action-btn" data-action="acquire">收購</button>`;
+                            } else if (!isDocumentMatch) {
+                                actionHtml = `<span class="badge bg-danger" title="證件不符合委託條件">X (不可操作)</span>`;
+                            } else {
+                                actionHtml = `<span class="badge bg-secondary">功能維護中</span>`;
+                            }
+                        }
+                        const rowHtml = `<tr>
+                            <td>${account.accountName}</td>
+                            <td>${account.documentType || '未提供'}</td>
+                            <td class="text-center" data-account-name="${account.accountName}" data-company-name="${companyName}">${actionHtml}</td>
+                        </tr>`;
+                        modalTableBody.insertAdjacentHTML('beforeend', rowHtml);
+                    });
+                    detailsModal.show();
+                }
+
+                // Modal 內部按鈕的事件監聽 (事件委派)
+                document.getElementById('modalTableBody').addEventListener('click', function(e) {
+                    if (e.target.classList.contains('action-btn')) {
+                        const button = e.target;
+                        const cell = button.closest('td');
+                        const action = button.dataset.action;
+                        const accountName = cell.dataset.accountName;
+                        const companyName = cell.dataset.companyName;
+
+                        alert(`模擬操作：\n類型: ${action}\n公司: ${companyName}\n帳號: ${accountName}`);
+                        detailsModal.hide();
+                    }
+                });
+
 
                 function renderPagination() {
                     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-                    const paginationContainer = document.getElementById('souvenirPagination');
-                    paginationContainer.innerHTML = ''; 
-                    if (totalPages <= 0) return;
+                    const paginationContainer = document.getElementById('delegablePagination');
+                    paginationContainer.innerHTML = '';
+                    if (totalPages <= 1) return;
 
-                    const pageButtons = [];
+                    let pageButtons = [];
                     pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上頁</button>`);
                     
                     let startPage = Math.max(1, currentPage - 2);
@@ -148,30 +250,35 @@ if (controlsContainer) {
 
                     if (startPage > 1) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
                     if (startPage > 2) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
+                    
                     for (let i = startPage; i <= endPage; i++) {
                         pageButtons.push(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>`);
                     }
+                    
                     if (endPage < totalPages - 1) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
                     if (endPage < totalPages) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
 
-                    pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''} onclick="changePage(1)">下頁</button>`);
+                    pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下頁</button>`);
                     paginationContainer.innerHTML = pageButtons.join('');
                 }
 
                 window.changePage = (offset) => { currentPage += offset; renderTable(); };
                 window.goToPage = (page) => { currentPage = page; renderTable(); };
-
+                
+                // 初始載入
                 sortTable(sortKey);
             })
-            .catch(error => {
-                console.error('載入紀念品資料錯誤：', error);
-                document.getElementById('souvenirTable').querySelector('tbody').innerHTML = '<tr><td colspan="100%" class="text-danger text-center">資料載入失敗</td></tr>';
-            });
+            .withFailureHandler(function(error) {
+                console.error('呼叫後端失敗:', error);
+                document.getElementById('delegableListTable').querySelector('tbody').innerHTML = '<tr><td colspan="100%" class="text-danger text-center">無法載入資料，請檢查網路或聯繫管理員。</td></tr>';
+            })
+            .getDelegableListData(email);
     }
 
+    // 啟動函式
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadSouvenirDataWithoutDataTables);
+        document.addEventListener('DOMContentLoaded', loadDelegableData);
     } else {
-        loadSouvenirDataWithoutDataTables();
+        loadDelegableData();
     }
 </script>

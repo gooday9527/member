@@ -113,8 +113,14 @@ function renderRecommendTable(data) {
 
   tbody.appendChild(fragment);
 
-  // ➤ 顯示統計資訊
+  // ➤ 顯示統計資訊（桌機版）
   if (summaryElement) {
     summaryElement.textContent = `估計 ${totalAmount.toLocaleString()} 元／${data.length} 家`;
+  }
+
+  // ➤ 顯示統計資訊（手機版）── 把這三行加在上面那段下面
+  const mobileSummary = document.getElementById('summaryInfoMobile');
+  if (mobileSummary) {
+    mobileSummary.textContent = `估計 ${totalAmount.toLocaleString()} 元／${data.length} 家`;
   }
 }

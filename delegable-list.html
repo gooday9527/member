@@ -40,6 +40,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 (function(){
+    // ✅ 使用您已確認的 Web App 網址
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwFSVsZNUeuQXiJ9cU-KSBCg1ZZLVRs-urxiwdQVHt3n_9DJBBvWLZ1Mez0pExtM04Q/exec';
 
     const email = window.currentUserEmail;
@@ -72,25 +73,37 @@
     
     // 使用 fetch 呼叫您的 Web App API
     const apiUrl = `${WEB_APP_URL}?view=getDelegableList&email=${encodeURIComponent(email)}`;
+    console.log("【偵錯】1. 準備呼叫 API:", apiUrl);
 
     fetch(apiUrl)
-        .then(response => response.ok ? response.json() : Promise.reject('網路回應錯誤'))
         .then(response => {
+            console.log("【偵錯】2. 收到網路回應", response);
+            if (!response.ok) {
+                throw new Error('網路回應錯誤，狀態碼: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(response => {
+            console.log("【偵錯】3. 成功解析 JSON，收到的原始物件:", response);
             if (response.status !== 'success' || !response.data) {
                 throw new Error(response.message || '後端回傳資料格式不符');
             }
+            
             rawData = response.data || [];
+            console.log("【偵錯】4. 從後端取得的 rawData 筆數:", rawData.length);
+            
             appSettings = response.appSettings || appSettings;
             
             sortData(); 
             filterData();
+            console.log("【偵錯】5. 經過篩選後的 filteredData 筆數:", filteredData.length);
+
             renderHeader();
             renderTable();
-        // ❌ 【修正】移除這裡多餘的 `})`
         })
         .catch(err => { 
-            console.error('API 呼叫失敗:', err);
-            tblBody.innerHTML=`<tr><td colspan="7" class="text-center text-danger p-4">資料載入失敗，請稍後再試</td></tr>`; 
+            console.error('【偵錯】API 呼叫或資料處理過程中發生致命錯誤:', err);
+            tblBody.innerHTML=`<tr><td colspan="7" class="text-center text-danger p-4">資料載入失敗，請按F12查看主控台錯誤</td></tr>`; 
         });
 
     function sortData() {
@@ -118,12 +131,9 @@
     }
     
     function renderTable() {
-        tblHead.querySelectorAll('th.sortable span').forEach(s => s.textContent = '');
-        const sortIndicator = tblHead.querySelector(`th[data-key="${sortKey}"] span`);
-        if (sortIndicator) sortIndicator.textContent = sortAsc ? ' ▲' : ' ▼';
-
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = filteredData.slice(start, start + rowsPerPage);
+        console.log(`【偵錯】6. 準備渲染第 ${currentPage} 頁，資料筆數: ${pageData.length}`);
 
         tblBody.innerHTML = pageData.length ? pageData.map(row => {
             const cells = columns.map(key => {
@@ -139,36 +149,27 @@
 
         tblBody.querySelectorAll('.view-details-btn').forEach(btn => btn.addEventListener('click', e => showDetailsModal(JSON.parse(e.currentTarget.closest('tr').dataset.rowDetails))));
         renderPagination();
+        console.log("【偵錯】7. 表格渲染完成。");
     }
 
-    // ✅ 【修正】採用我們之前討論過的「聰明分頁」版本
     function renderPagination() {
         const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
-        // ✅ 【修正】使用正確的 ID: delegablePagination
         const paginationContainer = document.getElementById('delegablePagination');
         paginationContainer.innerHTML = '';
-
         if (totalPages <= 1) return;
-
         let pageButtons = [];
         pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="window.delegableTable.changePage(-1)">上頁</button>`);
-
         let startPage = Math.max(1, currentPage - 2);
         let endPage = Math.min(totalPages, currentPage + 2);
-
         if (startPage > 1) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.delegableTable.goToPage(1)">1</button>`);
         if (startPage > 2) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
-        
         for (let i = startPage; i <= endPage; i++) {
-            // ✅ 【修正】使用 window.delegableTable.goToPage
             pageButtons.push(`<button class="btn btn-sm me-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="window.delegableTable.goToPage(${i})">${i}</button>`);
         }
-        
         if (endPage < totalPages - 1) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
         if (endPage < totalPages) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.delegableTable.goToPage(${totalPages})">${totalPages}</button>`);
-
         pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="window.delegableTable.changePage(1)">下頁</button>`);
-        paginationContainer.innerHTML = pageButtons.join('');
+        pagContainer.innerHTML = pageButtons.join('');
     }
 
     function showDetailsModal(rowData) {
@@ -183,7 +184,6 @@
                 const docType = account.documentType || '';
                 if (rowData.delegationConditions.includes("身分證正本") && docType !== "身分證") isMatch = false;
                 if (rowData.delegationConditions.includes("證件正本") && !["身分證", "健保卡"].includes(docType)) isMatch = false;
-                
                 if (isMatch && appSettings.isDelegationAcquisitionEnabled) {
                     const btnText = rowData.delegationConditions.includes("寄開會通知書給我") ? '委託 (需寄單)' : '委託';
                     actionHtml = `<button class="btn btn-primary btn-sm me-1 action-btn" data-action="delegate">${btnText}</button><button class="btn btn-info btn-sm action-btn" data-action="acquire">收購</button>`;

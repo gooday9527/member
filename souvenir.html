@@ -23,39 +23,34 @@
 
 if (controlsContainer) {
   controlsContainer.innerHTML = `
-    <!-- 🎛️ 控制列主區塊 -->
-    <div class="d-block d-md-flex align-items-md-center w-100 mb-1">
+    <div class="d-block d-md-flex align-items-center w-100 mb-1 px-3 gap-3 justify-content-start flex-wrap">
 
-      <!-- 🎁 左側：標題 -->
-      <div class="text-center text-md-start order-1 order-md-1 w-100 w-md-33 mb-2 mb-md-0 ps-md-2">
+      <!-- 🎁 標題 -->
+      <div class="me-3">
         <h3 class="mt-1 mb-1 mb-md-0">🎁 紀念品</h3>
       </div>
 
-      <!-- 📊 中間：筆數 + 搜尋（橫排） -->
-      <div class="d-flex justify-content-center order-2 order-md-2 w-100 w-md-33">
-        <div class="d-flex align-items-center gap-3">
-          <div>
-            <label for="rowsPerPageSelect" class="form-label mb-0 me-1">筆數:</label>
-            <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block" style="width: 80px;">
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
-          </div>
-          <div>
-            <label for="searchInput" class="form-label mb-0 me-1">搜尋:</label>
-            <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 150px;" placeholder="關鍵字...">
-          </div>
+      <!-- 📊 筆數 + 搜尋欄 -->
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div>
+          <label for="rowsPerPageSelect" class="form-label mb-0 me-1">筆數:</label>
+          <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block" style="width: 80px;">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        <div>
+          <label for="searchInput" class="form-label mb-0 me-1">搜尋:</label>
+          <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 150px;" placeholder="關鍵字...">
         </div>
       </div>
-
-      <!-- 🔲 右側：保留空間（目前不放東西，可加功能按鈕） -->
-      <div class="d-none d-md-block order-3 w-md-33"></div>
 
     </div>
   `;
 }
+
 
                 if (!data || data.length === 0) {
                     tableHead.innerHTML = '';

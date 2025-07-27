@@ -2,7 +2,7 @@
 
 <div class="container-fluid mt-2">
     <h2 class="mb-3">📥 可委託代領清單</h2>
-    <p class="text-muted">這裡會列出所有您可以委託代領的股東會紀念品。</p>
+    <p class="text-muted">這裡會列出所有您可以委託我們代領的股東會紀念品。您可以利用下方的搜尋功能快速找到目標公司。</p>
     
     <div class="card shadow-sm">
         <div class="card-body">
@@ -70,10 +70,8 @@
 
         const table = new DataTable('#delegableTable', {
             ajax: function (data, callback, settings) {
-                // 在 DataTables 載入數據時顯示載入中訊息
                 $('#delegableTable tbody').html('<tr><td colspan="7" class="text-center p-4">資料載入中...</td></tr>');
                 
-                // 調用後端 Apps Script 中的 getDelegableListData 函數來獲取數據
                 google.script.run
                     .withSuccessHandler(function (response) {
                         if (response.status === "success") {

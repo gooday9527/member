@@ -58,16 +58,16 @@
   <section id="page-recommend" class="page-container">
     <div class="recommend-wrapper">
 
-      <!-- 🌟 控制列：標題 + 分類下拉 -->
-      <div class="d-block d-md-flex align-items-center justify-content-between px-3 gap-3 mb-2 flex-wrap">
+      <!-- 🌟 控制列：推薦清單 + 分類 -->
+      <div class="d-block d-md-flex align-items-center px-3 gap-3 mb-2 flex-wrap">
 
-        <!-- 左：標題 -->
+        <!-- 左側：標題 -->
         <div class="text-center text-md-start">
           <h3 class="mt-1 mb-1 mb-md-0">🌟 推薦清單</h3>
         </div>
 
-        <!-- 右：分類下拉 -->
-        <div class="d-flex justify-content-center justify-content-md-end align-items-center gap-2">
+        <!-- 右側：分類選單（緊跟標題） -->
+        <div class="d-flex align-items-center gap-2">
           <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
           <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
             <option>分類載入中...</option>
@@ -76,7 +76,7 @@
 
       </div>
 
-      <!-- 📋 推薦清單表格 -->
+      <!-- 📋 表格 -->
       <div class="table-responsive">
         <table class="table table-bordered table-sm" id="recommendTable">
           <thead class="table-warning"></thead>

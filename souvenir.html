@@ -48,8 +48,13 @@
                 }
 
                 const headers = Object.keys(data[0]);
-                let currentPage = 1; let rowsPerPage = 10; let sortKey = "股號"; let sortAsc = true;
-                let sortedData = [...data]; let filteredData = [...data];
+                let currentPage = 1;
+                let rowsPerPage = 10;
+                let sortKey = "股號";
+                let sortAsc = true;
+                let sortedData = [...data];
+                let filteredData = [...data];
+                let isFirstSort = true; // ✅ 【排序修正】新增一個旗標來處理首次排序
 
                 tableHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}">${h} <span></span></th>`).join('')}</tr>`;
                 
@@ -61,35 +66,54 @@
 
                 headers.forEach(h => {
                     const th = tableHead.querySelector(`th[data-key="${h}"]`);
-                    if (th) { th.style.cursor = 'pointer'; th.addEventListener('click', () => sortTable(h)); }
+                    if (th) {
+                        th.style.cursor = 'pointer';
+                        th.addEventListener('click', () => sortTable(h));
+                    }
                 });
 
                 document.getElementById('searchInput').addEventListener('input', (e) => {
                     const keyword = e.target.value.trim().toLowerCase();
                     filteredData = sortedData.filter(row => headers.some(h => String(row[h] || '').toLowerCase().includes(keyword)));
-                    currentPage = 1; renderTable();
+                    currentPage = 1;
+                    renderTable();
                 });
 
                 document.getElementById('rowsPerPageSelect').addEventListener('change', (e) => {
-                    rowsPerPage = parseInt(e.target.value); currentPage = 1; renderTable();
+                    rowsPerPage = parseInt(e.target.value);
+                    currentPage = 1;
+                    renderTable();
                 });
 
                 function sortTable(key) {
-                    sortAsc = (sortKey === key) ? !sortAsc : true;
+                    // ✅ 【排序修正】如果是第一次排序，強制為升冪；否則才切換
+                    if (isFirstSort) {
+                        sortAsc = true;
+                        isFirstSort = false;
+                    } else {
+                        sortAsc = (sortKey === key) ? !sortAsc : true;
+                    }
                     sortKey = key;
+                    
                     sortedData.sort((a, b) => {
-                        const valA = a[key] || ''; const valB = b[key] || '';
+                        const valA = a[key] || '';
+                        const valB = b[key] || '';
                         const isNumber = !isNaN(parseFloat(valA)) && !isNaN(parseFloat(valB)) && isFinite(valA) && isFinite(valB);
-                        if (isNumber) return sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA);
-                        return sortAsc ? String(valA).localeCompare(String(valB), 'zh-Hant') : String(valB).localeCompare(String(valA), 'zh-Hant');
+                        if (isNumber) {
+                           return sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA);
+                        } else {
+                           return sortAsc ? String(valA).localeCompare(String(valB), 'zh-Hant') : String(valB).localeCompare(String(valA), 'zh-Hant');
+                        }
                     });
                     const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
                     filteredData = keyword ? sortedData.filter(row => headers.some(h => String(row[h] || '').toLowerCase().includes(keyword))) : [...sortedData];
-                    currentPage = 1; renderTable();
+                    currentPage = 1;
+                    renderTable();
                 }
 
                 function renderTable() {
-                    const start = (currentPage - 1) * rowsPerPage; const end = start + rowsPerPage;
+                    const start = (currentPage - 1) * rowsPerPage;
+                    const end = start + rowsPerPage;
                     const pageData = filteredData.slice(start, end);
                     tableBody.innerHTML = pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('');
                     renderPagination();
@@ -99,30 +123,42 @@
                 function renderPagination() {
                     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
                     const paginationContainer = document.getElementById('souvenirPagination');
-                    paginationContainer.innerHTML = ''; // 清空
-                    // ✅ 【修正】移除 "如果只有一頁就不顯示" 的邏輯，永遠顯示頁碼
-                    if (totalPages > 0) {
-                        const pageButtons = [];
-                        pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上頁</button>`);
-                        // ... (此處省略頁碼計算邏輯，與您之前的版本相同)
-                        let startPage = Math.max(1, currentPage - 2);
-                        let endPage = Math.min(totalPages, currentPage + 2);
-                        if (startPage > 1) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
-                        if (startPage > 2) pageButtons.push(`<span class="align-self-end me-1">...</span>`);
-                        for (let i = startPage; i <= endPage; i++) {
-                            pageButtons.push(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>`);
-                        }
-                        if (endPage < totalPages - 1) pageButtons.push(`<span class="align-self-end me-1">...</span>`);
-                        if (endPage < totalPages) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
-                        pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(1)">下頁</button>`);
-                        paginationContainer.innerHTML = pageButtons.join('');
+                    paginationContainer.innerHTML = ''; 
+                    if (totalPages <= 0) return; // 如果沒有資料，不顯示頁碼
+
+                    // ✅ 【頁碼修正】補回完整的頁碼產生邏輯
+                    const pageButtons = [];
+                    pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上頁</button>`);
+                    
+                    let startPage = Math.max(1, currentPage - 2);
+                    let endPage = Math.min(totalPages, currentPage + 2);
+
+                    if (startPage > 1) {
+                        pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
                     }
+                    if (startPage > 2) {
+                        pageButtons.push(`<span class="align-self-center me-1">...</span>`);
+                    }
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        pageButtons.push(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>`);
+                    }
+
+                    if (endPage < totalPages - 1) {
+                        pageButtons.push(`<span class="align-self-center me-1">...</span>`);
+                    }
+                    if (endPage < totalPages) {
+                        pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
+                    }
+
+                    pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''} onclick="changePage(1)">下頁</button>`);
+                    paginationContainer.innerHTML = pageButtons.join('');
                 }
 
                 window.changePage = (offset) => { currentPage += offset; renderTable(); };
                 window.goToPage = (page) => { currentPage = page; renderTable(); };
 
-                sortTable(sortKey);
+                sortTable(sortKey); // 初始排序和渲染
             })
             .catch(error => {
                 console.error('載入紀念品資料錯誤：', error);
@@ -130,6 +166,7 @@
             });
     }
 
+    // 安全啟動邏輯不變
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', loadSouvenirDataWithoutDataTables);
     } else {

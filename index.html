@@ -59,36 +59,28 @@
     <div class="recommend-wrapper">
 
 <!-- 推薦清單控制列 -->
-<!-- 桌機版 (md↑)：同一列橫排 -->
-<div class="d-none d-md-flex justify-content-between align-items-center px-3 mb-2">
-  <!-- 左側：🌟 推薦清單 -->
-  <h3 class="mb-0">🌟 推薦清單</h3>
+<div class="d-flex flex-wrap align-items-center px-3 mb-2 justify-content-between justify-content-md-start">
 
-  <!-- 右側：下拉選單 + 估計 -->
-  <div class="d-flex align-items-center gap-3">
-    <label for="recommendSheet" class="form-label mb-0">選擇分類：</label>
+  <!-- 1️⃣ 推薦清單 標題 -->
+  <h3 class="mb-0 order-1 order-md-1">🌟 推薦清單</h3>
+
+  <!-- 2️⃣ 估計金額／家數 -->
+  <span id="summaryInfo"
+        class="small text-muted order-2 order-md-3 ms-md-2">
+    估計 -- 元／-- 家
+  </span>
+
+  <!-- 3️⃣ 分類下拉 -->
+  <div class="d-flex align-items-center gap-2 order-3 order-md-2 w-100 w-md-auto
+              justify-content-center justify-content-md-start mt-2 mt-md-0">
+    <label for="recommendSheet" class="form-label mb-0 me-1">選擇分類：</label>
     <select id="recommendSheet" class="form-select form-select-sm" style="width: 160px;">
       <option>分類載入中...</option>
     </select>
-    <span id="summaryInfo" class="small text-muted">估計 -- 元／-- 家</span>
   </div>
+
 </div>
 
-<!-- 手機版 (md↓)：上下分列 -->
-<div class="d-block d-md-none px-3 mb-2">
-  <!-- 第一行：標題 + 估計 -->
-  <div class="d-flex justify-content-between align-items-center mb-1">
-    <h3 class="mb-0">🌟 推薦清單</h3>
-    <span id="summaryInfoMobile" class="small text-muted">估計 -- 元／-- 家</span>
-  </div>
-  <!-- 第二行：置中下拉選單 -->
-  <div class="d-flex justify-content-center">
-    <label for="recommendSheetMobile" class="form-label mb-0 me-2">選擇分類：</label>
-    <select id="recommendSheetMobile" class="form-select form-select-sm" style="width: 160px;">
-      <option>分類載入中...</option>
-    </select>
-  </div>
-</div>
 
 
 

@@ -21,35 +21,38 @@
                 const tableBody = tableElement.querySelector('tbody');
                 const controlsContainer = document.getElementById('souvenirControlsContainer');
 
-             if (controlsContainer) {
-    // ✅ 使用更完整的 Bootstrap 響應式 class
-    controlsContainer.innerHTML = `
-        <div class="d-block d-md-flex align-items-md-center w-100 mb-1">
-            
-            <div class="flex-grow-1 d-none d-md-block"></div>
+if (controlsContainer) {
+  controlsContainer.innerHTML = `
+    <!-- 🎛️ 控制列主區塊 -->
+    <div class="d-block d-md-flex align-items-md-center w-100 mb-1">
 
-            <div class="text-center">
-                <h3 class="mt-1 mb-1 mb-md-0">🎁 紀念品</h3>
-            </div>
-            
-            <div class="flex-grow-1 d-flex justify-content-center justify-content-md-end align-items-center gap-3">
-                <div>
-                    <label for="rowsPerPageSelect" class="form-label mb-0 me-1">筆數:</label>
-                    <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block" style="width: 80px;">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="searchInput" class="form-label mb-0 me-1">搜尋:</label>
-                    <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 150px;" placeholder="關鍵字...">
-                </div>
-            </div>
-
+      <!-- 📍 左側：搜尋 + 筆數（手機置中，桌機靠左） -->
+      <div class="flex-grow-1 d-flex justify-content-center justify-content-md-start align-items-center gap-3 order-2 order-md-1 mb-2 mb-md-0">
+        <div>
+          <label for="rowsPerPageSelect" class="form-label mb-0 me-1">筆數:</label>
+          <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block" style="width: 80px;">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
         </div>
-    `;
+        <div>
+          <label for="searchInput" class="form-label mb-0 me-1">搜尋:</label>
+          <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 150px;" placeholder="關鍵字...">
+        </div>
+      </div>
+
+      <!-- 🎁 中間標題：手機與桌機都置中 -->
+      <div class="text-center flex-grow-0 order-1 order-md-2 w-100">
+        <h3 class="mt-1 mb-1 mb-md-0">🎁 紀念品</h3>
+      </div>
+
+      <!-- 🧱 右側佔位（桌機時推中間標題居中） -->
+      <div class="flex-grow-1 d-none d-md-block order-md-3"></div>
+      
+    </div>
+  `;
 }
 
                 if (!data || data.length === 0) {

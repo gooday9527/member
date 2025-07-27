@@ -142,33 +142,42 @@
     }
 
 function renderPagination() {
-                    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-                    const paginationContainer = document.getElementById('souvenirPagination');
-                    paginationContainer.innerHTML = ''; 
-                    if (totalPages <= 0) return;
+  // 計算總頁數
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  // 抓到正確的容器：delegablePagination
+  const paginationContainer = document.getElementById('delegablePagination');
+  // 如果頁數 0 或 1，就顯示 “1”
+  if (totalPages <= 1) {
+    paginationContainer.innerHTML = `<button class="btn btn-sm btn-primary me-1">1</button>`;
+    return;
+  }
 
-                    const pageButtons = [];
-                    pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(-1)">上頁</button>`);
-                    
-                    let startPage = Math.max(1, currentPage - 2);
-                    let endPage = Math.min(totalPages, currentPage + 2);
+  // 產生按鈕
+  let pageButtons = '';
+  pageButtons += `<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="delegableTable.changePage(-1)">上頁</button>`;
 
-                    if (startPage > 1) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(1)">1</button>`);
-                    if (startPage > 2) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
-                    for (let i = startPage; i <= endPage; i++) {
-                        pageButtons.push(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="goToPage(${i})">${i}</button>`);
-                    }
-                    if (endPage < totalPages - 1) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
-                    if (endPage < totalPages) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="goToPage(${totalPages})">${totalPages}</button>`);
+  // 中間頁碼
+  for (let i = 1; i <= totalPages; i++) {
+    pageButtons += `<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1" onclick="delegableTable.goToPage(${i})">${i}</button>`;
+  }
 
-                    pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''} onclick="changePage(1)">下頁</button>`);
-                    paginationContainer.innerHTML = pageButtons.join('');
-                   }
-                    window.changePage = (offset) => { currentPage += offset; renderTable(); };
-                    window.goToPage = (page) => { currentPage = page; renderTable(); };
+  pageButtons += `<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="delegableTable.changePage(1)">下頁</button>`;
 
-                    sortTable(sortKey);
-                    })
+  paginationContainer.innerHTML = pageButtons;
+}  // ← 這裡結束 renderPagination
+
+// 全域分頁控制，注意這兩行要寫在 renderPagination 函式外面
+window.delegableTable = {
+  changePage: offset => {
+    currentPage = Math.min(Math.max(1, currentPage + offset), Math.ceil(filteredData.length / rowsPerPage));
+    renderTable();
+  },
+  goToPage: page => {
+    currentPage = page;
+    renderTable();
+  }
+};
+
 
     function showDetailsModal(rowData) {
         if (!detailsModal) detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));

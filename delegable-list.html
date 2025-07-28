@@ -99,6 +99,8 @@
             
             rawData = response.data || [];
             console.log("【偵錯】4. 從後端取得的 rawData 筆數:", rawData.length);
+          // ✅ 新增這一行來查看第一筆資料的欄位名稱
+if (rawData.length > 0) { console.log("【偵錯】這是第一筆資料的樣子:", rawData[0]); }
             
             appSettings = response.appSettings || appSettings;
             

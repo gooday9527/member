@@ -1,11 +1,3 @@
-<style>
-  /* 強制設定表格內容文字為黑色 */
-  #delegableListTable tbody td {
-    color: black !important;
-    font-weight: bold; /* 順便加粗，讓文字更明顯 */
-  }
-</style>
-
 <div class="souvenir-wrapper pt-2 pb-2 pt-md-0 pb-md-0">
     <div class="d-block d-md-flex align-items-center gap-3 mb-2 mb-md-0 px-3" id="delegableControlsContainer">
         <div class="me-3"><h3 class="mt-1 mb-1 mb-md-0" style="white-space: nowrap;">📥 可委託清單</h3></div>
@@ -48,7 +40,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 (function(){
-    // ✅ 使用您已確認的 Web App 網址
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwFSVsZNUeuQXiJ9cU-KSBCg1ZZLVRs-urxiwdQVHt3n_9DJBBvWLZ1Mez0pExtM04Q/exec';
 
     const email = window.currentUserEmail;
@@ -57,16 +48,22 @@
         return;
     }
 
-    // 狀態變數
     let rawData = [], filteredData = [], currentPage = 1, rowsPerPage = 10;
-    let sortKey = '委託截止日', sortAsc = true;
+    let sortKey = 'delegationDeadline', sortAsc = true; // ✅ 修正：預設排序鍵改為英文
     let appSettings = { isDelegationAcquisitionEnabled: true };
     let detailsModal;
 
-    // 顯示欄位
-    const columns = ['股號','股名','電投開始日','委託截止日','委託條件','持有帳號數','已委託數'];
+    // ✅ 【核心修正】使用物件陣列，將「後端資料的鍵(key)」和「前端顯示的標題(title)」分開
+    const columnConfig = [
+        { key: 'stockCode',            title: '股號' },
+        { key: 'stockName',            title: '股名' },
+        { key: 'eVotingStartDate',     title: '電投開始日' },
+        { key: 'delegationDeadline',   title: '委託截止日' },
+        { key: 'delegationConditions', title: '委託條件' },
+        { key: 'totalHoldingAccounts', title: '持有帳號數' },
+        { key: 'delegatedAccounts',    title: '已委託數' }
+    ];
 
-    // DOM 元素
     const tblHead = document.querySelector('#delegableListTable thead');
     const tblBody = document.querySelector('#delegableListTable tbody');
     const ctrlRows = document.getElementById('delegRowsPerPage');
@@ -75,45 +72,24 @@
     const modalTitle = document.getElementById('modalCompanyName');
     const modalBody = document.getElementById('modalTableBody');
 
-    // 事件綁定
     ctrlRows.addEventListener('change', ()=>{ rowsPerPage = +ctrlRows.value; currentPage = 1; renderTable(); });
     ctrlSearch.addEventListener('input', ()=>{ currentPage = 1; filterData(); renderTable(); });
     
-    // 使用 fetch 呼叫您的 Web App API
     const apiUrl = `${WEB_APP_URL}?view=getDelegableList&email=${encodeURIComponent(email)}`;
-    console.log("【偵錯】1. 準備呼叫 API:", apiUrl);
 
     fetch(apiUrl)
+        .then(response => response.ok ? response.json() : Promise.reject('網路回應錯誤'))
         .then(response => {
-            console.log("【偵錯】2. 收到網路回應", response);
-            if (!response.ok) {
-                throw new Error('網路回應錯誤，狀態碼: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(response => {
-            console.log("【偵錯】3. 成功解析 JSON，收到的原始物件:", response);
             if (response.status !== 'success' || !response.data) {
                 throw new Error(response.message || '後端回傳資料格式不符');
             }
-            
             rawData = response.data || [];
-            console.log("【偵錯】4. 從後端取得的 rawData 筆數:", rawData.length);
-          // ✅ 新增這一行來查看第一筆資料的欄位名稱
-if (rawData.length > 0) { console.log("【偵錯】這是第一筆資料的樣子:", rawData[0]); }
-            
             appSettings = response.appSettings || appSettings;
-            
-            sortData(); 
-            filterData();
-            console.log("【偵錯】5. 經過篩選後的 filteredData 筆數:", filteredData.length);
-
-            renderHeader();
-            renderTable();
+            sortData(); filterData(); renderHeader(); renderTable();
         })
         .catch(err => { 
-            console.error('【偵錯】API 呼叫或資料處理過程中發生致命錯誤:', err);
-            tblBody.innerHTML=`<tr><td colspan="7" class="text-center text-danger p-4">資料載入失敗，請按F12查看主控台錯誤</td></tr>`; 
+            console.error('API 呼叫失敗:', err);
+            tblBody.innerHTML=`<tr><td colspan="7" class="text-center text-danger p-4">資料載入失敗，請稍後再試</td></tr>`; 
         });
 
     function sortData() {
@@ -127,11 +103,13 @@ if (rawData.length > 0) { console.log("【偵錯】這是第一筆資料的樣�
 
     function filterData() {
         const keyword = ctrlSearch.value.trim().toLowerCase();
-        filteredData = keyword ? rawData.filter(r => columns.some(h => String(r[h]||'').toLowerCase().includes(keyword))) : [...rawData];
+        // ✅ 修正：搜尋時使用英文 key 來查找資料
+        filteredData = keyword ? rawData.filter(r => columnConfig.some(c => String(r[c.key]||'').toLowerCase().includes(keyword))) : [...rawData];
     }
 
     function renderHeader() {
-        tblHead.innerHTML = '<tr>' + columns.map(h => `<th class="sortable" data-key="${h}" style="cursor:pointer;white-space:nowrap">${h}<span></span></th>`).join('') + '</tr>';
+        // ✅ 修正：表頭使用 config 中的 title 顯示中文，但 data-key 儲存英文鍵
+        tblHead.innerHTML = '<tr>' + columnConfig.map(c => `<th class="sortable" data-key="${c.key}" style="cursor:pointer;white-space:nowrap">${c.title}<span></span></th>`).join('') + '</tr>';
         tblHead.querySelectorAll('th.sortable').forEach(th => th.addEventListener('click', () => {
             const key = th.dataset.key;
             sortAsc = (sortKey === key) ? !sortAsc : true;
@@ -141,36 +119,37 @@ if (rawData.length > 0) { console.log("【偵錯】這是第一筆資料的樣�
     }
     
     function renderTable() {
+        tblHead.querySelectorAll('th.sortable span').forEach(s => s.textContent = '');
+        const sortIndicator = tblHead.querySelector(`th[data-key="${sortKey}"] span`);
+        if (sortIndicator) sortIndicator.textContent = sortAsc ? ' ▲' : ' ▼';
+
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = filteredData.slice(start, start + rowsPerPage);
-        console.log(`【偵錯】6. 準備渲染第 ${currentPage} 頁，資料筆數: ${pageData.length}`);
 
         tblBody.innerHTML = pageData.length ? pageData.map(row => {
-            const cells = columns.map(key => {
-                let value = row[key] ?? '';
-                let className = ['持有帳號數', '已委託數'].includes(key) ? 'text-center' : '';
-                if (key === '持有帳號數' && value > 0) {
+            // ✅ 修正：遍歷 config，用 c.key 來從 row 中取值
+            const cells = columnConfig.map(c => {
+                let value = row[c.key] ?? '';
+                let className = ['totalHoldingAccounts', 'delegatedAccounts'].includes(c.key) ? 'text-center' : '';
+                if (c.key === 'totalHoldingAccounts' && value > 0) {
                     return `<td class="${className}"><button class="btn btn-sm btn-outline-primary view-details-btn">${value}</button></td>`;
                 }
                 return `<td class="${className}">${value}</td>`;
             }).join('');
             return `<tr data-row-details='${JSON.stringify(row)}'>${cells}</tr>`;
-        }).join('') : '<tr><td colspan="7" class="text-center p-4">沒有符合條件的資料</td></tr>';
+        }).join('') : `<tr><td colspan="${columnConfig.length}" class="text-center p-4">沒有符合條件的資料</td></tr>`;
 
         tblBody.querySelectorAll('.view-details-btn').forEach(btn => btn.addEventListener('click', e => showDetailsModal(JSON.parse(e.currentTarget.closest('tr').dataset.rowDetails))));
         renderPagination();
-        console.log("【偵錯】7. 表格渲染完成。");
     }
 
     function renderPagination() {
         const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
-        const paginationContainer = document.getElementById('delegablePagination');
-        paginationContainer.innerHTML = '';
+        pagContainer.innerHTML = '';
         if (totalPages <= 1) return;
         let pageButtons = [];
         pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="window.delegableTable.changePage(-1)">上頁</button>`);
-        let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(totalPages, currentPage + 2);
+        let startPage = Math.max(1, currentPage - 2), endPage = Math.min(totalPages, currentPage + 2);
         if (startPage > 1) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.delegableTable.goToPage(1)">1</button>`);
         if (startPage > 2) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
         for (let i = startPage; i <= endPage; i++) {
@@ -218,6 +197,5 @@ if (rawData.length > 0) { console.log("【偵錯】這是第一筆資料的樣�
         changePage: offset => { currentPage = Math.min(Math.max(1, currentPage + offset), Math.ceil(filteredData.length / rowsPerPage)); renderTable(); },
         goToPage: page => { currentPage = page; renderTable(); }
     };
-
 })();
 </script>

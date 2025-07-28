@@ -80,9 +80,10 @@
     fetch(apiUrl)
         .then(response => response.ok ? response.json() : Promise.reject('網路回應錯誤'))
         .then(response => {
-            if (response.status !== 'success' || !response.data) {
-                throw new Error(response.message || '後端回傳資料格式不符');
-            }
+            if (!response.success || !response.data) {
+  throw new Error(response.message || '後端回傳資料格式不符');
+}
+
             rawData = response.data || [];
             appSettings = response.appSettings || appSettings;
             sortData(); filterData(); renderHeader(); renderTable();

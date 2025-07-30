@@ -107,18 +107,13 @@
     }
 
     function renderHeader() {
-        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <span></span></th>`).join('')}</tr>`;
-        tblHead.querySelectorAll('th.sortable').forEach(th => {
+        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <span style="color: #999;">↕</span></th>`).join('')}</tr>`;
             th.addEventListener('click', () => sortTable(th.dataset.key));
         });
     }
 
     function renderTable() {
-        // ✅ 【關鍵修正】更新排序指示器的邏輯放在這裡
-        tblHead.querySelectorAll('th.sortable span').forEach(span => span.textContent = '');
-        const activeTh = tblHead.querySelector(`th[data-key="${sortKey}"] span`);
-        if (activeTh) activeTh.textContent = sortAsc ? ' ▲' : ' ▼';
-
+        // 分頁資料 (直接從這裡開始)
         const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;
         const pageData = filteredData.slice(start, end);

@@ -113,8 +113,17 @@ html, body {
   #souvenirTable {
     table-layout: fixed;
     word-wrap: break-word;
+     width: 100%;
+    /* ✅ 新增這一行，告訴瀏覽器將邊框寬度包含在 100% 內 */
+    box-sizing: border-box;
   }
-  
+
+ /* ✅ 也為儲存格加上，確保萬無一失 */
+  #souvenirTable th, 
+  #souvenirTable td {
+    box-sizing: border-box;
+  } 
+
   /* ✅ 根據紀念品頁常見欄位設定寬度 (您可以自行調整) */
   /* 假設前兩個欄位是股號和股名 */
   #souvenirTable th:nth-child(1) { width: 8%; }  /* 股號 */

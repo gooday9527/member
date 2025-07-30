@@ -107,15 +107,29 @@
     }
 
     // ✅ 【修正】還原完整的 renderHeader 函式
-    function renderHeader() {
-        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <span style="color: #999;">↕</span></th>`).join('')}</tr>`;
-        tblHead.querySelectorAll('th.sortable').forEach(th => {
-            th.addEventListener('click', () => sortTable(th.dataset.key));
-        });
+     function renderHeader() {
+       // 將 span 換成 i 標籤，並使用 Font Awesome 的 class
+       tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <i class="fas fa-sort sort-indicator"></i></th>`).join('')}</tr>`;
+       tblHead.querySelectorAll('th.sortable').forEach(th => {
+        th.addEventListener('click', () => sortTable(th.dataset.key));
+      });
     }
 
     function renderTable() {
-        // 移除更新箭頭的邏輯，因為箭頭現在是固定的
+       // ✅ 【新增】智能箭頭更新邏輯
+      // 1. 先將所有圖示重置為預設的灰色上下箭頭
+       tblHead.querySelectorAll('.sort-indicator').forEach(icon => {
+        icon.className = 'fas fa-sort sort-indicator';
+        icon.style.color = '#aaa'; // 預設灰色
+      });
+
+      // 2. 找到正在排序中的那個欄位的圖示
+      const activeIcon = tblHead.querySelector(`th[data-key="${sortKey}"] .sort-indicator`);
+      if (activeIcon) {
+        // 3. 根據升冪或降冪，更新它的圖示與顏色
+        activeIcon.className = sortAsc ? 'fas fa-sort-up sort-indicator' : 'fas fa-sort-down sort-indicator';
+        activeIcon.style.color = 'black'; // 作用中的黑色
+        
         const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;
         const pageData = filteredData.slice(start, end);

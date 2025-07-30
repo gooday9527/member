@@ -72,7 +72,6 @@
             rawData = data;
             headers = Object.keys(rawData[0]);
             
-            // ✅ 【採用新寫法】首次載入時，先渲染表頭，再進行排序和渲染表格
             renderHeader();
             sortTable(sortKey); // 初始排序
         })
@@ -81,17 +80,14 @@
             tblBody.innerHTML = '<tr><td colspan="10" class="text-danger text-center">資料載入失敗</td></tr>';
         });
 
-    // ✅ 【採用新寫法】排序觸發函式
     function sortTable(key) {
         sortAsc = (sortKey === key) ? !sortAsc : true;
         sortKey = key;
-        
-        sortData();    // 排序
-        filterData();  // 篩選
-        renderTable(); // 渲染
+        sortData();
+        filterData();
+        renderTable();
     }
     
-    // 實際進行排序的函式 (使用我們修正過的精準版本)
     function sortData() {
         const isPureNumeric = (s) => /^-?\d+(\.\d+)?$/.test(String(s).trim());
         rawData.sort((a, b) => {
@@ -110,7 +106,6 @@
         filteredData = keyword ? rawData.filter(row => headers.some(h => String(row[h] || '').toLowerCase().includes(keyword))) : [...rawData];
     }
 
-    // ✅ 【採用新寫法】渲染表頭與綁定事件的函式
     function renderHeader() {
         tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <span></span></th>`).join('')}</tr>`;
         tblHead.querySelectorAll('th.sortable').forEach(th => {
@@ -118,19 +113,16 @@
         });
     }
 
-    // ✅ 【採用新寫法】渲染表格主體（包含更新排序指示器）
     function renderTable() {
-        // 更新排序指示器
+        // ✅ 【關鍵修正】更新排序指示器的邏輯放在這裡
         tblHead.querySelectorAll('th.sortable span').forEach(span => span.textContent = '');
         const activeTh = tblHead.querySelector(`th[data-key="${sortKey}"] span`);
         if (activeTh) activeTh.textContent = sortAsc ? ' ▲' : ' ▼';
 
-        // 分頁資料
         const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;
         const pageData = filteredData.slice(start, end);
 
-        // 渲染表格內容
         tblBody.innerHTML = pageData.length > 0 ? pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${headers.length}" class="text-center p-4">沒有符合條件的資料</td></tr>`;
         
         renderPagination();
@@ -164,7 +156,6 @@
         pagContainer.innerHTML = pageButtons.join('');
     }
     
-    // 將分頁函式掛載到 window，並使用命名空間避免衝突
     window.souvenirTable = {
         changePage: (offset) => { 
             const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;

@@ -106,20 +106,20 @@
         filteredData = keyword ? rawData.filter(row => headers.some(h => String(row[h] || '').toLowerCase().includes(keyword))) : [...rawData];
     }
 
+    // ✅ 【修正】還原完整的 renderHeader 函式
     function renderHeader() {
         tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <span style="color: #999;">↕</span></th>`).join('')}</tr>`;
+        tblHead.querySelectorAll('th.sortable').forEach(th => {
             th.addEventListener('click', () => sortTable(th.dataset.key));
         });
     }
 
     function renderTable() {
-        // 分頁資料 (直接從這裡開始)
+        // 移除更新箭頭的邏輯，因為箭頭現在是固定的
         const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;
         const pageData = filteredData.slice(start, end);
-
         tblBody.innerHTML = pageData.length > 0 ? pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${headers.length}" class="text-center p-4">沒有符合條件的資料</td></tr>`;
-        
         renderPagination();
     }
 
@@ -129,25 +129,19 @@
             pagContainer.innerHTML = '';
             return;
         }
-        
         let pageButtons = [];
         pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="window.souvenirTable.changePage(-1)">上頁</button>`);
-        
         let startPage = Math.max(1, currentPage - 2);
         let endPage = Math.min(totalPages, currentPage + 2);
 
         if (startPage > 1) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.souvenirTable.goToPage(1)">1</button>`);
         if (startPage > 2) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
-        
         for (let i = startPage; i <= endPage; i++) {
             pageButtons.push(`<button class="btn btn-sm me-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="window.souvenirTable.goToPage(${i})">${i}</button>`);
         }
-        
         if (endPage < totalPages - 1) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
         if (endPage < totalPages) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.souvenirTable.goToPage(${totalPages})">${totalPages}</button>`);
-        
         pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="window.souvenirTable.changePage(1)">下頁</button>`);
-        
         pagContainer.innerHTML = pageButtons.join('');
     }
     
@@ -162,6 +156,5 @@
             renderTable(); 
         }
     };
-
 })();
 </script>

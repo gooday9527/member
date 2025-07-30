@@ -96,24 +96,40 @@
     }
 
     function renderHeader() {
-        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <span></span></th>`).join('')}</tr>`;
-        tblHead.querySelectorAll('th.sortable').forEach(th => {
-            th.addEventListener('click', () => {
-                const key = th.dataset.key;
-                sortAsc = (sortKey === key) ? !sortAsc : true;
-                sortKey = key;
-                sortData();
-                filterData(); // 重新排序後要重新篩選
-                renderTable();
-            });
-        });
+  // 1) 建立所有欄位的 <th>，並在裡面放一個 <span> 作為排序指示器
+  tblHead.innerHTML =
+    `<tr>${headers
+      .map(h => `<th class="sortable" data-key="${h}" style="cursor:pointer;white-space:nowrap">
+                    ${h} <span></span>
+                 </th>`)
+      .join("")}</tr>`;
+
+  // 2) 為每個 <th> 綁定 click，切換 sortKey 與 sortAsc，然後重新排序＋渲染
+  tblHead.querySelectorAll("th.sortable").forEach(th => {
+    th.addEventListener("click", () => {
+      const key = th.dataset.key;
+      // 同一欄位點第二次才反向
+      sortAsc = (sortKey === key) ? !sortAsc : true;
+      sortKey = key;
+
+      sortData();
+      filterData();  // 排序後重跑篩選
+      renderTable();
+    });
+  });
+}
+
     }
 
     function renderTable() {
-        // 更新排序指示器
-        tblHead.querySelectorAll('th.sortable span').forEach(span => span.textContent = '');
-        const activeTh = tblHead.querySelector(`th[data-key="${sortKey}"] span`);
-        if (activeTh) activeTh.textContent = sortAsc ? ' ▲' : ' ▼';
+       // ■ 清掉所有排序指示
+        tblHead.querySelectorAll("th.sortable span")
+        .forEach(span => span.textContent = "");
+       // ■ 在目前 sortKey 那一欄的 <span> 裡顯示 ▲ 或 ▼
+        const activeSpan = tblHead.querySelector(
+         `th[data-key="${sortKey}"] span`
+       );
+        if (activeSpan) activeSpan.textContent = sortAsc ? " ▲" : " ▼";
 
         // 分頁資料
         const start = (currentPage - 1) * rowsPerPage;

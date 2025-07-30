@@ -126,8 +126,8 @@ html, body {
   z-index: 10;             /* 確保蓋在內容之上 */
 
   /* 自行畫出上、下框線 */
-  border-top:    1px solid #f8f9fa;
-  border-bottom: 1px solid #f8f9fa;
+  border-top:    1px solid #999;
+  border-bottom: 1px solid #999;
   /* 若要左右框線也要固定，可再加： */
   /* border-left: 1px solid #ccc;
      border-right:1px solid #ccc; */

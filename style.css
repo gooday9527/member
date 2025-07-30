@@ -1,3 +1,4 @@
+C 備份css
 /* ==========================================================================
    1. 全站通用樣式 (Global Styles)
    ========================================================================== */
@@ -81,76 +82,44 @@ html, body {
 /* ==========================================================================
    3. 組件：紀念品頁面 (Component: Souvenir Page)
    ========================================================================== */
-/* 1. 預設樣式 (手機直向 & 桌機): 固定導覽列、內部滾動 */
-/* 這個樣式會先套用在所有尺寸上 */
-.souvenir-wrapper {
-  display: flex;
-  flex-direction: column;
-  /* 減去導覽列等元素的高度，您可以微調 100px 這個值 */
-  height: calc(100vh - 100px); 
-}
-.souvenir-wrapper .table-controls-fixed {
-  flex-shrink: 0;
-  padding: 0.5rem 1rem;
-}
-.souvenir-wrapper .table-scroll-container {
-  flex-grow: 1;
-  overflow-y: auto; /* 表格內容可以垂直滾動 */
-  position: relative;
-}
-.souvenir-wrapper #souvenirPaginationWrapper {
-  flex-shrink: 0;
-  padding: 1rem;
-}
-/* 強制控制項群組不換行，並在需要時提供水平滾動 */
-  #souvenirControlsGroup {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    width: 100%;
- }
 
-.souvenir-wrapper thead th {
-  position: sticky;
-  top: 0;
-  background-color: #fff3cd; /* 與您 th 背景色一致 */
-  z-index: 2;
-  white-space: nowrap;
-}
-/* 在此佈局下，全域禁止捲動，由內部滾動取代 */
-html, body {
-  overflow: hidden; 
-}
+/* --- 桌機版佈局 (Desktop Layout) --- */
+@media (min-width: 768px) {
 
-
-/* 2. 手機橫向的「例外」規則 (恢復成整頁滾動) */
-/* 條件：當螢幕寬度在 576px (手機橫向) 和 767px (平板直向之前) 之間時 */
-@media (min-width: 576px) and (max-width: 767px) {
-  
-  /* 將預設的複雜版面規則「還原」成簡單的傳統版面 */
-  html, body {
-    overflow: auto;   /* 允許整頁滾動 */
-  }
+  /* --- 原本的桌機版佈局 --- */
   .souvenir-wrapper {
-    display: block;   /* 取消 flex 佈局 */
-    height: auto;     /* 高度自動 */
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 100px);
+  }
+  .souvenir-wrapper .table-controls-fixed {
+    flex-shrink: 0;
+    padding: 1rem;
+    background-color: #ffffff;
   }
   .souvenir-wrapper .table-scroll-container {
-    overflow-y: visible; /* 取消內部滾動 */
-    overflow-x: auto;    /* 允許表格橫向滾動 */
+    flex-grow: 1;
+    overflow-y: auto !important;
+    border: 1px none #dee2e6;
+    position: relative;
   }
-  .souvenir-wrapper thead th {
-    position: static; /* 取消表頭固定 */
+  .souvenir-wrapper #souvenirPaginationWrapper {
+    flex-shrink: 0;
+    padding: 1rem;
+    background-color: #ffffff;
+    text-align: center;
+    margin-bottom: 3rem;
   }
-}
 
+  /* ✅ 【將您新增的樣式放在這裡】✅ */
 
-/* 3. 桌機版的微調 (例如欄寬) */
-@media (min-width: 768px) {
+  /* 固定表格佈局，讓寬度設定生效 */
   #souvenirTable {
     table-layout: fixed;
     word-wrap: break-word;
   }
-  /* 您之前設定的欄寬 */
+
+  /* 根據紀念品頁常見欄位設定寬度 */
   #souvenirTable th:nth-child(1) { width: 5%; }
   #souvenirTable th:nth-child(2) { width: 6%; }
   #souvenirTable th:nth-child(3) { width: 10%; }
@@ -158,6 +127,34 @@ html, body {
   #souvenirTable th:nth-child(5) { width: 8%; }
   #souvenirTable th:nth-child(7) { width: 6%; }
   #souvenirTable th:nth-child(8) { width: 28%; }
+
+} /* @media 區塊在這裡正確地結尾 */
+/* --- 手機版佈局 (Mobile Layout) --- */
+@media (max-width: 768px) {
+  .souvenir-wrapper .table-scroll-container {
+    max-height: 65vh; /* 手機上用最大高度限制 */
+    overflow: auto;   /* 手機上同時允許垂直和水平滾動 */
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+  .souvenir-wrapper table {
+    min-width: 600px;
+  }
+
+  /* ✅【修正】增加表格和頁碼之間的間距 */
+  .souvenir-wrapper #souvenirPaginationWrapper {
+    margin-top: 1rem; /* 增加 1rem 的上邊距，讓它們分開一點 */
+    margin-bottom: 2rem; /* 或 2rem，看你想多遠 */
+  }
+}
+
+/* --- 通用樣式 (紀念品) --- */
+.souvenir-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background-color: #fff3cd;
+  z-index: 2;
+  white-space: nowrap;
 }
 
 /* ==========================================================================

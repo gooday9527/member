@@ -149,32 +149,6 @@ body.has-internal-scroll {
 
 /* --- 桌機版佈局 (Desktop Layout) --- */
 @media (min-width: 768px) {
-
-  /* --- 原本的桌機版佈局 --- */
-  .souvenir-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 100px);
-  }
-  .souvenir-wrapper .table-controls-fixed {
-    flex-shrink: 0;
-    padding: 1rem;
-    background-color: #ffffff;
-  }
-  .souvenir-wrapper .table-scroll-container {
-    flex-grow: 1;
-    overflow-y: auto !important;
-    border: 1px none #dee2e6;
-    position: relative;
-  }
-  .souvenir-wrapper #souvenirPaginationWrapper {
-    flex-shrink: 0;
-    padding: 1rem;
-    background-color: #ffffff;
-    text-align: center;
-    margin-bottom: 3rem;
-  }
-
   /* ✅ 【將您新增的樣式放在這裡】✅ */
 
   /* 固定表格佈局，讓寬度設定生效 */
@@ -182,6 +156,12 @@ body.has-internal-scroll {
     table-layout: fixed;
     word-wrap: break-word;
   }
+  #souvenirControlsGroup {
+  flex-wrap: nowrap;      /* 強制不換行 */
+  overflow-x: auto;       /* 內容超寬時，允許內部水平滾動 */
+  padding-bottom: 5px;    /* 給可能出現的滾動條留下一點視覺空間 */
+  min-width: 0;           /* 修正 flex 在某些瀏覽器下的最小寬度問題 */
+}
 
   /* 根據紀念品頁常見欄位設定寬度 */
   #souvenirTable th:nth-child(1) { width: 5%; }

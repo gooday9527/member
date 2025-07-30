@@ -48,7 +48,6 @@
                     </div>
                 </div>
             </div>`;
-        // 立即綁定事件
         document.getElementById('rowsPerPageSelect').addEventListener('change', (e) => {
             rowsPerPage = parseInt(e.target.value);
             currentPage = 1;
@@ -73,16 +72,28 @@
             headers = Object.keys(rawData[0]);
             
             renderHeader();
-            sortTable(sortKey); // 初始排序
+            // 修正過的初始載入
+            sortData();
+            filterData();
+            renderTable();
         })
         .catch(error => {
             console.error('載入紀念品資料錯誤：', error);
             tblBody.innerHTML = '<tr><td colspan="10" class="text-danger text-center">資料載入失敗</td></tr>';
         });
 
+    // ✅ 【排序偵錯版】
     function sortTable(key) {
+        console.log(`--- 排序點擊 ---`);
+        console.log(`觸發的欄位 (key): ${key}`);
+        console.log(`點擊前的狀態 (sortKey, sortAsc): ${sortKey}, ${sortAsc}`);
+
         sortAsc = (sortKey === key) ? !sortAsc : true;
         sortKey = key;
+
+        console.log(`點擊後的狀態 (sortKey, sortAsc): ${sortKey}, ${sortAsc}`);
+        console.log(`----------------`);
+
         sortData();
         filterData();
         renderTable();
@@ -123,7 +134,7 @@
         if (activeIcon) {
             activeIcon.className = sortAsc ? 'fas fa-sort-up sort-indicator' : 'fas fa-sort-down sort-indicator';
             activeIcon.style.color = 'black';
-        } // ✅ 【修正】在這裡加上缺少的右大括號
+        }
 
         const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;
@@ -165,5 +176,6 @@
             renderTable(); 
         }
     };
+
 })();
 </script>

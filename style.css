@@ -102,6 +102,13 @@ html, body {
   flex-shrink: 0;
   padding: 1rem;
 }
+/* 強制控制項群組不換行，並在需要時提供水平滾動 */
+  #souvenirControlsGroup {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+ }
+
 .souvenir-wrapper thead th {
   position: sticky;
   top: 0;

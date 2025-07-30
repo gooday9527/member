@@ -84,6 +84,8 @@ html, body {
 
 /* --- 桌機版佈局 (Desktop Layout) --- */
 @media (min-width: 768px) {
+
+  /* --- 原本的桌機版佈局 --- */
   .souvenir-wrapper {
     display: flex;
     flex-direction: column;
@@ -96,7 +98,7 @@ html, body {
   }
   .souvenir-wrapper .table-scroll-container {
     flex-grow: 1;
-    overflow-y: auto !important; /* 桌機主要垂直滾動 */
+    overflow-y: auto !important;
     border: 1px none #dee2e6;
     position: relative;
   }
@@ -105,34 +107,33 @@ html, body {
     padding: 1rem;
     background-color: #ffffff;
     text-align: center;
-    margin-bottom: 3rem; /* 或 2rem，看你想多遠 */
+    margin-bottom: 3rem;
   }
 
-/* 固定表格佈局，讓寬度設定生效 */
+  /* ✅ 【將您新增的樣式放在這裡】✅ */
+
+  /* 固定表格佈局，讓寬度設定生效 */
   #souvenirTable {
     table-layout: fixed;
     word-wrap: break-word;
   }
 
-   /* 單獨設定表頭 th 的上下框線 */
-.souvenir-wrapper .table thead th {
-  /* 上方框線：2px 寬度，實線，灰色 */
-  border-top: 2px solid #999;
-  /* 下方框線：2px 寬度，實線，灰色 */
-  border-bottom: 2px solid #999;
-}
+  /* 單獨設定表頭 th 的上下框線 */
+  .souvenir-wrapper .table thead th {
+    border-top: 2px solid #999;
+    border-bottom: 2px solid #999;
+  }
 
-  /* ✅ 根據紀念品頁常見欄位設定寬度 (您可以自行調整) */
-  #souvenirTable th:nth-child(1) { width: 5%; } /* ID */
-  #souvenirTable th:nth-child(2) { width: 6%; } /* 股號 */
-  #souvenirTable th:nth-child(3) { width: 10%; } /* 股名 */
-  #souvenirTable th:nth-child(4) { width: 18%; } /*紀念品  */
-  #souvenirTable th:nth-child(5) { width: 8%; } /* 股名 */
-  #souvenirTable th:nth-child(7) { width: 6%; } /* 股名 */
-  #souvenirTable th:nth-child(8) { width: 28%; } /*委託條件 */
-  
-}
+  /* 根據紀念品頁常見欄位設定寬度 */
+  #souvenirTable th:nth-child(1) { width: 5%; }
+  #souvenirTable th:nth-child(2) { width: 6%; }
+  #souvenirTable th:nth-child(3) { width: 10%; }
+  #souvenirTable th:nth-child(4) { width: 18%; }
+  #souvenirTable th:nth-child(5) { width: 8%; }
+  #souvenirTable th:nth-child(7) { width: 6%; }
+  #souvenirTable th:nth-child(8) { width: 28%; }
 
+} /* @media 區塊在這裡正確地結尾 */
 /* --- 手機版佈局 (Mobile Layout) --- */
 @media (max-width: 768px) {
   .souvenir-wrapper .table-scroll-container {

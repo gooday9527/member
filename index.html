@@ -55,28 +55,45 @@
 </nav>
 
 <div class="container-fluid">
-<section id="page-recommend" class="page-container">
-  <div class="recommend-wrapper">
+  <section id="page-recommend" class="page-container">
+    <div class="recommend-wrapper">
 
-    <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between px-3 py-2" style="gap: 0.75rem;">
-      
-      <h3 class="mb-2 mb-sm-0 text-center text-sm-start">🌟 推薦清單</h3>
+<!-- 桌机版 (md↑)：一行内「推荐清单｜下拉分类｜估计金額／家数」-->
+<div class="d-none d-sm-flex flex-nowrap align-items-center px-3 py-2" style="gap: 1rem;">
+  <!-- 标题 -->
+  <h3 class="mb-0 flex-shrink-0">🌟 推薦清單</h3>
 
-      <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center" style="gap: 0.5rem 1rem;">
-        
-        <div class="d-flex align-items-center">
-          <label for="recommendSheet" class="mb-0 text-nowrap me-2">選擇分類：</label>
-          <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
-            <option>載入中...</option>
-          </select>
-        </div>
+  <!-- 下拉分类 -->
+  <div class="d-flex align-items-center flex-shrink-0" style="gap: 0.5rem;">
+    <label for="recommendSheet" class="mb-0 text-nowrap">選擇分類：</label>
+    <select id="recommendSheet" class="form-select form-select-sm w-100 w-md-auto" style="max-width: 200px;">
+      <option>載入中...</option>
+    </select>
+  </div>
 
-        <span id="summaryInfo" class="small text-muted text-nowrap mt-2 mt-sm-0">
-          估計 -- 元／-- 家
-        </span>
+  <!-- 估计金額／家数 -->
+  <span id="summaryInfo" class="small text-muted flex-shrink-0 text-nowrap">
+    估計 -- 元／-- 家
+  </span>
+</div>
 
-      </div>
-    </div>
+<!-- 手機版 (md↓)：兩行排列 -->
+<div class="d-flex d-sm-none flex-column px-3 py-2" style="gap: 0.75rem;">
+  <!-- 第一行：标题 + 估计 -->
+  <div class="d-flex justify-content-between align-items-center">
+    <h3 class="mb-0">🌟 推薦清單</h3>
+    <span id="summaryInfoMobile" class="small text-muted text-nowrap">
+      估計 -- 元／-- 家
+    </span>
+  </div>
+  <!-- 第二行：置中下拉分类 -->
+  <div class="d-flex justify-content-center align-items-center" style="gap: 0.5rem;">
+    <label for="recommendSheet" class="mb-0">選擇分類：</label>
+    <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
+      <option>載入中...</option>
+    </select>
+  </div>
+</div>
         
       <!-- 📋 表格 -->
       <div class="table-responsive">

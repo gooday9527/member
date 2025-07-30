@@ -130,7 +130,7 @@ html, body {
   #souvenirTable th:nth-child(5) { width: 8%; } /* 股名 */
   #souvenirTable th:nth-child(7) { width: 6%; } /* 股名 */
   #souvenirTable th:nth-child(8) { width: 28%; } /*委託條件 */
-  }
+  
 }
 
 /* --- 手機版佈局 (Mobile Layout) --- */

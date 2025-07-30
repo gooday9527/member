@@ -119,10 +119,19 @@ html, body {
   }
 
   /* 單獨設定表頭 th 的上下框線 */
-  .souvenir-wrapper .table thead th {
-    border-top: 2px solid #999;
-    border-bottom: 2px solid #999;
-  }
+  .souvenir-wrapper #souvenirTable thead th {
+  position: sticky;        /* 啟用黏性定位 */
+  top: 0;                  /* 距離滾動容器頂端 0 */
+  background-color: #fff;  /* 固定時蓋過下方內容 */
+  z-index: 10;             /* 確保蓋在內容之上 */
+
+  /* 自行畫出上、下框線 */
+  border-top:    1px solid #f8f9fa;
+  border-bottom: 1px solid #f8f9fa;
+  /* 若要左右框線也要固定，可再加： */
+  /* border-left: 1px solid #ccc;
+     border-right:1px solid #ccc; */
+}
 
   /* 根據紀念品頁常見欄位設定寬度 */
   #souvenirTable th:nth-child(1) { width: 5%; }

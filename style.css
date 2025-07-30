@@ -125,15 +125,11 @@ html, body {
   } 
 
   /* ✅ 根據紀念品頁常見欄位設定寬度 (您可以自行調整) */
-  /* 假設前兩個欄位是股號和股名 */
-  #souvenirTable th:nth-child(1) { width: 8%; }  /* 股號 */
   #souvenirTable th:nth-child(2) { width: 10%; } /* 股名 */
   #souvenirTable th:nth-child(3) { width: 20%; } /*紀念品  */
-  #souvenirTable th:nth-child(4) { width: 8%; } /* */
-  #souvenirTable th:nth-child(5) { width: 8%; } /* */
   #souvenirTable th:nth-child(6) { width: 8%; } /* 股代*/
   #souvenirTable th:nth-child(7) { width: 30%; } /*委託條件 */
-  #souvenirTable th:nth-child(8) { width: 8%; } /*委託截止日 */
+
 
 /* --- 手機版佈局 (Mobile Layout) --- */
 @media (max-width: 768px) {

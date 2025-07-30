@@ -54,14 +54,15 @@
     let detailsModal;
 
     // ✅ 【核心修正】使用物件陣列，將「後端資料的鍵(key)」和「前端顯示的標題(title)」分開
+    // ✅ 【最終修正】修正打錯的 key 名稱
     const columnConfig = [
-        { key: 'stockCode',            title: '股號' },
-        { key: 'stockName',            title: '股名' },
-        { key: 'eVotingStartDate',     title: '電投開始日' },
-        { key: 'delegationDeadline',   title: '委託截止日' },
-        { key: 'delegationConditions', title: '委託條件' },
-        { key: 'totalHoldingAccounts', title: '持有帳號數' },
-        { key: 'delegatedAccounts',    title: '已委託數' }
+    { key: 'stockCode',            title: '股號' },
+    { key: 'stockName',            title: '股名' },
+    { key: 'eVotingStartDate',     title: '電投開始日' },
+    { key: 'delegationDeadline',   title: '委託截止日' },
+    { key: 'delegationConditions', title: '委託條件' },
+    { key: 'totalHoldingAccounts', title: '持有帳號數' },
+    { key: 'delegatedAccounts',    title: '已委託數' }
     ];
 
     const tblHead = document.querySelector('#delegableListTable thead');

@@ -53,6 +53,70 @@ html, body {
 }
 
 /* ==========================================================================
+   ✅ 全域滾動佈局 (Global Scrolling Layout)
+   ========================================================================== */
+
+/* 1. 預設佈局 (手機直向 & 桌機): 內部滾動 */
+/* 條件：當頁面的最外層容器有 "page-internal-scroll" 這個 class 時生效 */
+
+.page-internal-scroll {
+  display: flex;
+  flex-direction: column;
+  /* 高度計算：100% 視窗高度減去導覽列(navbar)的高度。您可以根據您導覽列的實際高度微調 56px 這個值。 */
+  height: calc(100vh - 56px); 
+}
+
+.page-internal-scroll .controls-fixed-top {
+  flex-shrink: 0; /* 控制列區域不壓縮 */
+}
+
+.page-internal-scroll .scrollable-table-container {
+  flex-grow: 1; /* 表格區域填滿剩餘空間 */
+  overflow-y: auto; /* 啟用此區塊的內部垂直滾動 */
+  position: relative;
+}
+
+.page-internal-scroll .pagination-fixed-bottom {
+  flex-shrink: 0; /* 分頁區域不壓縮 */
+}
+
+/* 讓表格的 thead 在內部滾動時可以固定在頂部 */
+.page-internal-scroll .scrollable-table-container thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* 在此佈局下，全域禁止捲動，由內部滾動取代 */
+body.has-internal-scroll {
+  overflow: hidden; 
+}
+
+
+/* 2. 手機橫向的「例外」規則 (恢復成整頁滾動) */
+/* 條件：螢幕寬度在 576px 和 767px 之間 */
+@media (min-width: 576px) and (max-width: 767px) {
+  
+  /* 當 body 有 has-internal-scroll 且螢幕符合此區間 */
+  body.has-internal-scroll {
+    overflow: auto;   /* 允許整頁滾動 */
+  }
+
+  body.has-internal-scroll .page-internal-scroll {
+    display: block;   /* 取消 flex 佈局 */
+    height: auto;     /* 高度自動 */
+  }
+
+  body.has-internal-scroll .scrollable-table-container {
+    overflow-y: visible; /* 取消內部滾動 */
+  }
+
+  body.has-internal-scroll .scrollable-table-container thead th {
+    position: static; /* 取消表頭固定 */
+  }
+}
+
+/* ==========================================================================
    2. 主要佈局 (Layout: Navbar & Container)
    ========================================================================== */
 .navbar {

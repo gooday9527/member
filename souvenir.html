@@ -135,7 +135,7 @@
         const pageData = filteredData.slice(start, end);
 
         // 渲染表格內容
-        tblBody.innerHTML = pageData.length > 0 ? pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('') : '<tr><td colspan="${headers.length}" class="text-center p-4">沒有符合條件的資料</td></tr>';
+        tblBody.innerHTML = pageData.length > 0 ? pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${headers.length}" class="text-center p-4">沒有符合條件的資料</td></trr>`;
         
         renderPagination();
     }

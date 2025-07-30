@@ -3,7 +3,13 @@
     <div class="table-scroll-container table-responsive">
         <table class="table table-bordered table-sm" id="souvenirTable">
             <thead class="table-warning"></thead>
-            <tbody> </tbody>
+            <tbody>
+                <tr><td colspan="10" class="text-center p-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </td></tr>
+            </tbody>
         </table>
     </div>
     <div id="souvenirPaginationWrapper">
@@ -66,23 +72,32 @@
             rawData = data;
             headers = Object.keys(rawData[0]);
             
-            // 初始處理與渲染
-            sortData();
-            filterData();
+            // ✅ 【採用新寫法】首次載入時，先渲染表頭，再進行排序和渲染表格
             renderHeader();
-            renderTable();
+            sortTable(sortKey); // 初始排序
         })
         .catch(error => {
             console.error('載入紀念品資料錯誤：', error);
             tblBody.innerHTML = '<tr><td colspan="10" class="text-danger text-center">資料載入失敗</td></tr>';
         });
 
+    // ✅ 【採用新寫法】排序觸發函式
+    function sortTable(key) {
+        sortAsc = (sortKey === key) ? !sortAsc : true;
+        sortKey = key;
+        
+        sortData();    // 排序
+        filterData();  // 篩選
+        renderTable(); // 渲染
+    }
+    
+    // 實際進行排序的函式 (使用我們修正過的精準版本)
     function sortData() {
+        const isPureNumeric = (s) => /^-?\d+(\.\d+)?$/.test(String(s).trim());
         rawData.sort((a, b) => {
             const valA = a[sortKey] || '';
             const valB = b[sortKey] || '';
-            const isNumber = !isNaN(parseFloat(valA)) && !isNaN(parseFloat(valB));
-            if (isNumber) {
+            if (isPureNumeric(valA) && isPureNumeric(valB)) {
                 return sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA);
             } else {
                 return sortAsc ? String(valA).localeCompare(String(valB), 'zh-Hant') : String(valB).localeCompare(String(valA), 'zh-Hant');
@@ -95,39 +110,20 @@
         filteredData = keyword ? rawData.filter(row => headers.some(h => String(row[h] || '').toLowerCase().includes(keyword))) : [...rawData];
     }
 
+    // ✅ 【採用新寫法】渲染表頭與綁定事件的函式
     function renderHeader() {
-  // 1) 建立所有欄位的 <th>，並在裡面放一個 <span> 作為排序指示器
-  tblHead.innerHTML =
-    `<tr>${headers
-      .map(h => `<th class="sortable" data-key="${h}" style="cursor:pointer;white-space:nowrap">
-                    ${h} <span></span>
-                 </th>`)
-      .join("")}</tr>`;
+        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <span></span></th>`).join('')}</tr>`;
+        tblHead.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => sortTable(th.dataset.key));
+        });
+    }
 
-  // 2) 為每個 <th> 綁定 click，切換 sortKey 與 sortAsc，然後重新排序＋渲染
-  tblHead.querySelectorAll("th.sortable").forEach(th => {
-    th.addEventListener("click", () => {
-      const key = th.dataset.key;
-      // 同一欄位點第二次才反向
-      sortAsc = (sortKey === key) ? !sortAsc : true;
-      sortKey = key;
-
-      sortData();
-      filterData();  // 排序後重跑篩選
-      renderTable();
-    });
-  });
-}
-
+    // ✅ 【採用新寫法】渲染表格主體（包含更新排序指示器）
     function renderTable() {
-       // ■ 清掉所有排序指示
-        tblHead.querySelectorAll("th.sortable span")
-        .forEach(span => span.textContent = "");
-       // ■ 在目前 sortKey 那一欄的 <span> 裡顯示 ▲ 或 ▼
-        const activeSpan = tblHead.querySelector(
-         `th[data-key="${sortKey}"] span`
-       );
-        if (activeSpan) activeSpan.textContent = sortAsc ? " ▲" : " ▼";
+        // 更新排序指示器
+        tblHead.querySelectorAll('th.sortable span').forEach(span => span.textContent = '');
+        const activeTh = tblHead.querySelector(`th[data-key="${sortKey}"] span`);
+        if (activeTh) activeTh.textContent = sortAsc ? ' ▲' : ' ▼';
 
         // 分頁資料
         const start = (currentPage - 1) * rowsPerPage;
@@ -135,7 +131,7 @@
         const pageData = filteredData.slice(start, end);
 
         // 渲染表格內容
-        tblBody.innerHTML = pageData.length > 0 ? pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${headers.length}" class="text-center p-4">沒有符合條件的資料</td></trr>`;
+        tblBody.innerHTML = pageData.length > 0 ? pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${headers.length}" class="text-center p-4">沒有符合條件的資料</td></tr>`;
         
         renderPagination();
     }

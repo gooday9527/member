@@ -73,7 +73,10 @@
             headers = Object.keys(rawData[0]);
             
             renderHeader();
-            sortTable(sortKey); // 初始排序
+            // 修正過的初始載入
+            sortData();
+            filterData();
+            renderTable();
         })
         .catch(error => {
             console.error('載入紀念品資料錯誤：', error);
@@ -106,24 +109,26 @@
         filteredData = keyword ? rawData.filter(row => headers.some(h => String(row[h] || '').toLowerCase().includes(keyword))) : [...rawData];
     }
 
-    function renderHeader() {
-        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <i class="fas fa-sort sort-indicator"></i></th>`).join('')}</tr>`;
+  function renderHeader() {
+        // ✅ 【修正】使用最新的 fa-solid class
+        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <i class="fa-solid fa-sort sort-indicator"></i></th>`).join('')}</tr>`;
         tblHead.querySelectorAll('th.sortable').forEach(th => {
             th.addEventListener('click', () => sortTable(th.dataset.key));
         });
     }
 
     function renderTable() {
+        // ✅ 【修正】使用最新的 fa-solid class
         tblHead.querySelectorAll('.sort-indicator').forEach(icon => {
-            icon.className = 'fas fa-sort sort-indicator';
+            icon.className = 'fa-solid fa-sort sort-indicator';
             icon.style.color = '#aaa';
         });
 
         const activeIcon = tblHead.querySelector(`th[data-key="${sortKey}"] .sort-indicator`);
         if (activeIcon) {
-            activeIcon.className = sortAsc ? 'fas fa-sort-up sort-indicator' : 'fas fa-sort-down sort-indicator';
+            activeIcon.className = sortAsc ? 'fa-solid fa-sort-up sort-indicator' : 'fa-solid fa-sort-down sort-indicator';
             activeIcon.style.color = 'black';
-        } // ✅ 【修正】在這裡加上缺少的右大括號
+        }
 
         const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;

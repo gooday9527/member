@@ -107,7 +107,6 @@ html, body {
     text-align: center;
     margin-bottom: 3rem; /* 或 2rem，看你想多遠 */
   }
-}
 
 /* 固定表格佈局，讓寬度設定生效 */
   #souvenirTable {
@@ -118,6 +117,14 @@ html, body {
     box-sizing: border-box;
   }
 
+   /* 單獨設定表頭 th 的上下框線 */
+.souvenir-wrapper .table thead th {
+  /* 上方框線：2px 寬度，實線，灰色 */
+  border-top: 2px solid #999;
+  /* 下方框線：2px 寬度，實線，灰色 */
+  border-bottom: 2px solid #999;
+}
+
   /* ✅ 根據紀念品頁常見欄位設定寬度 (您可以自行調整) */
   #souvenirTable th:nth-child(1) { width: 5%; } /* ID */
   #souvenirTable th:nth-child(2) { width: 6%; } /* 股號 */
@@ -127,6 +134,7 @@ html, body {
   #souvenirTable th:nth-child(7) { width: 6%; } /* 股名 */
   #souvenirTable th:nth-child(8) { width: 28%; } /*委託條件 */
   }
+}
 
 /* --- 手機版佈局 (Mobile Layout) --- */
 @media (max-width: 768px) {

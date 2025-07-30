@@ -73,7 +73,9 @@
             headers = Object.keys(rawData[0]);
             
             renderHeader();
-            sortTable(sortKey); // 初始排序
+            sortData();
+            filterData();
+            renderTable();
         })
         .catch(error => {
             console.error('載入紀念品資料錯誤：', error);

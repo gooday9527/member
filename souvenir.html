@@ -118,15 +118,17 @@
     }
 
     function renderHeader() {
-        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <i class="fas fa-sort sort-indicator"></i></th>`).join('')}</tr>`;
+        // ✅ 【修正】使用最新的 fa-solid class
+        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <i class="fa-solid fa-sort sort-indicator"></i></th>`).join('')}</tr>`;
         tblHead.querySelectorAll('th.sortable').forEach(th => {
             th.addEventListener('click', () => sortTable(th.dataset.key));
         });
     }
 
     function renderTable() {
+        // ✅ 【修正】使用最新的 fa-solid class
         tblHead.querySelectorAll('.sort-indicator').forEach(icon => {
-            icon.className = 'fas fa-sort sort-indicator';
+            icon.className = 'fa-solid fa-sort sort-indicator';
             icon.style.color = '#aaa';
         });
 

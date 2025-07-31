@@ -1,7 +1,7 @@
 <style>
   /* 固定表格佈局，讓寬度設定生效 */
   #delegableListTable {
-    table-layout: fixed;
+    table-layout: fixrawData = response.dataed;
     word-wrap: break-word;
     width: 100%;
     box-sizing: border-box; 
@@ -119,6 +119,9 @@
         .then(response => {
             if (!response.success || !response.data) throw new Error(response.message || '後端回傳資料格式不符');
             rawData = response.data || [];
+          // ✅ 請在這裡加上下面這一行偵錯碼
+          if (rawData.length > 0) { console.log("【偵錯】第一筆資料的樣子:", rawData[0]); }
+
             appSettings = response.appSettings || appSettings;
             renderHeader();
             sortTable(sortKey); // 初始排序

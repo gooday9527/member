@@ -102,15 +102,20 @@
     // ✅ 【核心】確保呼叫 API 時，網址包含了 view=getDelegableList 這個必要參數
     const apiUrl = `${WEB_APP_URL}?view=getDelegableList&email=${encodeURIComponent(email)}`;
 
-    fetch(apiUrl)
-        .then(response => response.ok ? response.json() : Promise.reject('網路回應錯誤'))
-        .then(response => {
-            if (!response.success || !response.data) throw new Error(response.message || '後端回傳資料格式不符');
-            rawData = response.data || [];
-            appSettings = response.appSettings || appSettings;
-            renderHeader();
-            sortTable(sortKey);
-        })
+fetch(apiUrl)
+    .then(response => response.ok ? response.json() : Promise.reject('網路回應錯誤'))
+    .then(response => {
+        console.log("🔍 API 回傳 success/data：", response.success, response.data);
+        rawData = response.data || [];
+        console.log("🔍 rawData 長度：", rawData.length, rawData);
+        appSettings = response.appSettings || appSettings;
+
+        renderHeader();
+        // 初次載入：只做排序與渲染，不反轉箭頭狀態
+        sortData();
+        filterData();
+        renderTable();
+    })
         .catch(err => { 
             console.error('API 呼叫失敗:', err);
             tblBody.innerHTML=`<tr><td colspan="7" class="text-center text-danger p-4">資料載入失敗，請稍後再試</td></tr>`; 
@@ -139,10 +144,20 @@
         });
     }
 
-    function filterData() {
-        const keyword = document.getElementById('delegSearchInput').value.trim().toLowerCase();
-        filteredData = keyword ? rawData.filter(r => columnConfig.some(c => String(r[c.key]||'').toLowerCase().includes(keyword))) : [...rawData];
+function filterData() {
+    const kw = document.getElementById('delegSearchInput').value.trim().toLowerCase();
+    if (!kw) {
+        // 無關鍵字時，完整複製 rawData
+        filteredData = rawData.slice();
+    } else {
+        // 有輸入才做過濾
+        filteredData = rawData.filter(r =>
+            columnConfig.some(c =>
+                String(r[c.key] || '').toLowerCase().includes(kw)
+            )
+        );
     }
+}
 
     function renderHeader() {
         tblHead.innerHTML = '<tr>' + columnConfig.map(c => `<th class="sortable" data-key="${c.key}" style="cursor:pointer;">${c.title} <i class="fa-solid fa-sort sort-indicator"></i></th>`).join('') + '</tr>';

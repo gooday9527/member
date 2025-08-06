@@ -1,3 +1,4 @@
+D 可委託
 <style>
   /* 固定表格佈局，讓寬度設定生效 */
   #delegableListTable {
@@ -57,51 +58,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// ✅ 【核心修正】整個 JavaScript 改為 JSONP 模式
 (function(){
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxMhYweDStNeqK-y3Rb8eEupmO6H9dX_UQ8wdOz5B605kkTiZgcchIfEZPYNxAgrtCk/exec';
-    
-    // 將主要的資料處理邏輯包裝起來
-    function handleData(response) {
-        if (!response.success || !response.data) {
-            tblBody.innerHTML = `<tr><td colspan="7" class="text-center text-danger p-4">後端錯誤: ${response.message || '資料格式不符'}</td></tr>`;
-            return;
-        }
-        rawData = response.data || [];
-        appSettings = response.appSettings || appSettings;
-        renderHeader();
-        sortTable(sortKey);
-    }
+    // ✅ 請再次確認這裡的網址是您「全新部署」的網址
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz_3JIw5zMGuBEElU1fWG3jDsIfJZcHJERYvQ6ATHgahIYDdFJIxPMhSlhDSxEmyPpYpw/exec';
 
-    // JSONP 呼叫函式
-    function fetchDataWithJsonp() {
-        const email = window.currentUserEmail;
-        if (!email) {
-            document.querySelector('#delegableListTable tbody').innerHTML = '<tr><td colspan="7" class="text-center text-danger p-4">請先登入</td></tr>';
-            return;
-        }
-
-        // 1. 定義一個全域的回呼函式
-        window.jsonpCallback_delegableList = function(data) {
-            handleData(data);
-            // 4. 清理工作
-            delete window.jsonpCallback_delegableList;
-            document.body.removeChild(document.getElementById('jsonp-script-delegable'));
-        };
-
-        // 2. 建立帶有 callback 參數的 API 網址
-        const apiUrl = `${WEB_APP_URL}?view=getDelegableList&email=${encodeURIComponent(email)}&callback=jsonpCallback_delegableList`;
-
-        // 3. 動態建立並插入 <script> 標籤
-        const script = document.createElement('script');
-        script.id = 'jsonp-script-delegable';
-        script.src = apiUrl;
-        script.onerror = function() {
-             tblBody.innerHTML = `<tr><td colspan="7" class="text-center text-danger p-4">資料載入失敗，請檢查網路連線。</td></tr>`;
-             delete window.jsonpCallback_delegableList;
-             document.body.removeChild(this);
-        };
-        document.body.appendChild(script);
+    const email = window.currentUserEmail;
+    if (!email) {
+        document.querySelector('#delegableListTable tbody').innerHTML = '<tr><td colspan="7" class="text-center text-danger p-4">請先登入</td></tr>';
+        return;
     }
 
     let rawData = [], filteredData = [], currentPage = 1, rowsPerPage = 10;
@@ -139,33 +103,24 @@
     // ✅ 【核心】確保呼叫 API 時，網址包含了 view=getDelegableList 這個必要參數
     const apiUrl = `${WEB_APP_URL}?view=getDelegableList&email=${encodeURIComponent(email)}`;
 
-fetch(WEB_APP_URL, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  // 將資料放在 "body" 中
-  body: JSON.stringify({ 
-    action: 'getDelegableList', // doPost 是用 action 來判斷
-    email: email 
-  }),
-})
-.then(response => response.ok ? response.json() : Promise.reject('網路回應錯誤'))
-.then(response => { // 這裡收到的 response 結構是 { success: true, data: { ... } }
-    // 我們需要從兩層 data 中取出真正的資料
-    const result = response.data; 
-    if (!response.success || !result || result.status !== 'success') {
-        throw new Error(result.message || '後端回傳資料格式不符');
-    }
-    rawData = result.data || [];
-    appSettings = result.appSettings || appSettings;
-    renderHeader();
-    sortTable(sortKey);
-})
-.catch(err => { 
-    console.error('API 呼叫失敗:', err);
-    tblBody.innerHTML=`<tr><td colspan="7" class="text-center text-danger p-4">資料載入失敗，請稍後再試</td></tr>`; 
-});
+fetch(apiUrl)
+    .then(response => response.ok ? response.json() : Promise.reject('網路回應錯誤'))
+    .then(response => {
+        console.log("🔍 API 回傳 success/data：", response.success, response.data);
+        rawData = response.data || [];
+        console.log("🔍 rawData 長度：", rawData.length, rawData);
+        appSettings = response.appSettings || appSettings;
+
+        renderHeader();
+        // 初次載入：只做排序與渲染，不反轉箭頭狀態
+        sortData();
+        filterData();
+        renderTable();
+    })
+        .catch(err => { 
+            console.error('API 呼叫失敗:', err);
+            tblBody.innerHTML=`<tr><td colspan="7" class="text-center text-danger p-4">資料載入失敗，請稍後再試</td></tr>`; 
+        });
 
     function sortTable(key) {
         sortAsc = (sortKey === key) ? !sortAsc : true;

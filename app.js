@@ -232,9 +232,7 @@ onAuthStateChanged(auth, (user) => {
             loadMemberName(loginEmail);
         }
         
-        // 根據 URL 參數決定要顯示哪個頁面，若無則顯示預設頁面
-        const urlParams = new URLSearchParams(window.location.search);
-        const view = urlParams.get("view") || "souvenir";
+       // 強制在首次載入時，一律顯示「紀念品頁」
         navigateTo("souvenir");
     }
 });

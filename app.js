@@ -222,17 +222,19 @@ onAuthStateChanged(auth, (user) => {
 
     // 只有在首次載入頁面時，才執行這段邏輯
     if (isInitialLoad) {
-        isInitialLoad = false; // 將旗標設為 false，確保此區塊只執行一次
-        document.getElementById("initialLoading")?.remove();
+       <!-- isInitialLoad = false; // 將旗標設為 false，確保此區塊只執行一次
+        document.getElementById("initialLoading")?.remove(); -->
 
-        // 首次載入時，根據登入狀態，預先渲染一次 UI
+        <!-- // 首次載入時，根據登入狀態，預先渲染一次 UI
         renderNavTabs();
         updateLoginStatusLink(isLoggedIn);
         if (isLoggedIn) {
             loadMemberName(loginEmail);
-        }
+        } -->
         
-       // 強制在首次載入時，一律顯示「紀念品頁」
+        // 根據 URL 參數決定要顯示哪個頁面，若無則顯示預設頁面
+        <!--const urlParams = new URLSearchParams(window.location.search);
+        const view = urlParams.get("view") || "souvenir";-->
         navigateTo("souvenir");
     }
 });

@@ -235,6 +235,6 @@ onAuthStateChanged(auth, (user) => {
         // 根據 URL 參數決定要顯示哪個頁面，若無則顯示預設頁面
         const urlParams = new URLSearchParams(window.location.search);
         const view = urlParams.get("view") || "souvenir";
-        navigateTo(view);
+        navigateTo("souvenir");
     }
 });

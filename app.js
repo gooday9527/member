@@ -222,8 +222,8 @@ onAuthStateChanged(auth, (user) => {
 
     // 只有在首次載入頁面時，才執行這段邏輯
     if (isInitialLoad) {
-       <!-- isInitialLoad = false; // 將旗標設為 false，確保此區塊只執行一次
-        document.getElementById("initialLoading")?.remove(); -->
+       isInitialLoad = false; // 將旗標設為 false，確保此區塊只執行一次
+        document.getElementById("initialLoading")?.remove();
 
         <!-- // 首次載入時，根據登入狀態，預先渲染一次 UI
         renderNavTabs();

@@ -2,12 +2,16 @@ name: Export Recommendations JSON
 
 on:
   schedule:
-    - cron: "0 * * * *"  # 每小時執行一次（UTC）
-  workflow_dispatch:     # 可手動觸發
+    - cron: "0 * * * *"  # 每小時執行一次（UTC時間）
+  workflow_dispatch:       # 允許手動觸發
 
 jobs:
   export-json:
     runs-on: ubuntu-latest
+
+    # ✅ 請在這裡或 job 的最上方加入這兩行
+    permissions:
+      contents: write   # 授予機器人「寫入」儲存庫的權限
 
     steps:
       - name: Checkout repo
@@ -15,6 +19,9 @@ jobs:
 
       - name: Fetch recommendations JSON
         run: |
+          # 確保 data 資料夾存在
+          mkdir -p data
+          # 使用 curl 下載檔案
           curl "https://script.google.com/macros/s/AKfycbzdoezSaX2ujsE5ejjac3HbZWWHhDKQbX0nN1rVTIPSZm7opdCtslmwPAIq6zBNvcTp/exec?action=exportJSON" \
             -o data/recommendations.json
 
@@ -23,5 +30,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/recommendations.json
-          git diff --cached --quiet || git commit -m "⏱️ Update recommendations.json from GAS"
-          git push
+          # 如果檔案有變更，才執行 commit 和 push
+          if ! git diff --cached --quiet; then
+            git commit -m "⏱️ Update recommendations.json from GAS"
+            git push
+          else
+            echo "No changes to commit."
+          fi

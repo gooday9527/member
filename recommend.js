@@ -2,8 +2,7 @@
 //                 recommend.js (最終動態版)
 // =================================================================
 
-const STATIC_JSON_URL = "https://raw.githubusercontent.com/gooday9527/data/main/recommendations_latest.json";
-
+const STATIC_JSON_URL = "https://member.gooday9527.com/data/recommendations_latest.json";
 let isRecommendInitialized = false;
 let recommendDataCache = {}; // 格式：{ 分類名稱: [...] }
 

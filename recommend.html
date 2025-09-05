@@ -1,246 +1,215 @@
-<div class="recommend-wrapper mt-0">
-        <div class="table-controls-fixed" id="recommendControlsContainer"></div>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>小管家股東紀念品代領</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="colors.css">
+</head>
+<body>
 
-        <div class="table-scroll-container table-responsive">
-        <table class="table table-bordered table-sm" id="recommendTable">
-            <thead class="table-warning"></thead>
-            <tbody>
-                <tr><td colspan="10" class="text-center p-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </td></tr>
-            </tbody>
-        </table>
-    </div>
+<nav class="navbar navbar-expand-md navbar-light sticky-top">
+  </nav>
 
-        <div id="recommendPaginationWrapper">
-        <div id="recommendPagination" class="d-flex justify-content-center flex-wrap"></div>
-    </div>
+<div class="container-fluid">
+  <section id="page-recommend">
+    <div class="recommend-wrapper">
+
+<div class="d-none d-sm-flex flex-nowrap align-items-center px-3 py-2" style="gap: 1rem;">
+  <h3 class="mb-0 flex-shrink-0">🌟 推薦清單</h3>
+  <div class="d-flex align-items-center flex-shrink-0" style="gap: 0.5rem;">
+    <label for="recommendSheet" class="mb-0 text-nowrap">選擇分類：</label>
+    <select id="recommendSheet" class="form-select form-select-sm w-100 w-md-auto" style="max-width: 200px;">
+      <option>載入中...</option>
+    </select>
+  </div>
+  <span id="summaryInfo" class="small text-muted flex-shrink-0 text-nowrap">
+    估計 -- 元／-- 家
+  </span>
 </div>
+
+<div class="d-flex d-sm-none flex-column px-3 py-2" style="gap: 0.75rem;">
+  <div class="d-flex justify-content-between align-items-center">
+    <h3 class="mb-0">🌟 推薦清單</h3>
+    <span id="summaryInfoMobile" class="small text-muted text-nowrap">
+      估計 -- 元／-- 家
+    </span>
+  </div>
+  <div class="d-flex justify-content-center align-items-center" style="gap: 0.5rem;">
+    <label for="recommendSheet" class="mb-0">選擇分類：</label>
+    <select id="recommendSheet" class="form-select form-select-sm" style="max-width: 200px;">
+      <option>載入中...</option>
+    </select>
+  </div>
+</div>
+     
+      <div class="table-responsive">
+        <table class="table table-bordered table-sm" id="recommendTable">
+          <thead class="table-warning"></thead>
+          <tbody>
+            <tr><td colspan="10" class="text-center p-4">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 (function() {
-    // ==================== 【請注意】主要設定區 ====================
-    // ✅ 已將 Google Sheet ID 更新為您提供的新網址 ID
-    const GOOGLE_SHEET_ID = '1UPU6fkJr_IiIYqaNDg7odYrHS-o7E_JKz4kNbkJEsmI';
-    // ⛔️ 您可以將不想顯示在分類選單中的工作表名稱加到這裡
-    const EXCLUDED_SHEETS = ["紀念品資訊", "版本紀錄"];
-    // =============================================================
+    // ==================== 設定區 ====================
+    // ✅ 您的 Google Sheet ID
+    const GOOGLE_SHEET_ID = '1UPU6fkJr_IiIYqaNDg7odYrHS-o7E_JKz4kNbkJEsmI';
+    // ⛔️ 您可以將不想顯示在分類選單中的工作表名稱加到這裡
+    const EXCLUDED_SHEETS = ["紀念品資訊", "版本紀錄"];
+    // =============================================
 
-    // 狀態變數
-    let rawData = [], filteredData = [], currentPage = 1, rowsPerPage = 10;
-    let sortKey = "股號", sortAsc = true;
-    let headers = [];
-    let selectedSheet = '';
+    // DOM 元素
+    const allSelects = document.querySelectorAll('#recommendSheet');
+    const tableElement = document.getElementById('recommendTable');
+    const summaryElement = document.getElementById('summaryInfo');
+    const mobileSummary = document.getElementById('summaryInfoMobile');
+    
+    if (allSelects.length === 0 || !tableElement) {
+        console.error("錯誤：HTML 結構不完整，找不到 #recommendSheet 或 #recommendTable。");
+        return;
+    }
+    
+    const thead = tableElement.querySelector('thead');
+    const tbody = tableElement.querySelector('tbody');
 
-    // DOM 元素
-    const tblHead = document.querySelector('#recommendTable thead');
-    const tblBody = document.querySelector('#recommendTable tbody');
-    const controlsContainer = document.getElementById('recommendControlsContainer');
-    const pagContainer = document.getElementById('recommendPagination');
+    /**
+     * 渲染表格和統計數據（沿用您舊版的邏輯）
+     * @param {Array} data - 要顯示在表格中的資料陣列
+     */
+    function renderRecommendTable(data) {
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
 
-    // 注入控制項 HTML
-    if (controlsContainer) {
-        controlsContainer.innerHTML = `
-        <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center w-100 mb-2 px-3 py-2">
-                        <div class="d-flex align-items-center mb-2 mb-sm-0">
-                <h3 class="mb-0 me-3 text-nowrap">🌟 推薦清單</h3>
-                <div class="d-flex align-items-center">
-                    <label for="sheetSelect" class="form-label mb-0 me-1 text-nowrap">分類:</label>
-                    <select id="sheetSelect" class="form-select form-select-sm" style="width: 150px;">
-                        <option value="">載入中...</option>
-                    </select>
-                </div>
-            </div>
-                        <div class="d-flex align-items-center gap-3">
-                <div class="d-flex align-items-center">
-                    <label for="searchInput" class="form-label mb-0 me-1 text-nowrap">搜尋:</label>
-                    <input type="text" id="searchInput" class="form-control form-control-sm" style="width: 150px;" placeholder="關鍵字...">
-                </div>
-                <div class="d-flex align-items-center">
-                    <label for="rowsPerPageSelect" class="form-label mb-0 me-1 text-nowrap">筆數:</label>
-                    <select id="rowsPerPageSelect" class="form-select form-select-sm" style="width: 80px;">
-                        <option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option>
-                    </select>
-                </div>
-            </div>
-        </div>`;
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="100%" class="text-center p-4">這個分類目前沒有資料</td></tr>';
+            if (summaryElement) summaryElement.textContent = `估計 0 元／0 家`;
+            if (mobileSummary) mobileSummary.textContent = `估計 0 元／0 家`;
+            return;
+        }
 
-        // 綁定事件
-        document.getElementById('sheetSelect').addEventListener('change', (e) => {
-            selectedSheet = e.target.value;
-            fetchData();
-        });
-        document.getElementById('rowsPerPageSelect').addEventListener('change', (e) => {
-            rowsPerPage = parseInt(e.target.value);
-            currentPage = 1;
-            renderTable();
-        });
-        document.getElementById('searchInput').addEventListener('input', () => {
-            currentPage = 1;
-            filterData();
-            renderTable();
-        });
-    }
+        const headers = Object.keys(data[0]);
+        thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
 
-    // 獲取 Google Sheet 的所有工作表名稱（即分類）
-    function fetchSheetNames() {
-        const sheetSelect = document.getElementById('sheetSelect');
-        fetch(`https://gsheet-parser.vercel.app/api?id=${GOOGLE_SHEET_ID}`)
-            .then(res => res.ok ? res.json() : Promise.reject('無法獲取工作表列表'))
-            .then(data => {
-                if (data.sheets) {
-                    sheetSelect.innerHTML = ''; // 清空選項
-                    data.sheets.forEach(sheet => {
-                        if(!EXCLUDED_SHEETS.includes(sheet)) { // 過濾掉不需要顯示的工作表
-                            const option = new Option(sheet, sheet);
-                            sheetSelect.add(option);
-                        }
-                    });
-                    selectedSheet = sheetSelect.value; // 設定預設選擇的分類
-                    fetchData(); // 獲取到分類列表後，自動載入第一個分類的資料
-                }
-            })
-            .catch(error => {
-                console.error('獲取工作表名稱失敗：', error);
-                sheetSelect.innerHTML = '<option>分類載入失敗</option>';
-            });
-    }
+        let totalAmount = 0;
+        const fragment = document.createDocumentFragment();
 
-    // 根據選擇的工作表（分類）獲取資料
-    function fetchData() {
-        if (!selectedSheet) return;
-        tblBody.innerHTML = `<tr><td colspan="10" class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>`;
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+            headers.forEach((key, idx) => {
+                const td = document.createElement("td");
+                const value = row[key] || '';
 
-        fetch(`https://opensheet.elk.sh/${GOOGLE_SHEET_ID}/${selectedSheet}`)
-            .then(res => res.ok ? res.json() : Promise.reject('Network response was not ok.'))
-            .then(data => {
-                if (!data || data.length === 0) {
-                    rawData = [];
-                    headers = [];
-                    tblHead.innerHTML = '';
-                    tblBody.innerHTML = '<tr><td colspan="10" class="text-center p-4">這個分類目前沒有資料</td></tr>';
-                    return;
-                }
-                rawData = data;
-                headers = Object.keys(rawData[0]);
-                
-                currentPage = 1;
-                sortKey = headers.includes("股號") ? "股號" : headers[0];
-                sortAsc = true;
-                renderHeader();
-                sortData();
-                filterData();
-                renderTable();
-            })
-            .catch(error => {
-                console.error(`載入 ${selectedSheet} 資料錯誤：`, error);
-                tblBody.innerHTML = '<tr><td colspan="10" class="text-danger text-center">資料載入失敗</td></tr>';
-            });
-    }
+                // 假設金額在第 3 欄 (index = 2)
+                if (idx === 2) {
+                    const num = parseInt(String(value).replace(/,/g, ""), 10);
+                    if (!isNaN(num)) totalAmount += num;
+                }
 
-    // 排序資料
-    function sortData() {
-        const isPureNumeric = (s) => /^-?\d+(\.\d+)?$/.test(String(s).trim());
-        rawData.sort((a, b) => {
-            const valA = a[sortKey] || '';
-            const valB = b[sortKey] || '';
-            if (isPureNumeric(valA) && isPureNumeric(valB)) {
-                return sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA);
-            } else {
-                return sortAsc ? String(valA).localeCompare(String(valB), 'zh-Hant') : String(valB).localeCompare(String(valA), 'zh-Hant');
-            }
-        });
-    }
-    
-    // 排序表格
-    function sortTable(key) {
-        sortAsc = (sortKey === key) ? !sortAsc : true;
-        sortKey = key;
-        sortData();
-        filterData();
-        renderTable();
-    }
+                td.textContent = value;
+                tr.appendChild(td);
+            });
+            fragment.appendChild(tr);
+        });
 
-    // 過濾資料
-    function filterData() {
-        const searchInput = document.getElementById('searchInput');
-        if (!searchInput) {
-            filteredData = [...rawData];
-            return;
-        }
-        const keyword = searchInput.value.trim().toLowerCase();
-        filteredData = keyword ? rawData.filter(row => headers.some(h => String(row[h] || '').toLowerCase().includes(keyword))) : [...rawData];
-    }
+        tbody.appendChild(fragment);
 
-    // 渲染表頭
-    function renderHeader() {
-        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <i class="fa-solid fa-sort sort-indicator"></i></th>`).join('')}</tr>`;
-        tblHead.querySelectorAll('th.sortable').forEach(th => {
-            th.addEventListener('click', () => sortTable(th.dataset.key));
-        });
-    }
+        const text = `估計 ${totalAmount.toLocaleString()} 元／${data.length} 家`;
+        if (summaryElement) summaryElement.textContent = text;
+        if (mobileSummary) mobileSummary.textContent = text;
+    }
 
-    // 渲染表格
-    function renderTable() {
-        // 更新排序圖示
-        tblHead.querySelectorAll('.sort-indicator').forEach(icon => {
-            icon.className = 'fa-solid fa-sort sort-indicator';
-            icon.style.color = '#aaa';
-        });
-        const activeIcon = tblHead.querySelector(`th[data-key="${sortKey}"] .sort-indicator`);
-        if (activeIcon) {
-            activeIcon.className = sortAsc ? 'fa-solid fa-sort-up sort-indicator' : 'fa-solid fa-sort-down sort-indicator';
-            activeIcon.style.color = 'black';
-        }
+    /**
+     * 根據分類名稱，從 Google Sheet 獲取即時資料
+     * @param {string} sheetName - 工作表(分類)的名稱
+     */
+    function fetchCategoryData(sheetName) {
+        if (!sheetName) return;
+        
+        // 顯示載入動畫
+        tbody.innerHTML = `<tr><td colspan="100%" class="text-center p-4"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>`;
+        thead.innerHTML = ''; // 清空舊表頭
 
-        // 渲染表格內容
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const pageData = filteredData.slice(start, end);
-        tblBody.innerHTML = pageData.length > 0 ? pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${headers.length}" class="text-center p-4">沒有符合條件的資料</td></tr>`;
-        renderPagination();
-    }
+        fetch(`https://opensheet.elk.sh/${GOOGLE_SHEET_ID}/${sheetName}`)
+            .then(res => res.ok ? res.json() : Promise.reject('Network response was not ok.'))
+            .then(data => {
+                renderRecommendTable(data); // 用獲取到的新資料來渲染表格
+            })
+            .catch(error => {
+                console.error(`載入 ${sheetName} 資料錯誤：`, error);
+                tbody.innerHTML = '<tr><td colspan="100%" class="text-danger text-center">資料載入失敗</td></tr>';
+            });
+    }
 
-    // 渲染分頁
-    function renderPagination() {
-        const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
-        if (totalPages <= 1) {
-            pagContainer.innerHTML = '';
-            return;
-        }
-        let pageButtons = [];
-        pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="window.recommendTable.changePage(-1)">上頁</button>`);
-        let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(totalPages, currentPage + 2);
+    /**
+     * 初始化頁面：獲取所有分類並綁定事件
+     */
+    function initialize() {
+        // 獲取所有工作表名稱（即分類）來填充下拉選單
+        fetch(`https://gsheet-parser.vercel.app/api?id=${GOOGLE_SHEET_ID}`)
+            .then(res => res.ok ? res.json() : Promise.reject('無法獲取工作表列表'))
+            .then(data => {
+                if (data.sheets) {
+                    allSelects.forEach(sel => {
+                        sel.innerHTML = ''; // 清空 "載入中..."
+                        data.sheets.forEach(sheet => {
+                            if (!EXCLUDED_SHEETS.includes(sheet)) {
+                                const option = new Option(sheet, sheet);
+                                sel.add(option);
+                            }
+                        });
+                        sel.disabled = false;
+                    });
 
-        if (startPage > 1) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.recommendTable.goToPage(1)">1</button>`);
-        if (startPage > 2) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
-        for (let i = startPage; i <= endPage; i++) {
-            pageButtons.push(`<button class="btn btn-sm me-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="window.recommendTable.goToPage(${i})">${i}</button>`);
-        }
-        if (endPage < totalPages - 1) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
-        if (endPage < totalPages) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.recommendTable.goToPage(${totalPages})">${totalPages}</button>`);
-        pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="window.recommendTable.changePage(1)">下頁</button>`);
-        pagContainer.innerHTML = pageButtons.join('');
-    }
-    
-    // 將分頁函數暴露到全域
-    window.recommendTable = {
-        changePage: (offset) => { 
-            const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
-            currentPage = Math.min(Math.max(1, currentPage + offset), totalPages);
-            renderTable(); 
-        },
-        goToPage: (page) => { 
-            currentPage = page; 
-            renderTable(); 
-        }
-    };
-    
-    // 初始化
-    fetchSheetNames();
+                    // 綁定切換事件
+                    allSelects.forEach(sel => {
+                        sel.addEventListener('change', () => {
+                            const selectedValue = sel.value;
+                            // 同步所有下拉選單的值
+                            allSelects.forEach(otherSelect => {
+                                if (otherSelect !== sel) otherSelect.value = selectedValue;
+                            });
+                            // 獲取新分類的資料
+                            fetchCategoryData(selectedValue);
+                        });
+                    });
+                    
+                    // 初始載入第一個分類的資料
+                    if (allSelects[0] && allSelects[0].value) {
+                       fetchCategoryData(allSelects[0].value);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('獲取分類列表失敗：', error);
+                allSelects.forEach(sel => {
+                    sel.innerHTML = '<option>分類載入失敗</option>';
+                    sel.disabled = true;
+                });
+            });
+    }
+
+    // 當 DOM 載入完成後，立即執行初始化
+    document.addEventListener('DOMContentLoaded', initialize);
 
 })();
 </script>
+
+</body>
+</html>

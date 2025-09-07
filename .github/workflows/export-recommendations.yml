@@ -21,7 +21,7 @@ jobs:
           # 確保 data 資料夾存在
           mkdir -p data
           # ✅【已修改】將輸出的檔案名稱改為 v2 版本
-          curl "https://script.google.com/macros/s/AKfycbzYNiE4NCj8LgLrmizU6V0LxzV4raBRSstgo6_KZLohE31yVv20k0GSZXtBJxmFJfo/exec?action=exportJSON" \
+          curl "https://script.google.com/macros/s/AKfycbyn0XdXxJkrBl0ZbvtxSF753RjGXAr1b-7wX3XEC4PjPvMu4YZIrnm9n-DDnGWE0G9_/exec?action=exportJSON" \
             -o data/recommendations_v2.json
 
       - name: Commit and push if changed

@@ -8,29 +8,11 @@ body {
   padding: 0;
 }
 
-/*html, body {
+html, body {
   height: 100vh;
   margin: 0;
   padding: 0;
   overflow: hidden;
-}
-*/
-
-html, body {
-  height: 100%; /* 使用 100% 比 100vh 在某些情況下更穩定 */
-  margin: 0;
-  padding: 0;
-}
-
-/* 預設情況下，允許頁面滾動 */
-body {
-  overflow-y: auto; 
-}
-
-/* ✅ 只在需要內部滾動的頁面，才隱藏 body 的捲軸 */
-body.page-recommend,
-body.page-souvenir {
-  overflow-y: hidden;
 }
 
 @media (min-width: 768px) {

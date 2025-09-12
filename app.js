@@ -7,6 +7,7 @@ if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
 }
 
+import { initializeSouvenirPage } from './souvenir.js';
 import { initializeRecommendPage } from './recommend.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -137,6 +138,12 @@ async function loadExternalHtmlSection(sectionId) {
             newScript.appendChild(document.createTextNode(oldScript.innerHTML));
             oldScript.parentNode.replaceChild(newScript, oldScript);
         });
+      
+      // ✅ 【關鍵修改】在 HTML 載入完成後，才呼叫對應的初始化函數
+        if (sectionId === 'souvenir') {
+            initializeSouvenirPage();
+        }
+
     } catch (error) {
         console.error('載入外部內容錯誤:', error);
         dynamicContentArea.innerHTML = `<h3 class="text-center text-danger">頁面載入失敗</h3>`;

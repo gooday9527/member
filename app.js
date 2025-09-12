@@ -144,7 +144,6 @@ async function loadExternalHtmlSection(sectionId) {
 }
 
 function navigateTo(id, fromHistory = false) {
-  document.body.className = 'page-' + id; 
     // 為了穩定，我們在函式內部重新獲取元素
     const recommendPage = document.getElementById('page-recommend');
     const dynamicContentArea = document.getElementById('dynamic-content-area');

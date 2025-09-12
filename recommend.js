@@ -55,13 +55,13 @@ export function initializeRecommendPage() {
             }
         })
         .catch(err => {
-            console.error("推薦清單載入失敗", err);
+            console.error("推薦套組載入失敗", err);
             const tbody = document.querySelector('#recommendTable tbody');
             if (tbody) {
                 tbody.innerHTML = `
                   <tr>
                     <td colspan="100%" class="text-center p-4 text-danger">
-                      推薦清單資料載入失敗，請檢查 JSON 檔案路徑是否正確。
+                      推薦套組資料載入失敗，請檢查 JSON 檔案路徑是否正確。
                     </td>
                   </tr>`;
             }

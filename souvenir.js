@@ -1,0 +1,164 @@
+// =================================================================
+//                  souvenir.js (新的模組化版本)
+// =================================================================
+
+// 狀態變數
+let rawData = [], filteredData = [], currentPage = 1, rowsPerPage = 10;
+let sortKey = "股號", sortAsc = true;
+let headers = [];
+let isSouvenirInitialized = false; // 防止重複初始化
+
+/**
+ * ✅ 主要函數，匯出給 app.js 呼叫
+ */
+export function initializeSouvenirPage() {
+    if (isSouvenirInitialized) {
+        // 如果已初始化，可以選擇重新渲染或直接返回
+        // 為了簡單起見，我們假設每次都重新綁定，以處理可能的 DOM 變動
+    }
+    isSouvenirInitialized = true;
+
+    // DOM 元素
+    const tblHead = document.querySelector('#souvenirTable thead');
+    const tblBody = document.querySelector('#souvenirTable tbody');
+    const controlsContainer = document.getElementById('souvenirControlsContainer');
+    const pagContainer = document.getElementById('souvenirPagination');
+
+    // 注入控制項並綁定事件 (只在第一次初始化時執行)
+    if (controlsContainer && !controlsContainer.hasChildNodes()) {
+        controlsContainer.innerHTML = `
+            <div class="d-flex flex-column flex-sm-row justify-content-sm-start align-items-sm-center w-100 mb-2">
+                <h3 class="mb-0 mt-0 mb-sm-0 me-sm-2">🎁 紀念品</h3>
+                <div id="souvenirControlsGroup" class="d-flex align-items-center gap-4">
+                    <div>
+                        <label for="rowsPerPageSelect" class="form-label mb-0 me-1">筆數:</label>
+                        <select id="rowsPerPageSelect" class="form-select form-select-sm d-inline-block" style="width: 80px;">
+                            <option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="searchInput" class="form-label mb-0 me-1">搜尋:</label>
+                        <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block" style="width: 150px;" placeholder="關鍵字...">
+                    </div>
+                </div>
+            </div>`;
+        
+        document.getElementById('rowsPerPageSelect').addEventListener('change', (e) => {
+            rowsPerPage = parseInt(e.target.value);
+            currentPage = 1;
+            renderTable();
+        });
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            currentPage = 1;
+            filterData(e.target.value);
+            renderTable();
+        });
+    }
+    
+    // 獲取資料
+    fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊')
+        .then(res => res.ok ? res.json() : Promise.reject('Network response was not ok.'))
+        .then(data => {
+            if (!data || data.length === 0) {
+                tblBody.innerHTML = '<tr><td colspan="10">沒有可用的資料</td></tr>';
+                return;
+            }
+            rawData = data;
+            headers = Object.keys(rawData[0]);
+            
+            renderHeader();
+            sortData();
+            filterData(document.getElementById('searchInput')?.value || '');
+            renderTable();
+        })
+        .catch(error => {
+            console.error('載入紀念品資料錯誤：', error);
+            tblBody.innerHTML = '<tr><td colspan="10" class="text-danger text-center">資料載入失敗</td></tr>';
+        });
+
+    // --- 以下為內部輔助函數 ---
+
+    function sortTable(key) {
+        sortAsc = (sortKey === key) ? !sortAsc : true;
+        sortKey = key;
+        sortData();
+        filterData(document.getElementById('searchInput')?.value || '');
+        renderTable();
+    }
+    
+    function sortData() {
+        const isPureNumeric = (s) => /^-?\d+(\.\d+)?$/.test(String(s).trim());
+        rawData.sort((a, b) => {
+            const valA = a[sortKey] || '';
+            const valB = b[sortKey] || '';
+            if (isPureNumeric(valA) && isPureNumeric(valB)) {
+                return sortAsc ? Number(valA) - Number(valB) : Number(valB) - Number(valA);
+            } else {
+                return sortAsc ? String(valA).localeCompare(String(valB), 'zh-Hant') : String(valB).localeCompare(String(valA), 'zh-Hant');
+            }
+        });
+    }
+
+    function filterData(keyword) {
+        const lowerKeyword = keyword.trim().toLowerCase();
+        filteredData = lowerKeyword ? rawData.filter(row => headers.some(h => String(row[h] || '').toLowerCase().includes(lowerKeyword))) : [...rawData];
+    }
+
+    function renderHeader() {
+        tblHead.innerHTML = `<tr>${headers.map(h => `<th class="sortable" data-key="${h}" style="cursor: pointer; white-space: nowrap;">${h} <i class="fa-solid fa-sort sort-indicator"></i></th>`).join('')}</tr>`;
+        tblHead.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => sortTable(th.dataset.key));
+        });
+    }
+
+    function renderTable() {
+        tblHead.querySelectorAll('.sort-indicator').forEach(icon => {
+            icon.className = 'fa-solid fa-sort sort-indicator';
+            icon.style.color = '#aaa';
+        });
+        const activeIcon = tblHead.querySelector(`th[data-key="${sortKey}"] .sort-indicator`);
+        if (activeIcon) {
+            activeIcon.className = sortAsc ? 'fa-solid fa-sort-up sort-indicator' : 'fa-solid fa-sort-down sort-indicator';
+            activeIcon.style.color = 'black';
+        }
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageData = filteredData.slice(start, end);
+        tblBody.innerHTML = pageData.length > 0 ? pageData.map(row => `<tr>${headers.map(k => `<td>${row[k] || ''}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${headers.length}" class="text-center p-4">沒有符合條件的資料</td></tr>`;
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
+        if (totalPages <= 1) {
+            pagContainer.innerHTML = '';
+            return;
+        }
+        let pageButtons = [];
+        pageButtons.push(`<button class="btn btn-sm btn-outline-secondary me-1" ${currentPage === 1 ? 'disabled' : ''} onclick="window.souvenirTable.changePage(-1)">上頁</button>`);
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
+
+        if (startPage > 1) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.souvenirTable.goToPage(1)">1</button>`);
+        if (startPage > 2) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
+        for (let i = startPage; i <= endPage; i++) {
+            pageButtons.push(`<button class="btn btn-sm me-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}" onclick="window.souvenirTable.goToPage(${i})">${i}</button>`);
+        }
+        if (endPage < totalPages - 1) pageButtons.push(`<span class="align-self-center me-1">...</span>`);
+        if (endPage < totalPages) pageButtons.push(`<button class="btn btn-sm btn-outline-primary me-1" onclick="window.souvenirTable.goToPage(${totalPages})">${totalPages}</button>`);
+        pageButtons.push(`<button class="btn btn-sm btn-outline-secondary" ${currentPage === totalPages ? 'disabled' : ''} onclick="window.souvenirTable.changePage(1)">下頁</button>`);
+        pagContainer.innerHTML = pageButtons.join('');
+    }
+    
+    window.souvenirTable = {
+        changePage: (offset) => { 
+            const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
+            currentPage = Math.min(Math.max(1, currentPage + offset), totalPages);
+            renderTable(); 
+        },
+        goToPage: (page) => { 
+            currentPage = page; 
+            renderTable(); 
+        }
+    };
+}

@@ -139,10 +139,11 @@ async function loadExternalHtmlSection(sectionId) {
             oldScript.parentNode.replaceChild(newScript, oldScript);
         });
       
-      // ✅ 【關鍵修改】在 HTML 載入完成後，才呼叫對應的初始化函數
-        if (sectionId === 'souvenir') {
-            initializeSouvenirPage();
-        }
+      // ✅【關鍵修改】
+        // 檢查並呼叫對應的啟動函數，來重新綁定功能
+        if (sectionId === 'souvenir' && typeof window.initializeSouvenirPage === 'function') {
+            window.initializeSouvenirPage();
+        }
 
     } catch (error) {
         console.error('載入外部內容錯誤:', error);

@@ -14,15 +14,18 @@
                         <small class="d-block text-muted">前 62 日</small>
                     </div>
                 </div>
-                <div class="timeline-item-period">
-                    <strong class="text-purple">投票檔期</strong>
-                    <div class="line-period">
-                        <div class="dot"></div>
-                        <div class="dot"></div>
+                <div class="timeline-item">
+                    <div class="timeline-point"></div>
+                    <div class="timeline-content">
+                        <span class="badge bg-purple">投票檔期</span>
+                        <small class="d-block text-muted">前 30 日</small>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <small class="text-muted">前 30 日</small>
-                        <small class="text-muted">前 3 日</small>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-point"></div>
+                    <div class="timeline-content">
+                        <span class="badge bg-purple">截止</span>
+                        <small class="d-block text-muted">前 3 日</small>
                     </div>
                 </div>
                  <div class="timeline-item">
@@ -57,6 +60,7 @@
                 </div>
                 <div class="flow-arrow">→</div>
                 <div class="flow-step">
+                    <div class="our-side-box">我方</div>
                     <div class="step-box">建立委託單</div>
                     <p class="step-desc">確認委託數量<br>
                         確認領取條件 <br>
@@ -78,60 +82,43 @@
 </div>
 
 <style>
-    /* 時間軸樣式 (最終、最簡單的版本) */
-    .final-timeline {
+    /* 時間軸樣式 */
+    .timeline {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start; /* 頂部對齊 */
-        text-align: center;
+        position: relative;
+        padding-top: 1rem;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: calc(1rem + 4px); /* 對齊點的中心 */
+        left: 5%;
+        right: 5%;
+        height: 2px;
+        background-color: #6c757d; /*灰色線*/
     }
     .timeline-item {
-        width: 20%; /* 兩側的點佔據寬度 */
-        padding-top: 1.5rem; /* 讓文字和中間的標題對齊 */
+        position: relative;
+        text-align: center;
     }
-    .timeline-item-period {
-        width: 50%; /* 中間的區間佔據較大寬度 */
-    }
-    .line {
-        height: 2px;
+    .timeline-point {
+        width: 10px;
+        height: 10px;
         background-color: #6c757d;
-        position: relative;
-        margin-top: 4px;
-    }
-    .dot {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 12px;
-        height: 12px;
-        background-color: white;
-        border: 2px solid #6c757d;
         border-radius: 50%;
-    }
-    .line-period {
-        height: 4px;
-        background-color: #6f42c1; /* 紫色 */
         position: relative;
-        margin-top: 4px;
+        z-index: 1;
+        margin: 0 auto;
     }
-    .line-period .dot {
-        border-color: #6f42c1; /* 讓區間的點也是紫色 */
+    .timeline-content {
+        margin-top: 0.5rem;
     }
-    /* 分別定位左右兩個點 */
-    .line-period .dot:first-child {
-        left: 0;
-        transform: translate(-50%, -50%);
+    .badge.bg-purple {
+        background-color: #6f42c1 !important;
     }
-    .line-period .dot:last-child {
-        left: 100%;
-        transform: translate(-50%, -50%);
-    }
-    .text-purple {
-        color: #6f42c1;
-    }
-    .period-dates {
-        margin-top: 0.25rem;
+    .badge.bg-magenta {
+        background-color: #d63384 !important;
     }
 
     /* 流程圖樣式 */

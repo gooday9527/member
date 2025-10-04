@@ -5,7 +5,7 @@
             <h3 class="card-title mb-0 text-center">零股股東紀念品領取資格</h3>
         </div>
         <div class="card-body p-4 text-center">
-            
+
             <div class="timeline">
                 <div class="timeline-item">
                     <div class="timeline-point"></div>
@@ -28,7 +28,7 @@
                         <small class="d-block text-muted">前 3 日</small>
                     </div>
                 </div>
-                 <div class="timeline-item">
+                <div class="timeline-item">
                     <div class="timeline-point"></div>
                     <div class="timeline-content">
                         <span class="badge bg-magenta">股東會</span>
@@ -43,8 +43,7 @@
         </div>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-light">
+    <div class="card shadow-sm mb-5"> <div class="card-header bg-light">
             <h3 class="card-title mb-0 text-center">委託代領流程</h3>
         </div>
         <div class="card-body p-4">
@@ -66,9 +65,9 @@
                     <div class="step-box">建立委託單</div>
                     <p class="step-desc">確認委託數量<br>
                         確認領取條件<br>
-                         <strong class="text-danger">需要開會通知書？</strong><br>
-                         <strong class="text-danger">需要證件？</strong>
-                     </p>
+                        <strong class="text-danger">需要開會通知書？</strong><br>
+                        <strong class="text-danger">需要證件？</strong>
+                    </p>
                 </div>
                 <div class="flow-arrow">→</div>
                 <div class="flow-step position-relative">
@@ -83,15 +82,53 @@
                     <div class="step-box">領取紀念品</div>
                     <p class="step-desc">開箱分享社群<br>
                         贈點數(折抵代領費)<br>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h3 class="card-title mb-0 text-center">常見問答 (Q&A)</h3>
+        </div>
+        <div class="card-body p-4">
+            
+            <div class="qa-container">
 
-</div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="toggle-icon">+</span>
+                        <span>1. 整張也能委託代領嗎?</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p>
+                            可以。<br>
+                            整張跟零股，都需要上股東e服務平台投票+截圖，上傳截圖才算完成委託。
+                        </p>
+                        <img src="圖片路徑/圖片1.png" alt="投票截圖範例1" style="max-width: 100%; height: auto; margin-top: 10px;">
+                        <img src="圖片路徑/圖片2.png" alt="投票截圖範例2" style="max-width: 100%; height: auto; margin-top: 10px;">
+                    </div>
+                </div>
+        
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="toggle-icon">+</span>
+                        <span>2. 什麼是代電投?</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p>
+                            這裡是「什麼是代電投」的詳細解釋...
+                        </p>
+                    </div>
+                </div>
+                
+                </div>
 
-<style>
-    /* 時間軸樣式 */
+        </div>
+    </div>
+
+</div> <style>
+    /* 您原本的樣式開始 (未更動) */
     .timeline {
         display: flex;
         justify-content: space-between;
@@ -101,11 +138,11 @@
     .timeline::before {
         content: '';
         position: absolute;
-        top: calc(1rem + 4px); /* 對齊點的中心 */
+        top: calc(1rem + 4px);
         left: 5%;
         right: 5%;
         height: 2px;
-        background-color: #6c757d; /*灰色線*/
+        background-color: #6c757d;
     }
     .timeline-item {
         position: relative;
@@ -129,11 +166,9 @@
     .badge.bg-magenta {
         background-color: #d63384 !important;
     }
-
-    /* 流程圖樣式 */
     .flowchart {
         display: flex;
-        flex-wrap: wrap; /* 在手機上會自動換行 */
+        flex-wrap: wrap;
         justify-content: center;
         align-items: flex-start;
         gap: 1rem;
@@ -143,7 +178,7 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
-        width: 120px; /* 每個步驟的寬度 */
+        width: 120px;
     }
     .step-box {
         background-color: #e9ecef;
@@ -157,13 +192,13 @@
         font-size: 0.85rem;
         color: #6c757d;
         margin-top: 0.5rem;
-        min-height: 40px; /* 確保高度一致 */
+        min-height: 40px;
     }
     .flow-arrow {
         font-size: 2rem;
         color: #dc3545;
         align-self: center;
-        margin-top: -2rem; /* 讓箭頭位置高一點 */
+        margin-top: -2rem;
     }
     .our-side-box {
         position: absolute;
@@ -177,7 +212,7 @@
         font-weight: bold;
         font-size: 0.9rem;
     }
-    .our-side-box::after { /* 畫出小箭頭 */
+    .our-side-box::after {
         content: '';
         position: absolute;
         bottom: -10px;
@@ -189,13 +224,72 @@
         border-right: 8px solid transparent;
         border-top: 8px solid #dc3545;
     }
-    /* 手機版時，隱藏箭頭 */
     @media (max-width: 767px) {
         .flow-arrow {
             display: none;
         }
         .our-side-box {
-             top: -20px;
+            top: -20px;
         }
     }
+    /* 您原本的樣式結束 */
+
+
+    /* ========= 新增的 Q&A 樣式 ========= */
+    .qa-container {
+        font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+    }
+    .qa-item {
+        border-bottom: 1px solid #eee;
+        padding: 15px 0;
+    }
+    .qa-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    .qa-item:first-child {
+        padding-top: 0;
+    }
+    .qa-question {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #333;
+    }
+    .toggle-icon {
+        font-size: 1.5em;
+        margin-right: 15px;
+        color: #0d6efd; /* Bootstrap Primary color */
+        transition: transform 0.3s ease;
+    }
+    .qa-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-out;
+        padding-left: 37px; /* 讓答案文字對齊問題文字 (圖示寬度+間距) */
+        color: #555;
+        line-height: 1.6;
+    }
+    .qa-item.active .qa-answer {
+        max-height: 1000px; /* 確保內容能完整顯示 */
+        padding-top: 10px;
+    }
+    .qa-item.active .toggle-icon {
+        transform: rotate(45deg); /* 將 '+' 旋轉成 'x' */
+    }
 </style>
+
+<script>
+    // 確保這段 script 不會影響到您未來可能加入的其他 script
+    (function() {
+        const questions = document.querySelectorAll('.qa-question');
+        questions.forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+    })();
+</script>

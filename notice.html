@@ -8,17 +8,17 @@
     
     <style>
         body {
-            background-color: #f0f2f5;
+            background-color: #f0f2ff;
         }
         .flowchart { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 1rem; }
-        .flow-step { display: flex; flex-direction: column; align-items: center; text-align: center; width: 120px; }
+        .flow-step { display: flex; flex-direction: column; align-items: center; text-align: center; width: 130px; }
         
         .step-box { 
             background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 0.25rem; 
             padding: 0.5rem;
             font-weight: bold; width: 100%; min-height: 80px;
             display: flex; 
-            flex-direction: column; /* 讓內部文字垂直排列 */
+            flex-direction: column;
             align-items: center; 
             justify-content: center;
         }
@@ -26,10 +26,15 @@
             font-weight: normal;
             font-size: 0.75em;
         }
-
         .step-desc { font-size: 0.85rem; color: #6c757d; margin-top: 0.5rem; min-height: 40px; }
-        .flow-arrow { font-size: 2rem; color: #dc3545; align-self: center; margin-top: -3.5rem; }
-        @media (max-width: 767px) { .flow-arrow { display: none; } }
+        .flow-arrow { font-size: 2rem; color: #6c757d; align-self: center; margin-top: -3.5rem; }
+        @media (max-width: 991px) { .flow-arrow { display: none; } }
+
+        .fork-section {
+            border-top: 2px dashed #6c757d;
+            padding-top: 2rem;
+            margin-top: 2rem;
+        }
 
         .qa-container { font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif; }
         .qa-item { border-bottom: 1px solid #eee; padding: 15px 0; }
@@ -50,45 +55,35 @@
         <div class="card-header bg-light">
             <h3 class="card-title mb-0 text-center">領取紀念品 步驟流程</h3>
         </div>
-        <div class="card-body p-4">
-            <div class="mb-5">
-                <h4 class="text-center mb-4">😴 懶人包</h4>
-                <div class="flowchart justify-content-center">
-                    <div class="flow-step">
-                        <div class="step-box">1. 開戶<br><small style="color:#0d6efd;">(新光/永豐/富邦/國泰)</small></div>
-                        <p class="step-desc">開立您的證券戶</p>
-                    </div>
-                    <div class="flow-arrow">→</div>
-                    <div class="flow-step">
-                        <div class="step-box">2. 買股<br><small style="color:#0d6efd;">(可使用套組一次買足)</small></div>
-                        <p class="step-desc">購入喜愛的零股</p>
-                    </div>
-                    <div class="flow-arrow">→</div>
-                    <div class="flow-step">
-                        <div class="step-box">3. 上傳憑證<br><small style="color:#0d6efd;">(我們為您代投票)</small></div>
-                        <p class="step-desc">將後續流程交給我們</p>
-                    </div>
-                    <div class="flow-arrow">→</div>
-                    <div class="flow-step">
-                        <div class="step-box">🎉 等領紀念品</div>
-                        <p class="step-desc">輕鬆坐等收貨！</p>
-                    </div>
+        <div class="card-body p-4 p-md-5">
+
+            <h4 class="text-center mb-4">😴 懶人包 (主要推薦路徑)</h4>
+            <div class="flowchart justify-content-center">
+                <div class="flow-step">
+                    <div class="step-box">1. 開戶<br><small style="color:#0d6efd;">(新光/永豐/國泰)</small></div>
+                    <p class="step-desc">建立您的證券戶</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-box">2. 買股<br><small style="color:#0d6efd;">(可使用套組一次買足)</small></div>
+                    <p class="step-desc">購入喜愛的零股</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-box">3. 上傳憑證<br><small style="color:#0d6efd;">(我們為您代投票)</small></div>
+                    <p class="step-desc">將後續流程交給我們</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="step-box" style="background-color: #d1e7dd; border-color: #a3cfbb;">🎁 等領紀念品</div>
+                    <p class="step-desc">輕鬆坐等收貨！</p>
                 </div>
             </div>
-            <hr> <div class="mt-5">
-                <h4 class="text-center mb-4">✍️ 自行操作版</h4>
+
+            <div class="fork-section text-center">
+                <h4 class="mb-4">✍️ 自行操作 (分岔選項)</h4>
                 <div class="flowchart justify-content-center">
-                    <div class="flow-step">
-                        <div class="step-box">1. 開戶<br><small style="color:#0d6efd;">(任何一家券商皆可)</small></div>
-                        <p class="step-desc">建立您的證券戶</p>
-                    </div>
-                    <div class="flow-arrow">→</div>
-                    <div class="flow-step">
-                        <div class="step-box">2. 買股<br><small style="color:#0d6efd;">(在最後買進日前)</small></div>
-                        <p class="step-desc">購入喜愛的零股</p>
-                    </div>
-                    <div class="flow-arrow">→</div>
-                    <div class="flow-step">
+                     <div class="flow-step">
                         <div class="step-box">3. 投票<br><small style="color:#0d6efd;">(需自行在期限內完成)</small></div>
                         <p class="step-desc">完成電子投票</p>
                     </div>
@@ -101,11 +96,6 @@
                     <div class="flow-step">
                         <div class="step-box">5. 上傳委託<br><small style="color:#0d6efd;">(上傳截圖以供核對)</small></div>
                         <p class="step-desc">在本站建立委託單</p>
-                    </div>
-                    <div class="flow-arrow">→</div>
-                    <div class="flow-step">
-                        <div class="step-box">6. 領紀念品</div>
-                        <p class="step-desc">等待通知取貨</p>
                     </div>
                 </div>
             </div>

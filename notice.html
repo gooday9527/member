@@ -13,24 +13,22 @@
         .flowchart { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 1rem; }
         .flow-step { display: flex; flex-direction: column; align-items: center; text-align: center; width: 120px; }
         
-        /* --- CSS 微調部分 --- */
         .step-box { 
             background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 0.25rem; 
-            padding: 0.5rem; /* 稍微減少 padding 讓空間更舒適 */
-            font-weight: bold; width: 100%; min-height: 80px; /* 稍微增加高度 */
+            padding: 0.5rem;
+            font-weight: bold; width: 100%; min-height: 80px;
             display: flex; 
             flex-direction: column; /* 讓內部文字垂直排列 */
             align-items: center; 
             justify-content: center;
         }
         .step-box small {
-            font-weight: normal; /* 讓小字不要粗體 */
-            font-size: 0.75em; /* 讓小字更小一點 */
+            font-weight: normal;
+            font-size: 0.75em;
         }
-        /* --- CSS 微調結束 --- */
 
         .step-desc { font-size: 0.85rem; color: #6c757d; margin-top: 0.5rem; min-height: 40px; }
-        .flow-arrow { font-size: 2rem; color: #dc3545; align-self: center; margin-top: -3.5rem; /* 微調箭頭位置 */ }
+        .flow-arrow { font-size: 2rem; color: #dc3545; align-self: center; margin-top: -3.5rem; }
         @media (max-width: 767px) { .flow-arrow { display: none; } }
 
         .qa-container { font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif; }
@@ -47,13 +45,12 @@
 <body>
 
 <div class="container py-4">
-    
+
     <div class="card shadow-sm mb-5">
         <div class="card-header bg-light">
             <h3 class="card-title mb-0 text-center">領取紀念品 步驟流程</h3>
         </div>
         <div class="card-body p-4">
-            
             <div class="mb-5">
                 <h4 class="text-center mb-4">😴 懶人包</h4>
                 <div class="flowchart justify-content-center">
@@ -78,7 +75,6 @@
                     </div>
                 </div>
             </div>
-
             <hr> <div class="mt-5">
                 <h4 class="text-center mb-4">✍️ 自行操作版</h4>
                 <div class="flowchart justify-content-center">
@@ -117,10 +113,91 @@
     </div>
 
     <div class="card shadow-sm mb-5">
+        <div class="card-header bg-light">
+            <h3 class="card-title mb-0 text-center">委託代領詳細流程</h3>
         </div>
-
+        <div class="card-body p-4">
+            <p class="mb-4 text-center" style="line-height: 1.8;">
+                多數為了紀念品而投資零股的人，往往都購置300多檔、500多檔、甚至更完整的800多檔 😂<br>
+                每年為了領取紀念品，就必須要重複數百次的投票...<br>
+                <span style="font-family: 'Courier New', Courier, monospace;">買股 → 投票 → 截圖 → 領取</span><br>
+                「小管家」就是幫您代操第 <strong>2、3、4</strong> 步 💪📌，也可協助一鍵下單全部零股喔 🎊！<br>
+                簡單來說，您只需要購入零股後，等著領取紀念品即可 🎉
+            </p>
+            <div class="alert alert-info text-center" role="alert">
+                💥 代領&amp;代投票服務 ❎ <strong>並不會</strong>向你索取任何帳號密碼，<br class="d-none d-sm-block"> ❎ <strong>也不會</strong>要求預先支付任何金額才提供服務！
+            </div>
+            <div class="flowchart">
+                <div class="flow-step"> <div class="step-box">加入會員</div> <p class="step-desc">免費加入</p> </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step"> <div class="step-box">上傳憑證檔</div> <p class="step-desc"> <strong class="text-danger">為本站代投票服務專用</strong><br> 亦可自行上傳截圖<br> </p> </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step"> <div class="step-box">建立委託單</div> <p class="step-desc">確認委託數量<br> 確認領取條件<br> <strong class="text-danger">需要開會通知書？</strong><br> <strong class="text-danger">需要證件？</strong> </p> </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step position-relative"> <div class="step-box">申請出貨</div> <p class="step-desc">支付代領費<br> 領取方式<br> 親領/超取/宅配<br> </p> </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step"> <div class="step-box">領取紀念品</div> <p class="step-desc">開箱分享社群<br> 贈點數(折抵代領費)<br> </p> </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h3 class="card-title mb-0 text-center">常見問答 (Q&A)</h3>
         </div>
+        <div class="card-body p-4">
+            <div class="qa-container">
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>1. 為什麼要找你們代領？</span> </div>
+                    <div class="qa-answer"> <p>便宜又方便。我們的代領費用約在 12 元至 16 元之間，自行找銀行券商領取費用通常為單筆 25~30 元。 我們透過一次領取所有會員的紀念品來節省成本，因此可以提供較低的費用。</p> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>2. 你們是詐騙嗎？會不會證券帳戶被冒用？</span> </div>
+                    <div class="qa-answer"> <p>絕對不是。上市櫃公司每年會準備股東會紀念品，除了鼓勵股東們參加之外，也是感謝股東對於公司的支持。買一股零股即可領取，公開資訊都查得到，絕對不是詐騙。<br>請您放心，代領紀念品只需要電子投票截圖或是身份證明，絕對不會有任何風險。</p> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>3. 我(有)(無)證券戶，該如何開始? 未成年小孩能開證券戶嗎？</span> </div>
+                    <div class="qa-answer"> <p>未成年小孩，雙親能幫小孩開證券戶。</p> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>4. 最晚何時要買進股票才有領紀念品資格? 什麼時候可以知道送什麼紀念品?</span> </div>
+                    <div class="qa-answer"> <p>公司會公告<strong>「最後過戶日」</strong>，通常在股東會前62天。因此在「最後過戶日」前2個交易日買進該檔股票，就有領取紀念品的權利。<br>公司大多會在股東會前1~2個月公告有沒有送紀念品及送什麼。股東會大部份都集中在3~6月，因此最好在前一年12月到隔年3月前把零股買好。</p> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>5. 如何委託? 整張也能委託代領嗎?</span> </div>
+                    <div class="qa-answer"> <p>可以。 整張(1000股) 和 零股(1~999股)，<br>都必須在<strong class="text-danger">有效時間內</strong>上<a href="https://stockservices.tdcc.com.tw/evote/index.html" target="_blank" rel="noopener noreferrer">股東e服務平台</a>投票+截圖，並在本站<strong class="text-danger">上傳截圖</strong>才算完成委託。</p> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>6. 如何電子投票? 代電投服務是什麼?</span> </div>
+                    <div class="qa-answer"> <p>▶︎進入<a href="https://stockservices.tdcc.com.tw/evote/index.html" target="_blank" rel="noopener noreferrer">股東e服務平台</a>， <strong>"投票"</strong>後按<strong>"查詢"</strong> ，並<strong>截圖</strong>如下畫面。<br>❤️因電子投票有時間限制，步驟繁瑣。 <strong class="text-danger">上傳憑證</strong> 即能享受小管家<span style="color: #FF69B4;">代電投＋截圖服務</span>。自動委託，讓您免煩惱。<small style="color: #6c757d;">憑證只能投票用，並無法買賣您的股票。</small></p> <img src="images/截圖範例1.jpg" alt="截圖範例(手機板)" style="display: block; width: 200px; max-width: 100%; height: auto; margin: 10px auto;"> <img src="images/截圖範例2.jpg" alt="截圖範例(電腦版)" style="display: block; width: 200px; max-width: 100%; height: auto; margin: 10px auto;"> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>7. 什麼時候可以電子投票?</span> </div>
+                    <div class="qa-answer"> <p><strong>電子投票開始日:</strong> 股東會(常會)前30天，股東會(臨時會)前15天。<br><strong>電子投票截止日:</strong> 股東會前3天止。</p> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>8. 一檔一檔買太麻煩了，有沒有快一點的方法？</span> </div>
+                    <div class="qa-answer"> <p>請參考我們的<strong>推薦套組</strong>，證券戶需有匯入功能<span style="color: #0d6efd;">(新光、永豐、富邦、國泰)</span>。<br>我們將會為您提供專業的服務，最多一次掛滿超過 500 檔。<br><br><a href="https://line.me/ti/p/aWJd9KCJMj"><img src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png" alt="加入好友" height: 36" border="0"></a></p> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>9. 何時能領到紀念品?</span> </div>
+                    <div class="qa-answer"> <p>一般來說，等到股東會旺季結束後統一出貨（大約會在8~9月附近，每年不太一定），若您有相當喜愛的紀念品希望提早寄送，請參考我們的提早出貨申請。</p> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>10. 不想要物品，可以都換成現金嗎?</span> </div>
+                    <div class="qa-answer"> <p>我們可以直接回收。收購價可抵扣代領費用。</p> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>11. 為什麼領到的紀念品和公告的不同?</span> </div>
+                    <div class="qa-answer"> <p>股東會紀念品數量不足時，公司會以其他商品代替。</p> </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>12. 為什麼有不開放委託的情況?</span> </div>
+                    <div class="qa-answer"> <ol> <li>沒發紀念品。</li> <li>不發給零股股東 (常見於興櫃公司)。</li> <li>可以自已兌換 (如大魯閣、 HiTi inPhoto 相片沖印卷，自行到公司網站APP/股東專區/股東會贈品/獲取兌換碼)。</li> <li>領取地點在中南部且又要身份證件正本。因需要證件的紀念品我一定是親自領取，跑一趟中南部成本太高，除非紀念品超值。</li> </ol> </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 

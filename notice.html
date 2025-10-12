@@ -1,3 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>股東紀念品領取說明</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+        <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="colors.css">
+
+    <style>
+        /* 您原本的 CSS 樣式，完全不變 */
+        body { background-color: #f0f2ff; }
+        .flowchart { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 1rem; }
+        .flow-step { display: flex; flex-direction: column; align-items: center; text-align: center; width: 130px; }
+        .step-box { background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 0.25rem; padding: 0.5rem; font-weight: bold; width: 100%; min-height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .step-desc { font-size: 0.85rem; color: #6c757d; margin-top: 0.5rem; min-height: 40px; }
+        .flow-arrow { font-size: 2rem; color: #6c757d; align-self: center; margin-top: -3.5rem; }
+        @media (max-width: 991px) { .flow-arrow { display: none; } }
+        .fork-section { border-top: 2px dashed #6c757d; padding-top: 2rem; margin-top: 2rem; }
+        .qa-container { font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif; }
+        .qa-item { border-bottom: 1px solid #eee; padding: 15px 0; }
+        .qa-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .qa-item:first-child { padding-top: 0; }
+        .qa-question { display: flex; align-items: center; cursor: pointer; font-size: 1.1em; font-weight: bold; color: #333; }
+        .toggle-icon { font-size: 1.5em; margin-right: 15px; color: #0d6efd; transition: transform 0.3s ease; }
+        .qa-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; padding-left: 37px; color: #555; line-height: 1.6; }
+        .qa-item.active .qa-answer { max-height: 1200px; padding-top: 10px; }
+        .qa-item.active .toggle-icon { transform: rotate(45deg); }
+    </style>
+</head>
+<body>
+
 <div class="container py-4">
 
     <div class="card shadow-sm mb-5">
@@ -5,11 +39,10 @@
             <h3 class="card-title mb-0 text-center">領取紀念品 步驟流程</h3>
         </div>
         <div class="card-body p-4 p-md-5">
-
             <h4 class="text-center mb-4">😴 懶人包（主要步驟）</h4>
             <div class="flowchart justify-content-center">
                 <div class="flow-step">
-                    <div class="step-box">1. 開戶<br><span style="color:#0d6efd; font-size: 0.85em; font-weight: normal;">(新光／永豐／富邦)</span></div>
+                                        <div class="step-box">1. 開戶<br><span style="color:#0d6efd; font-size: 0.85em; font-weight: normal;">(新光／永豐／富邦)</span></div>
                     <p class="step-desc">建立您的證券戶</p>
                 </div>
                 <div class="flow-arrow">→</div>
@@ -28,11 +61,10 @@
                     <p class="step-desc">輕鬆坐等收貨！</p>
                 </div>
             </div>
-
             <div class="fork-section text-center">
                 <h4 class="mb-4">✍️憑證功能 (<span style="color: #dc3545;">代電投+截圖</span>)</h4>
                 <div class="flowchart justify-content-center">
-                     <div class="flow-step">
+                    <div class="flow-step">
                         <div class="step-box" style="background-color: #d1e7dd; border-color: #a3cfbb;">3-1. 投票<br><span style="color:#0d6efd; font-size: 0.85em; font-weight: normal;">(在期限內完成)</span></div>
                         <p class="step-desc">完成電子投票</p>
                     </div>
@@ -51,51 +83,25 @@
         </div>
     </div>
 
-    <div class="card shadow-sm mb-5">
-        <div class="card-header bg-light">
-            <h3 class="card-title mb-0 text-center">委託代領詳細流程</h3>
-        </div>
-        <div class="card-body p-4">
-            <p class="mb-4 text-center" style="line-height: 1.8;">
-                多數為了紀念品而投資零股的人，往往都購置300多檔、500多檔、甚至更完整的800多檔 😂<br>
-                每年為了領取紀念品，就必須要重複數百次的投票...<br>
-                <span style="font-family: 'Courier New', Courier, monospace;">買股 → 投票 → 截圖 → 領取</span><br>
-                「小管家」就是幫您代操第 <strong>2、3、4</strong> 步 💪📌，也可協助一鍵下單全部零股喔 🎊！<br>
-                簡單來說，您只需要購入零股後，等著領取紀念品即可 🎉
-            </p>
-            <div class="flowchart">
-                <div class="flow-step"> <div class="step-box">加入會員</div> <p class="step-desc">免費加入</p> </div>
-                <div class="flow-arrow">→</div>
-<div class="flow-step">
-    <div class="step-box">上傳憑證檔</div>
-    <p class="step-desc">
-        <strong class="text-danger">上傳憑證教學</strong><br>
-        <a href="https://www.skis.com.tw/skisservice/#/qa" target="_blank" rel="noopener noreferrer">新光</a> /
-        <a href="https://www.sinotrade.com.tw/newweb/customer-support/question/AKFBqAYrTFqqoHpmOAtNw220328082950/" target="_blank" rel="noopener noreferrer">永豐</a> /
-        <a href="https://www.fbs.com.tw/Certificate/Management" target="_blank" rel="noopener noreferrer">富邦</a><br>
-        <a href="mailto:gooday9527@gmail.com?subject=股東紀念品憑證 - [請在此填寫您的姓名或會員帳號]&body=小管家您好，%0D%0A%0D%0A我是 [請在此填寫您的姓名或會員帳號]，%0D%0A在此附上我的憑證＆憑證密碼。%0D%0A[請在此填寫您的憑證密碼]。%0D%0A%0D%0A請查收，謝謝！">📧 將憑證寄至小管家信箱</a>
-    </p>
-</div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step"> <div class="step-box">建立委託單</div> <p class="step-desc">確認委託數量<br> 確認領取條件<br> <strong class="text-danger">需要開會通知書？</strong><br> <strong class="text-danger">需要證件？</strong> </p> </div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step position-relative"> <div class="step-box">申請出貨</div> <p class="step-desc">支付代領費<br> 領取方式<br> 親領/超取/宅配<br> </p> </div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step"> <div class="step-box">領取紀念品</div> <p class="step-desc">開箱分享社群<br> 贈點數(折抵代領費)<br> </p> </div>
+        <div class="card shadow-sm mb-5">
             </div>
-        </div>
-    </div>
     
     <div class="card shadow-sm">
-        <div class="card-header bg-light">
-            <h3 class="card-title mb-0 text-center">常見問答 (Q&A)</h3>
-        </div>
-        <div class="card-body p-4">
-            <div class="qa-container">
-                            </div>
-        </div>
-    </div>
+            </div>
 
 </div>
 
-<script type="module" src="notice.js"></script>
+<script>
+    (function() {
+        const questions = document.querySelectorAll('.qa-question');
+        questions.forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+    })();
+</script>
+
+</body>
+</html>

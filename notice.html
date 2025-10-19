@@ -230,7 +230,10 @@
 </div>
 
 <script>
-    (function() {
+    // 等待整個頁面的 HTML 都載入完成後，再執行裡面的程式碼
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- 只保留 Q&A 開闔功能 ---
         const questions = document.querySelectorAll('.qa-question');
         questions.forEach(question => {
             question.addEventListener('click', () => {
@@ -238,7 +241,10 @@
                 item.classList.toggle('active');
             });
         });
-    })();
+
+        // --- 地址開闔功能已被移除 ---
+
+    });
 </script>
 
 </body>

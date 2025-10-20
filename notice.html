@@ -93,7 +93,7 @@
                     <strong style="font-size: 1rem;">4. 提供投票證明 <span class="text-danger fw-normal">(二 選 一)</span></strong>
                 </div>
                 <div class="d-flex justify-content-center align-items-stretch w-100" style="gap: 0.5rem;">
-                    <div class="step-box text-start p-2 d-flex flex-column" style="font-size: 0.8rem; line-height: 1.4; min-height: 130px; width: 50%;"> <strong class="text-center d-block mb-1 class="text-danger"> A (推薦)</strong>
+                    <div class="step-box text-start p-2 d-flex flex-column" style="font-size: 0.8rem; line-height: 1.4; min-height: 130px; width: 50%;"> <strong class="text-center d-block mb-1">📌A (推薦)</strong>
                         <hr class="my-1 w-100">
                         <span class="text-danger">上傳憑證</span>由本站<span class="text-primary">代投票+截圖</span><br>
                         <em class="small text-muted mt-auto">(需<a href="#certificate-export" class="text-decoration-none">匯出憑證</a>/<a href="mailto:gooday9527@gmail.com?subject=股東紀念品憑證 - [請在此填寫您的姓名或會員帳號]&body=小管家您好，%0D%0A%0D%0A我是 [請在此填寫您的姓名或會員帳號]，%0D%0A在此附上我的憑證＆憑證密碼。%0D%0A[請在此填寫您的憑證密碼]。%0D%0A%0D%0A請查收，謝謝！" class="text-decoration-none">Email寄送憑證</a>)</em>
@@ -230,34 +230,15 @@
 </div>
 
 <script>
-// 等待整個頁面的 HTML 都載入完成後，再執行裡面的程式碼
-document.addEventListener('DOMContentLoaded', function() {
-
-    // --- 原本的 Q&A 開闔功能 ---
-    const questions = document.querySelectorAll('.qa-question');
-    questions.forEach(question => {
-        question.addEventListener('click', () => {
-            const item = question.parentElement;
-            item.classList.toggle('active');
+    (function() {
+        const questions = document.querySelectorAll('.qa-question');
+        questions.forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                item.classList.toggle('active');
+            });
         });
-    });
-
-    // --- 新增的地址開闔功能 ---
-    const addressToggles = document.querySelectorAll('.address-toggle-link');
-    addressToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(event) {
-            event.preventDefault(); 
-
-            const targetId = this.dataset.target;
-            const targetElement = document.querySelector(targetId);
-
-            if (targetElement) {
-                targetElement.classList.toggle('show');
-            }
-        });
-    });
-
-});
+    })();
 </script>
 
 </body>

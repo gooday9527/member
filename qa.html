@@ -144,34 +144,27 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // --- Q&A 開闔功能 ---
-    const questions = document.querySelectorAll('.qa-question');
-    questions.forEach(question => {
-        question.addEventListener('click', () => {
-            const item = question.parentElement;
-            item.classList.toggle('active');
+
+    (function() {
+
+        const questions = document.querySelectorAll('.qa-question');
+
+        questions.forEach(question => {
+
+            question.addEventListener('click', () => {
+
+                const item = question.parentElement;
+
+                item.classList.toggle('active');
+
+            });
+
         });
-    });
 
-    // --- 地址開闔功能 ---
-    const addressToggles = document.querySelectorAll('.address-toggle-link');
-    addressToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(event) {
-            event.preventDefault(); 
-            
-            const targetId = this.dataset.target;
-            const targetElement = document.querySelector(targetId);
+    })();
 
-            if (targetElement) {
-                targetElement.classList.toggle('show');
-            }
-        });
-    });
-
-});
 </script>
+
 
 </body>
 </html>

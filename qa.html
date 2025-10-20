@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="colors.css">
 
-    <style>
+<style>
         /* 保留所有原本 notice.html 的內部樣式，確保 Q&A 顯示正常 */
         body { background-color: #f0f2ff; }
         .flowchart { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 1rem; } /* 保留 */
@@ -21,8 +21,15 @@
         @media (max-width: 991px) { .flow-arrow { display: none; } } /* 保留 */
         .fork-section { border-top: 2px dashed #6c757d; padding-top: 2rem; margin-top: 2rem; } /* 保留 */
 
-        /* Q&A 相關樣式 (必要) */
-        .qa-container { font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif; }
+        /* Q&A 相關樣式 */
+        .qa-container { 
+            font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif; 
+            /* ✅ 如果需要背景和邊框，可以在這裡加回來 */
+            /* background-color: #fff; */
+            /* border: 1px solid #ddd; */
+            /* border-radius: 8px; */
+            /* padding: 1rem 1.5rem; */ /* 從 card-body 繼承一些內距 */
+        }
         .qa-item { border-bottom: 1px solid #eee; padding: 15px 0; }
         .qa-item:last-child { border-bottom: none; padding-bottom: 0; }
         .qa-item:first-child { padding-top: 0; }
@@ -32,7 +39,7 @@
         .qa-item.active .qa-answer { max-height: 1200px; padding-top: 10px; }
         .qa-item.active .toggle-icon { transform: rotate(45deg); }
 
-        /* 地址收合相關樣式 (必要) */
+        /* 地址收合相關樣式 */
         .address-toggle-link { cursor: pointer; color: #0d6efd; text-decoration: underline; }
         .hidden-address { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease-out, margin 0.4s ease-out; padding: 0 1rem; margin-top: 0; background-color: #e9ecef; border-radius: 0.25rem; }
         .hidden-address.show { max-height: 200px; padding: 1rem; margin-top: 0.5rem; }

@@ -3,42 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>股東紀念品領取說明</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>常見問答 (Q&A)</title> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="colors.css">
+    <link rel="stylesheet" href="colors.css">
 
     <style>
+        /* 保留所有原本 notice.html 的內部樣式，確保 Q&A 顯示正常 */
         body {
             background-color: #f0f2ff;
         }
-        .flowchart { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 1rem; }
-        .flow-step { display: flex; flex-direction: column; align-items: center; text-align: center; width: 160px; }
-        
-        .step-box { 
-            background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 0.25rem; 
-            padding: 0.5rem;
-            font-weight: bold; width: 100%; min-height: 80px;
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center;
-        }
-        .step-box small {
-            font-weight: normal;
-            font-size: 0.75em;
-        }
-        .step-desc { font-size: 0.85rem; color: #6c757d; margin-top: 0.5rem; min-height: 40px; }
-        .flow-arrow { font-size: 2rem; color: #6c757d; align-self: center; margin-top: -3.5rem; }
-        @media (max-width: 991px) { .flow-arrow { display: none; } }
+        .flowchart { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 1rem; } /* 保留 */
+        .flow-step { display: flex; flex-direction: column; align-items: center; text-align: center; width: 160px; } /* 保留 */
+        .step-box { background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 0.25rem; padding: 0.5rem; font-weight: bold; width: 100%; min-height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; } /* 保留 */
+        .step-box span { font-weight: normal; font-size: 0.85em; } /* 保留 */
+        .step-desc { font-size: 0.85rem; color: #6c757d; margin-top: 0.5rem; min-height: 40px; } /* 保留 */
+        .flow-arrow { font-size: 2rem; color: #6c757d; align-self: center; margin-top: -3.5rem; } /* 保留 */
+        @media (max-width: 991px) { .flow-arrow { display: none; } } /* 保留 */
+        .fork-section { border-top: 2px dashed #6c757d; padding-top: 2rem; margin-top: 2rem; } /* 保留 */
 
-        .fork-section {
-            border-top: 2px dashed #6c757d;
-            padding-top: 2rem;
-            margin-top: 2rem;
-        }
-
+        /* Q&A 相關樣式 */
         .qa-container { font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif; }
         .qa-item { border-bottom: 1px solid #eee; padding: 15px 0; }
         .qa-item:last-child { border-bottom: none; padding-bottom: 0; }
@@ -48,98 +32,17 @@
         .qa-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; padding-left: 37px; color: #555; line-height: 1.6; }
         .qa-item.active .qa-answer { max-height: 1200px; padding-top: 10px; }
         .qa-item.active .toggle-icon { transform: rotate(45deg); }
+
+        /* 地址收合相關樣式 */
+        .address-toggle-link { cursor: pointer; color: #0d6efd; text-decoration: underline; }
+        .hidden-address { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease-out, margin 0.4s ease-out; padding: 0 1rem; margin-top: 0; background-color: #e9ecef; border-radius: 0.25rem; }
+        .hidden-address.show { max-height: 200px; padding: 1rem; margin-top: 0.5rem; }
     </style>
 </head>
 <body>
 
 <div class="container py-4">
 
-<div class="card shadow-sm mb-5">
-    <div class="card-header bg-light">
-        <h2 class="card-title mb-0 text-center">🎁 完整領取流程 (小管家服務)</h2>
-    </div>
-    <div class="card-body p-4 p-md-5">
-        <p class="mb-4 text-center" style="line-height: 1.8;">
-            <strong>依現行多數股代之規定，凡【完成電子投票】者，即可領取股東會紀念品，說明如下：</strong><br>
-            <span style="font-family: 'Courier New', Courier, monospace; color:#0d6efd;">買股 → 投票 → 截圖 → 領取</span><br>
-            「小管家」就是幫您代操第 <strong>2、3、4</strong> 步 💪📌，也可協助一鍵下單全部零股喔 🎊！<br>
-            簡單來說，<strong class="text-danger">您只需要購入零股後，等著領取紀念品即可</strong> 🎉
-        </p>
-
-        <div class="flowchart justify-content-center">
-            
-            <div class="flow-step">
-                <div class="step-box">1. 開戶<br><span style="color:#0d6efd;">新光／永豐</span></div>
-                <p class="step-desc">📌 開立您的證券戶。<br>(挑選手續費1元+有匯入功能的證券)</p>
-            </div>
-            
-            <div class="flow-arrow">→</div>
-            
-            <div class="flow-step">
-                <div class="step-box">2. 買股<br><span style="color:#0d6efd;">可參考推薦套組</span></div>
-                <p class="step-desc">📌 買１股就能領取!<br>(可自行下單 或<br> 🎊協助一鍵下單全部零股)</p>
-            </div>
-
-            <div class="flow-arrow">→</div>
-
-            <div class="flow-step">
-                <div class="step-box">3. 加入會員</div>
-                <p class="step-desc">免費註冊小管家帳號</p>
-            </div>
-
-            <div class="flow-arrow">→</div>
-
-            <div class="flow-step" style="width: 340px;"> <div class="step-box mb-1 text-center" style="min-height: auto; padding: 0.3rem 0.5rem; width: 100%;">
-                    <strong style="font-size: 1rem;">4. 提供投票證明 <span class="text-danger fw-normal">(二 選 一)</span></strong>
-                </div>
-                <div class="d-flex justify-content-center align-items-stretch w-100" style="gap: 0.5rem;">
-                    <div class="step-box text-start p-2 d-flex flex-column" style="font-size: 0.8rem; line-height: 1.4; min-height: 130px; width: 50%;"> <strong class="text-center d-block mb-1">📌A (推薦)</strong>
-                        <hr class="my-1 w-100">
-                        <span class="text-danger">上傳憑證</span>由本站<span class="text-primary">代投票+截圖</span><br>
-                        <em class="small text-muted mt-auto">(需<a href="#certificate-export" class="text-decoration-none">匯出憑證</a>/<a href="mailto:gooday9527@gmail.com?subject=股東紀念品憑證 - [請在此填寫您的姓名或會員帳號]&body=小管家您好，%0D%0A%0D%0A我是 [請在此填寫您的姓名或會員帳號]，%0D%0A在此附上我的憑證＆憑證密碼。%0D%0A[請在此填寫您的憑證密碼]。%0D%0A%0D%0A請查收，謝謝！" class="text-decoration-none">Email寄送憑證</a>)</em>
-                    </div>
-
-                    <div class="step-box text-start p-2 d-flex flex-column" style="font-size: 0.8rem; line-height: 1.4; min-height: 130px; width: 50%;"> <strong class="text-center d-block mb-1">B</strong>
-                        <hr class="my-1 w-100">
-                        <span class="text-danger">自行投票+截圖</span>後<span class="text-danger">上傳截圖</span><br>
-                        <em class="small text-muted mt-auto">(截圖<a href="#screenshot-example" class="text-decoration-none">範例格式</a>)</em>
-                    </div>
-                </div>
-                 <p class="step-desc"></p>
-            </div>
-            <div class="flow-arrow">→</div>
-            
-            <div class="flow-step">
-                <div class="step-box">5. 建立委託單</div>
-                <p class="step-desc">確認委託數量<br>確認領取條件<br><strong class="text-danger">需通知書/證件?</strong></p>
-            </div>
-            
-            <div class="flow-arrow">→</div>
-            
-            <div class="flow-step">
-                <div class="step-box">6. 申請出貨</div>
-                <p class="step-desc">支付代領費<br>選擇領取方式<br>(親領/超取/宅配)</p>
-            </div>
-            
-            <div class="flow-arrow">→</div>
-            
-            <div class="flow-step">
-                <div class="step-box">7. 領取紀念品</div>
-                <p class="step-desc">輕鬆坐等收貨！<br>開箱分享贈點數</p>
-            </div>
-        </div>
-        <div id="certificate-export" class="mt-3 small text-muted text-center">
-            (憑證匯出教學連結：
-            <a href="https://www.skis.com.tw/skisservice/#/qa" target="_blank" rel="noopener noreferrer">新光</a> /
-            <a href="https://www.sinotrade.com.tw/newweb/customer-support/question/AKFBqAYrTFqqoHpmOAtNw220328082950/" target="_blank" rel="noopener noreferrer">永豐</a> /
-            <a href="https://www.fbs.com.tw/Certificate/Management" target="_blank" rel="noopener noreferrer">富邦</a>)
-        </div>
-        <div id="screenshot-example" class="mt-1 small text-muted text-center">
-            (截圖範例請參考下方 Q&A 第 7 點)    
-        </div>
-    </div>
-</div>
-    
     <div class="card shadow-sm">
         <div class="card-header bg-light">
             <h3 class="card-title mb-0 text-center">常見問答 (Q&A)</h3>
@@ -161,60 +64,63 @@
                 <div class="qa-item">
                     <div class="qa-question"> <span class="toggle-icon">+</span> <span>4. 一檔一檔買太麻煩了，有沒有快一點的方法？</span> </div>
                     <div class="qa-answer"> <p>請參考我們的<strong>推薦套組</strong>，證券戶需有匯入功能<span style="color: #0d6efd;">(新光、永豐、富邦)</span>。<br>我們將會為您提供專業的服務，最多一次掛滿超過 500 檔。<br><br>
-                        <a href="#" target="_blank" rel="noopener noreferrer">一鍵下單教學 (新光)</a><br><br>                        
+                        <a href="#" target="_blank" rel="noopener noreferrer">一鍵下單教學 (新光)</a><br><br>
                         <a href="https://line.me/ti/p/aWJd9KCJMj"><img src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png" alt="加入好友" height="36" border="0"></a>🎉領取&lt;推薦套組&gt;匯入檔</p>
+                    </div>
                 </div>
                 <div class="qa-item">
                     <div class="qa-question"> <span class="toggle-icon">+</span> <span>5. 最晚何時要買進股票才有領紀念品資格? 什麼時候可以知道送什麼紀念品?</span> </div>
                     <div class="qa-answer"> <p>公司會公告<strong>「最後過戶日」</strong>，通常在股東會前62天。因此在「最後過戶日」前2個交易日買進該檔股票，就有領取紀念品的權利。<br>公司大多會在股東會前1~2個月公告有沒有送紀念品及送什麼。股東會大部份都集中在3~6月，因此最好在前一年12月到隔年3月前把零股買好。</p> </div>
                 </div>
-
                 <div class="qa-item">
                     <div class="qa-question"> <span class="toggle-icon">+</span> <span>6. 如何委託? 整張也能委託代領嗎?</span> </div>
                     <div class="qa-answer"> <p>可以。 整張(1000股) 和 零股(1~999股)，都必須在<strong class="text-danger">有效時間內</strong>上<a href="https://stockservices.tdcc.com.tw/evote/index.html" target="_blank" rel="noopener noreferrer">股東e服務平台</a>投票+截圖，並在本站<strong class="text-danger">上傳截圖</strong>才算完成委託。</p> </div>
                 </div>
-<div class="qa-item">
-    <div class="qa-question">
-        <span class="toggle-icon">+</span>
-        <span>7. 如何電子投票? 代電投服務是什麼?</span>
-    </div>
-    <div class="qa-answer">
-        <p>
-            📣<strong>零股電子投票</strong>是指零股股東透過線上平台（如台灣集中保管結算所的「股東e服務」或「集保e手掌握」APP）進行股東會表決，以便領取股東會紀念品。 此方式讓零股股東<strong>不必親自出席股東會</strong>，就能行使投票權並在<strong>指定時間地點</strong>領取紀念品，或選擇<strong>委託代領</strong>。<br>
-            📣進入<a href="https://stockservices.tdcc.com.tw/evote/index.html" target="_blank" rel="noopener noreferrer">股東e服務平台</a>， <strong>"投票"</strong>後按<strong>"查詢"</strong> ，並<strong>截圖</strong>如下畫面。<br>
-            📣因電子投票有時間限制，步驟繁瑣。 <strong class="text-danger">上傳憑證</strong> 即能享受小管家<span style="color: #E65100; font-weight: bold;">代電投＋截圖</span>服務。自動委託，讓您免煩惱。<br><small style="color: #6c757d;">憑證只能投票用，並無法買賣您的股票。</small>
-        </p>
-        <div class="d-flex justify-content-center flex-wrap" style="gap: 15px;">
-             <img src="images/截圖範例1.jpg" alt="截圖範例(手機板)" style="width: 180px; height: 250px; object-fit: contain; border: 1px solid #ddd;"> 
-             <img src="images/截圖範例2.jpg" alt="截圖範例(電腦版)" style="width: 300px; height: 150px; object-fit: contain; border: 1px solid #ddd;"> 
-        </div>
-    </div>
-</div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="toggle-icon">+</span>
+                        <span>7. 如何電子投票? 代電投服務是什麼?</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p>
+                            📣<strong>零股電子投票</strong>是指零股股東透過線上平台（如台灣集中保管結算所的「股東e服務」或「集保e手掌握」APP）進行股東會表決，以便領取股東會紀念品。 此方式讓零股股東<strong>不必親自出席股東會</strong>，就能行使投票權並在<strong>指定時間地點</strong>領取紀念品，或選擇<strong>委託代領</strong>。<br>
+                            📣進入<a href="https://stockservices.tdcc.com.tw/evote/index.html" target="_blank" rel="noopener noreferrer">股東e服務平台</a>， <strong>"投票"</strong>後按<strong>"查詢"</strong> ，並<strong>截圖</strong>如下畫面。<br>
+                            📣因電子投票有時間限制，步驟繁瑣。 <strong class="text-danger">上傳憑證</strong> 即能享受小管家<span style="color: #E65100; font-weight: bold;">代電投＋截圖</span>服務。自動委託，讓您免煩惱。<br><small style="color: #6c757d;">憑證只能投票用，並無法買賣您的股票。</small>
+                        </p>
+                        <div class="d-flex justify-content-center flex-wrap" style="gap: 15px;">
+                             <img src="images/截圖範例1.jpg" alt="截圖範例(手機板)" style="width: 180px; height: 250px; object-fit: contain; border: 1px solid #ddd;">
+                             <img src="images/截圖範例2.jpg" alt="截圖範例(電腦版)" style="width: 300px; height: 150px; object-fit: contain; border: 1px solid #ddd;">
+                        </div>
+                    </div>
+                </div>
                 <div class="qa-item">
                     <div class="qa-question"> <span class="toggle-icon">+</span> <span>8. 何時能領到紀念品?</span> </div>
-                    <div class="qa-answer"> <p>一般來說，等到股東會旺季結束後統一出貨（大約會在8~9月附近，每年不太一定）。<br>
-                        若您有相當喜愛的紀念品希望提早寄送，請參考我們的提早出貨申請。</p> </div>
+                    <div class="qa-answer"> <p>一般來說，等到股東會旺季結束後統一出貨（大約會在8~9月附近，每年不太一定）。<br>若您有相當喜愛的紀念品希望提早寄送，請參考我們的提早出貨申請。</p> </div>
                 </div>
                 <div class="qa-item">
                     <div class="qa-question"> <span class="toggle-icon">+</span> <span>9. 不想要物品，可以都換成現金嗎?</span> </div>
                     <div class="qa-answer"> <p>1.我們可以直接回收。收購價可抵扣代領費用。<br>
-                    2.平台收購之物品，是與盤商配合，大盤批發價格與市價有顯著差異，可自由選擇領出紀念品後自行販售，以取得較好的收益。<br>
-                    3.<strong>「代領後收購」</strong>，如遇發放替代品，無論替代品價值高於/低於原紀念品，或物品變為點數卡，均不影響原定收購價格。
-                    </p> </div>
+                        2.平台收購之物品，是與盤商配合，大盤批發價格與市價有顯著差異，可自由選擇領出紀念品後自行販售，以取得較好的收益。<br>
+                        3.<strong>「代領後收購」</strong>，如遇發放替代品，無論替代品價值高於/低於原紀念品，或物品變為點數卡，均不影響原定收購價格。</p> </div>
                 </div>
-    <div class="qa-item">
-    <div class="qa-question"> <span class="toggle-icon">+</span> <span>10. 為何有持股，卻無法領到紀念品?</span> </div>
-    <div class="qa-answer">
-        <p>
-            1. 買進持有日期，超過公告期限<span style="color:#0d6efd;">(需在股東會前62天買入)</span>。<br>
-            2. 領取條件 需要附加<span style="color:#0d6efd;">證件正本</span> 或<span style="color:#0d6efd;">紙本通知書</span>。<br>
-            3. <strong>寄送地址：</strong><br>
-                32071 桃園市中壢區榮安十三街292號1樓<br>
-                收件人：許婷貽<br>
-                *請使用【掛號】或【限時掛號】寄送
-        </p>
-    </div>
-</div>
+                <div class="qa-item">
+                    <div class="qa-question"> <span class="toggle-icon">+</span> <span>10. 為何有持股，卻無法領到紀念品?</span> </div>
+                    <div class="qa-answer">
+                        <p>
+                            1. 買進持有日期，超過公告期限<span style="color:#0d6efd;">(需在股東會前62天買入)</span>。<br>
+                            2. 領取條件 需要附加<span style="color:#0d6efd;">證件正本</span> 或<span style="color:#0d6efd;">紙本通知書</span>。<br>
+                            3. <a href="#" class="address-toggle-link" data-target="#shipping-address">點我查看寄送地址</a>
+                        </p>
+                        <div class="hidden-address" id="shipping-address">
+                            <p>
+                                <strong>寄送地址：</strong><br>
+                                32071 桃園市中壢區榮安十三街292號1樓<br>
+                                收件人：許婷貽<br>
+                                *請使用【掛號】或【限時掛號】寄送
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 <div class="qa-item">
                     <div class="qa-question"> <span class="toggle-icon">+</span> <span>11. 為何領到的紀念品和公告的不同?</span> </div>
                     <div class="qa-answer"> <p>股東會紀念品數量不足時，公司會以其他商品代替。</p> </div>
@@ -229,16 +135,36 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    (function() {
-        const questions = document.querySelectorAll('.qa-question');
-        questions.forEach(question => {
-            question.addEventListener('click', () => {
-                const item = question.parentElement;
-                item.classList.toggle('active');
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- Q&A 開闔功能 ---
+    const questions = document.querySelectorAll('.qa-question');
+    questions.forEach(question => {
+        question.addEventListener('click', () => {
+            const item = question.parentElement;
+            item.classList.toggle('active');
         });
-    })();
+    });
+
+    // --- 地址開闔功能 ---
+    const addressToggles = document.querySelectorAll('.address-toggle-link');
+    addressToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(event) {
+            event.preventDefault(); 
+            
+            const targetId = this.dataset.target;
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                targetElement.classList.toggle('show');
+            }
+        });
+    });
+
+});
 </script>
 
 </body>

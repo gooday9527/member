@@ -230,21 +230,34 @@
 </div>
 
 <script>
-    // 等待整個頁面的 HTML 都載入完成後，再執行裡面的程式碼
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        // --- 只保留 Q&A 開闔功能 ---
-        const questions = document.querySelectorAll('.qa-question');
-        questions.forEach(question => {
-            question.addEventListener('click', () => {
-                const item = question.parentElement;
-                item.classList.toggle('active');
-            });
+// 等待整個頁面的 HTML 都載入完成後，再執行裡面的程式碼
+document.addEventListener('DOMContentLoaded', function() {
+
+    // --- 原本的 Q&A 開闔功能 ---
+    const questions = document.querySelectorAll('.qa-question');
+    questions.forEach(question => {
+        question.addEventListener('click', () => {
+            const item = question.parentElement;
+            item.classList.toggle('active');
         });
-
-        // --- 地址開闔功能已被移除 ---
-
     });
+
+    // --- 新增的地址開闔功能 ---
+    const addressToggles = document.querySelectorAll('.address-toggle-link');
+    addressToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(event) {
+            event.preventDefault(); 
+
+            const targetId = this.dataset.target;
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                targetElement.classList.toggle('show');
+            }
+        });
+    });
+
+});
 </script>
 
 </body>

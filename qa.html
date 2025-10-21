@@ -35,8 +35,8 @@
         .qa-item:first-child { padding-top: 0; }
         .qa-question { display: flex; align-items: center; cursor: pointer; font-size: 1.1em; font-weight: bold; color: #333; }
         .toggle-icon { font-size: 1.5em; margin-right: 15px; color: #0d6efd; transition: transform 0.3s ease; }
-        .qa-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; padding-left: 37px; color: #555; line-height: 1.6; }
-        .qa-item.active .qa-answer { max-height: 1200px; padding-top: 10px; }
+        .qa-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; padding-left: 37px; color: #555; line-height: 1.6; font-size: 0; }
+        .qa-item.active .qa-answer { max-height: 1200px; padding-top: 10px; font-size: inherit; }
         .qa-item.active .toggle-icon { transform: rotate(45deg); }
 
         /* 地址收合相關樣式 */
@@ -61,8 +61,7 @@
                 </div>
                 <div class="qa-item">
                     <div class="qa-question"> <span class="toggle-icon">+</span> <span>2. 為什麼要找你們代領？</span> </div>
-                    <div class="qa-answer"><p>便宜又方便。我們的代領費用約在 12 元至 16 元之間，自行找銀行券商領取費用通常為單筆 25~30 元。 我們透過一次領取所有會員的紀念品來節省成本，因此可以提供較低的費用。</p>
-                    </div>
+                    <div class="qa-answer"> <p>便宜又方便。我們的代領費用約在 12 元至 16 元之間，自行找銀行券商領取費用通常為單筆 25~30 元。 我們透過一次領取所有會員的紀念品來節省成本，因此可以提供較低的費用。</p> </div>
                 </div>
                <div class="qa-item">
                     <div class="qa-question"> <span class="toggle-icon">+</span> <span>3. 不想要紀念品，可以換成現金嗎?</span> </div>

@@ -1,4 +1,4 @@
-// announcement.js
+// notice.js
 import { APP_URLS } from './app.js'; 
 
 async function loadAnnouncements() {

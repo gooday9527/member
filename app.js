@@ -129,7 +129,7 @@ async function loadExternalHtmlSection(sectionId) {
     }
     dynamicContentArea.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height: 50vh;"><div class="spinner-border" role="status"></div></div>`;
     try {
-        const response = await fetch(`${sectionId}.html`);
+        const response = await fetch(`/${sectionId}.html`);
         if (!response.ok) throw new Error(`載入 ${sectionId}.html 失敗`);
         dynamicContentArea.innerHTML = await response.text();
         dynamicContentArea.querySelectorAll('script').forEach(oldScript => {

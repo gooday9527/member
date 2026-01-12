@@ -118,7 +118,8 @@ function updateLoginStatusLink(isLoggedIn) {
     if (isLoggedIn) {
         loginStatus.innerHTML = `<a class="nav-link ms-3 me-3 text-red" href="#" data-section="logout">登出</a>`;
     } else {
-        loginStatus.innerHTML = `<a class="nav-link ms-3 me-3 text-red" href="#" data-section="login">登入</a>`;
+        loginStatus.innerHTML = "" 
+        //;`<a class="nav-link ms-3 me-3 text-red" href="#" data-section="login">登入</a>`;
     }
 }
 

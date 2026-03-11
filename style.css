@@ -186,8 +186,9 @@ body.has-internal-scroll {
   #souvenirTable th:nth-child(3) { width: 10%; }
   #souvenirTable th:nth-child(4) { width: 18%; }
   #souvenirTable th:nth-child(5) { width: 8%; }
-  #souvenirTable th:nth-child(7) { width: 6%; }
-  #souvenirTable th:nth-child(8) { width: 28%; }
+  #souvenirTable th:nth-child(6) { width: 8%; }
+  #souvenirTable th:nth-child(7) { width: 26%; }
+  #souvenirTable th:nth-child(8) { width: 8%; }
 
 } /* @media 區塊在這裡正確地結尾 */
 /* --- 手機版佈局 (Mobile Layout) --- */

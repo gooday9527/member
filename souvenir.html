@@ -67,7 +67,6 @@ if (controlsContainer) {
     // 獲取資料
     // 修改這一行
     fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊?t=' + new Date().getTime())
-        .then(res => res.ok ? res.json() : Promise.reject('Network response was not ok.'))
     .then(data => {
         rawData = data;
     

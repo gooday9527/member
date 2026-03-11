@@ -55,9 +55,14 @@ function renderNavTabs() {
             li.className = "nav-item dropdown";
             li.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">${tab.label}</a><ul class="dropdown-menu" aria-labelledby="${tab.id}Link">${tab.children.map(child => `<li><a class="dropdown-item" href="#" data-section="${child.id}">${child.label}</a></li>`).join('')}</ul>`;
         } else if (tab.isExternal) {
-            // ✅ 新增：外部連結邏輯
-            // 使用 btn-primary 樣式讓它像個顯眼的按鈕
-            li.innerHTML = `<a class="nav-link btn btn-primary btn-sm text-white px-3 ms-lg-2 mt-2 mt-lg-0" href="${tab.url}" target="_blank">${tab.label}</a>`;
+            // ✅ 紅色邊框 + 紅色粗體字
+            li.innerHTML = `
+                <a class="nav-link btn btn-outline-danger btn-sm fw-bold px-3 ms-lg-2 mt-2 mt-lg-0" 
+                   href="${tab.url}" 
+                   target="_blank" 
+                   style="border-width: 2px; color: #ff0000 !important;">
+                   ${tab.label}
+                </a>`;
         } else {
             // 一般分頁邏輯 (保持不變)
             li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;

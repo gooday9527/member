@@ -55,13 +55,7 @@ function renderNavTabs() {
             li.className = "nav-item dropdown";
             li.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">${tab.label}</a><ul class="dropdown-menu" aria-labelledby="${tab.id}Link">${tab.children.map(child => `<li><a class="dropdown-item" href="#" data-section="${child.id}">${child.label}</a></li>`).join('')}</ul>`;
         } else if (tab.isExternal) {
-            // ✅ 移除 btn 類別，純文字連結但加上自定義 class
-            li.innerHTML = `
-                <a class="nav-link fw-bold nav-btn-join px-3 ms-lg-2" 
-                   href="${tab.url}" 
-                   target="_blank">
-                   ${tab.label}
-                </a>`;
+            li.innerHTML = `<a class="nav-link fw-bold" href="${tab.url}" target="_blank" style="color: #007bff !important;">${tab.label}</a>`;
         } else {
             // 一般分頁邏輯 (保持不變)
             li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;

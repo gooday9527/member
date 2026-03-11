@@ -65,13 +65,21 @@ if (controlsContainer) {
     }
     
     // 獲取資料
-    // 修改這一行
     fetch('https://opensheet.elk.sh/1z4SqcpGbhVtb5I6hQZ5aI9PQTNt2_64-ZFdc0_cV3kE/紀念品資訊?t=' + new Date().getTime())
+    .then(res => {
+        if (!res.ok) throw new Error('網路回應不正確');
+        return res.json(); // 🔥 這行絕對不能少，必須轉換成 JSON
+    })
     .then(data => {
+        if (!data || data.length === 0) {
+            tblBody.innerHTML = '<tr><td colspan="10" class="text-center p-4">沒有可用的資料</td></tr>';
+            return;
+        }
+
         rawData = data;
     
-        // 手動指定順序，這也能排除掉你不想要的「股代」
-        // 請確保這裡的字眼跟你的 Google 試算表第一列完全一樣
+        // 手動指定順序，確保與 Google 試算表標題完全一致
+        // 這樣即使 API 抓到其他欄位，網頁也只會顯示這 7 欄
         headers = ["股號", "股名", "紀念品", "最後買進日", "開會時間", "委託條件", "委託截止日"];
     
         renderHeader();
@@ -79,10 +87,10 @@ if (controlsContainer) {
         filterData();
         renderTable();
     })
-        .catch(error => {
-            console.error('載入紀念品資料錯誤：', error);
-            tblBody.innerHTML = '<tr><td colspan="10" class="text-danger text-center">資料載入失敗</td></tr>';
-        });
+    .catch(error => {
+        console.error('載入紀念品資料錯誤：', error);
+        tblBody.innerHTML = '<tr><td colspan="10" class="text-danger text-center">資料載入失敗，請確認試算表標題與權限</td></tr>';
+    });
 
     function sortTable(key) {
         sortAsc = (sortKey === key) ? !sortAsc : true;

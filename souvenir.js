@@ -4,7 +4,7 @@
 
 // 狀態變數
 let rawData = [], filteredData = [], currentPage = 1, rowsPerPage = 10;
-let sortKey = "股號", sortAsc = true;
+let sortKey = "最後買進日", sortAsc = true;
 let headers = [];
 let isSouvenirInitialized = false; // 防止重複初始化
 

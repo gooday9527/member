@@ -55,12 +55,11 @@ function renderNavTabs() {
             li.className = "nav-item dropdown";
             li.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">${tab.label}</a><ul class="dropdown-menu" aria-labelledby="${tab.id}Link">${tab.children.map(child => `<li><a class="dropdown-item" href="#" data-section="${child.id}">${child.label}</a></li>`).join('')}</ul>`;
         } else if (tab.isExternal) {
-            // ✅ 紅色邊框 + 紅色粗體字
+            // ✅ 移除 btn 類別，純文字連結但加上自定義 class
             li.innerHTML = `
-                <a class="nav-link btn btn-outline-danger btn-sm fw-bold px-3 ms-lg-2 mt-2 mt-lg-0" 
+                <a class="nav-link fw-bold nav-btn-join px-3 ms-lg-2" 
                    href="${tab.url}" 
-                   target="_blank" 
-                   style="border-width: 2px; color: #ff0000 !important;">
+                   target="_blank">
                    ${tab.label}
                 </a>`;
         } else {

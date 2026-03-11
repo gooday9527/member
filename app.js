@@ -41,7 +41,7 @@ let isInitialLoad = true;
 
 // --- 函數定義區 ---
 
-const tabsBeforeLogin = [ { id: "souvenir", label: "今年紀念品" }, { id: "recommend", label: "推薦套組" }, { id: "tutorial", label: "新手教學" }, { id: "about", label: "服務費用" }, { id: "qa", label: "常見Q✦A" }];
+const tabsBeforeLogin = [ { id: "souvenir", label: "今年紀念品" }, { id: "recommend", label: "推薦套組" }, { id: "tutorial", label: "新手教學" }, { id: "about", label: "服務費用" }, { id: "qa", label: "常見Q✦A" },{ id: "join-member", label: "加入會員", isExternal: true, url: "https://www.gooday9527.com/" }];
 const tabsAfterLogin = [ {id: "souvenir", label: "紀念品" }, { id: "recommend", label: "推薦套組" }, { id: "tutorial", label: "新手教學" }, { id: "about", label: "服務費用" }, { id: "qa", label: "常見Q✦A" }, { id: "notice", label: "公告欄" }, { id: "delegation-manage-dropdown", label: "委託管理", isDropdown: true, children: [ { id: "delegable-list", label: "可委託代領清單" }, { id: "delegated-query", label: "已委託代領查詢" },{ id: "upload-proof", label: "上傳憑證" } ] }, { id: "souvenir-manage-dropdown", label: "紀念品管理", isDropdown: true, children: [ { id: "souvenir-inventory", label: "紀念品總庫存" }, { id: "souvenir-transaction-query", label: "紀念品進出查詢" }, { id: "souvenir-withdrawal-query", label: "領出申請查詢" }, { id: "souvenir-album", label: "專屬紀念品相冊" } ] }, { id: "account-management-dropdown", label: "帳戶管理", isDropdown: true, children: [ { id: "account-query", label: "帳務查詢" }, { id: "deposit-withdrawal", label: "儲值 / 提款" },{ id: "add-account-shares", label: "新增帳號／持股" } ] } ];
 
 function renderNavTabs() {
@@ -51,9 +51,15 @@ function renderNavTabs() {
         const li = document.createElement("li");
         li.className = "nav-item";
         if (tab.isDropdown) {
+            // 下拉選單邏輯 (保持不變)
             li.className = "nav-item dropdown";
             li.innerHTML = `<a class="nav-link dropdown-toggle" href="#" id="${tab.id}Link" role="button" data-bs-toggle="dropdown" aria-expanded="false">${tab.label}</a><ul class="dropdown-menu" aria-labelledby="${tab.id}Link">${tab.children.map(child => `<li><a class="dropdown-item" href="#" data-section="${child.id}">${child.label}</a></li>`).join('')}</ul>`;
+        } else if (tab.isExternal) {
+            // ✅ 新增：外部連結邏輯
+            // 使用 btn-primary 樣式讓它像個顯眼的按鈕
+            li.innerHTML = `<a class="nav-link btn btn-primary btn-sm text-white px-3 ms-lg-2 mt-2 mt-lg-0" href="${tab.url}" target="_blank">${tab.label}</a>`;
         } else {
+            // 一般分頁邏輯 (保持不變)
             li.innerHTML = `<a class="nav-link" href="#" data-section="${tab.id}">${tab.label}</a>`;
         }
         navMenu.appendChild(li);
